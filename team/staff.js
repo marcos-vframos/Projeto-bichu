@@ -325,6 +325,7 @@ for (const [id, value] of [
     if (dirty() && !confirm('Descartar o texto não salvo?')) return
     closeMenu()
     mode = value
+    $('#detail').replaceChildren()
     $('#detail').hidden = true
     void load()
   }
@@ -334,6 +335,7 @@ for (const [id, duty] of Object.entries(duties)) {
     if (dirty() && !confirm('Descartar o texto não salvo?')) return
     closeMenu()
     mode = id
+    $('#detail').replaceChildren()
     $('#detail').hidden = true
     await load()
   })
@@ -380,7 +382,7 @@ $('#new-activity').onclick = () => {
         context: readContext(context),
         ...(assignee ? { userId: assignee } : {}),
       })
-      for (const field of form.querySelectorAll('textarea')) field.defaultValue = field.value
+      for (const field of form.querySelectorAll('textarea, input')) field.defaultValue = field.value
       await load()
       show('Atividade registrada.')
     } catch (error) {
