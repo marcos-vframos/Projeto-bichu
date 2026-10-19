@@ -1,4 +1,5 @@
 import http from 'node:http'
+import {migrateFromSource} from './migrate.mjs'
 import { readFile } from 'node:fs/promises'
 import { resolve, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -135,6 +136,7 @@ export function createApplication(options = {}) {
   return { store, dispatch, server }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  await migrateFromSource(process.env)
   const app = createApplication()
   app.server.listen(Number(process.env.PORT || 8080), '0.0.0.0')
   const shutdown = () =>

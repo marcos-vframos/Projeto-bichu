@@ -471,6 +471,7 @@ export async function handlePilot(request, env) {
   if (!safeOrigin(request) && !feedbackTicket) return fail('Origem inválida', 403)
   const url = new URL(request.url)
   const path = url.pathname.replace(/^\/api\/pilot\/?/, '').split('/').filter(Boolean)
+  if (env.PILOT_READ_ONLY === 'true' && !['GET','HEAD','OPTIONS'].includes(request.method)) return fail('Migração em andamento. As gravações neste endereço estão pausadas.', 503)
   if (path[0] === 'owner') {
     const ticketRead = await validReadTicket(request, env)
     const bridge = env.PILOT_BRIDGE_KEY && request.headers.get('authorization') === `Bearer ${env.PILOT_BRIDGE_KEY}`
@@ -499,6 +500,7 @@ export async function handlePilot(request, env) {
   }
   if (path[0] === 'admin') {
     if (!env.PILOT_ADMIN_KEY || request.headers.get('authorization') !== `Bearer ${env.PILOT_ADMIN_KEY}`) return fail('Acesso negado', 403)
+    if (path[1] === 'migration-status' && request.method === 'GET') return answer({readOnly:env.PILOT_READ_ONLY==='true'})
     if (path[1] === 'provision' && request.method === 'POST') return provision(env.DB, await request.json())
     if(path[1]==='backup'&&request.method==='GET')return answer(await backupPage(env.DB,url))
     if(path[1]==='backup-file'&&path.length===3&&request.method==='GET'){const file=await env.DB.prepare('SELECT object_key, content_type FROM pilot_files WHERE id = ?').bind(path[2]).first();const object=file&&await env.BUCKET.get(file.object_key);if(!object)return fail('Arquivo ausente',404);return new Response(object.body,{headers:{'content-type':file.content_type,'cache-control':'no-store'}})}
