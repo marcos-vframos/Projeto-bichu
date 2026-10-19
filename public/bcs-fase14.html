@@ -1,0 +1,2235 @@
+<!doctype html>
+<html lang="pt-BR" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+
+<title>Meu Bichu — Avaliação BCS/MCS 3D — Fase 14</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+:root:not([data-app-block-surface], [data-visualize-standalone]) > body {
+  padding: 12px;
+}
+
+.cursor-interaction {
+  cursor: var(--cursor-interaction, pointer);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: var(--cursor-interaction, pointer);
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+.widget {
+  min-width: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  box-shadow: 0 0 0 0.5px var(--border-strong, var(--border));
+  color: var(--foreground);
+  background: var(--background);
+}
+
+#widget > :not(.card, .widget, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The shared runtime owns data-tooltip; suppress AppBlock's pseudo-tooltip. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: var(--cursor-interaction, pointer);
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled="true"]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+/* Shared preview chrome; product styles stay inside each variant. */
+.viz-dotted-background {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--foreground) 14%, transparent) 0.8px,
+    transparent 0.8px
+  );
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.viz-carousel {
+  position: relative;
+  min-width: 0;
+}
+
+.viz-carousel:has(> .viz-carousel-controls) {
+  min-height: calc(60px + var(--viz-carousel-picker-height, 0px));
+  padding-bottom: 60px;
+}
+
+.viz-carousel > [data-variant][hidden] {
+  display: none !important;
+}
+
+.viz-carousel > [data-variant] {
+  isolation: isolate;
+}
+
+.viz-carousel-controls {
+  --viz-carousel-hover: light-dark(
+    color-mix(in srgb, var(--foreground) 5.4%, transparent),
+    color-mix(in srgb, var(--foreground) 7.8%, transparent)
+  );
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  left: 50%;
+  display: flex;
+  width: max-content;
+  /* Leave room for the host's design-controls launcher at the trailing edge. */
+  max-width: calc(100% - 96px);
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  /* Match the settings dropdown chrome independently of the content font size. */
+  font-size: 13px;
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+/* Keep authored mockup button styles out of the shared carousel chrome. */
+.viz-carousel-controls button,
+.viz-carousel-picker > summary {
+  display: flex !important;
+  height: auto !important;
+  min-height: 30px;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px;
+  padding: 0 6px !important;
+  -webkit-app-region: no-drag;
+  border: 0 !important;
+  border-radius: 14px !important;
+  color: inherit !important;
+  background: transparent !important;
+  font: inherit !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.viz-carousel-controls > button,
+.viz-carousel-picker > summary {
+  position: relative;
+  isolation: isolate;
+}
+
+.viz-carousel-controls > button {
+  --icon-size: 16px;
+  width: 30px !important;
+  padding: 0 !important;
+}
+
+.viz-carousel-picker > summary {
+  padding-inline: 12px !important;
+}
+
+.viz-carousel-controls .viz-carousel-caret {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin: 0;
+  color: inherit;
+  transform: rotate(180deg);
+}
+
+.viz-carousel-controls > button > svg,
+.viz-carousel-controls .viz-carousel-caret,
+.viz-carousel-count {
+  opacity: 0.5;
+}
+
+.viz-carousel-controls > button::before,
+.viz-carousel-picker > summary::before {
+  position: absolute;
+  z-index: -1;
+  inset: 3px;
+  border-radius: 12px;
+  content: "";
+  pointer-events: none;
+}
+
+.viz-carousel-controls > button:hover::before,
+.viz-carousel-picker > summary:hover::before {
+  background: var(--viz-carousel-hover);
+}
+
+.viz-carousel-controls > button,
+.viz-carousel-controls [data-lucide],
+.viz-carousel-controls .lucide {
+  flex-shrink: 0;
+}
+
+.viz-carousel-picker {
+  min-width: 0;
+}
+
+.viz-carousel-picker > summary {
+  min-width: 0;
+  list-style: none;
+}
+
+.viz-carousel-picker > summary::-webkit-details-marker {
+  display: none;
+}
+
+.viz-carousel-count {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.viz-carousel-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viz-carousel-options {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  max-height: 240px;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  box-shadow: 0 4px 12px light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 25%));
+}
+
+.viz-carousel-options > button {
+  border-radius: max(0px, calc(var(--radius-lg) - 5px)) !important;
+  width: 100% !important;
+  min-height: 28px;
+  justify-content: flex-start !important;
+  padding: 4px 8px !important;
+  font-size: var(--font-size-small) !important;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.viz-carousel-options > [aria-current="true"],
+.viz-carousel-options > button:hover {
+  background: var(--viz-carousel-hover) !important;
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed="true"],
+  [aria-selected="true"],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.viz-carousel-controls :is(button, summary):focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 2px !important;
+}
+
+@media (pointer: coarse) {
+  .viz-carousel:has(> .viz-carousel-controls) {
+    min-height: calc(76px + var(--viz-carousel-picker-height, 0px));
+    padding-bottom: 76px;
+  }
+
+  .btn,
+  .nav-link,
+  .viz-carousel-controls button,
+  .viz-carousel-picker > summary,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type="file"]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type="color"] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="time"],
+    [type="week"]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html>body{padding:0}</style>
+<link rel="stylesheet" href="/bcs-fase14-ui.css">
+</head>
+<body>
+<div id="bcs-dog-3d-f14">
+  <style>
+    #bcs-dog-3d-f14 { color: var(--foreground); }
+    #bcs-dog-3d-f14 .viewer { position: relative; min-height: 360px; height: min(62vw, 540px); overflow: hidden; }
+    #bcs-dog-3d-f14 canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    #bcs-dog-3d-f14 .overlay { position: absolute; inset: 12px 12px auto 12px; pointer-events: none; display: flex; justify-content: space-between; gap: 12px; }
+    #bcs-dog-3d-f14 .overlay > * { pointer-events: auto; }
+    #bcs-dog-3d-f14 .view-controls { position: absolute; right: 12px; bottom: 12px; }
+    #bcs-dog-3d-f14 .layer-row { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    #bcs-dog-3d-f14 .status { min-height: 1.5em; }
+    #bcs-dog-3d-f14 .clinical-detail { min-height: 2.8em; }
+    @media (max-width: 520px) {
+      #bcs-dog-3d-f14 .viewer { min-height: 390px; }
+      #bcs-dog-3d-f14 .overlay { flex-direction: column; }
+      #bcs-dog-3d-f14 .view-controls { left: 12px; right: auto; }
+    }
+  </style>
+
+  <div class="viz-row">
+    <h2>Border Collie — alertas longitudinais explicáveis · Fase 14</h2>
+    <span class="viz-badge" id="bcs-badge">BCS 5 · ideal</span>
+    <span class="viz-badge" id="mcs-badge" data-min-mode="veterinary">MCS normal</span>
+    <span class="viz-badge">Protótipo não validado</span>
+    <span class="viz-badge" id="asset-badge">Modelo procedural</span>
+  </div>
+
+  <div class="viz-controls" aria-label="Controles do modelo">
+    <label class="form-label" for="app-mode">Perfil de uso
+      <select class="form-select" id="app-mode"><option value="education">Educação</option><option value="triage">Triagem do tutor</option><option value="veterinary" selected>Instrumento veterinário</option></select>
+    </label>
+    <label class="form-label" for="bcs-score">
+      Escore: <strong class="tabular-nums" id="bcs-value">5</strong>
+      <input class="form-range" id="bcs-score" type="range" min="1" max="9" step="1" value="5" aria-describedby="bcs-status">
+    </label>
+    <label class="form-label" for="mcs-score" data-min-mode="veterinary">Condição muscular
+      <select class="form-select" id="mcs-score"><option value="0">Normal</option><option value="1">Perda leve</option><option value="2">Perda moderada</option><option value="3">Perda severa</option></select>
+    </label>
+    <label class="form-label" for="reference-score" data-min-mode="veterinary">Comparar com BCS
+      <select class="form-select" id="reference-score"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
+    </label>
+    <div class="layer-row" role="group" aria-label="Camadas anatômicas">
+      <label class="form-check form-switch"><input class="form-check-input" id="layer-skin" type="checkbox" checked><span class="form-check-label">Pele</span></label>
+      <label class="form-check form-switch"><input class="form-check-input" id="layer-fur" type="checkbox" checked><span class="form-check-label">Pelagem</span></label>
+      <label class="form-check form-switch" data-min-mode="veterinary"><input class="form-check-input" id="layer-fat" type="checkbox"><span class="form-check-label">Gordura</span></label>
+      <label class="form-check form-switch" data-min-mode="veterinary"><input class="form-check-input" id="layer-muscle" type="checkbox"><span class="form-check-label">Músculos</span></label>
+      <label class="form-check form-switch" data-min-mode="veterinary"><input class="form-check-input" id="layer-bone" type="checkbox"><span class="form-check-label">Esqueleto</span></label>
+      <label class="form-check form-switch"><input class="form-check-input" id="clinical-points" type="checkbox" checked><span class="form-check-label">Pontos clínicos</span></label>
+      <label class="form-check form-switch" data-min-mode="veterinary"><input class="form-check-input" id="mcs-points" type="checkbox"><span class="form-check-label">Pontos MCS</span></label>
+      <label class="form-check form-switch" data-min-mode="veterinary"><input class="form-check-input" id="bcs-reference" type="checkbox"><span class="form-check-label">Sobrepor referência</span></label>
+    </div>
+  </div>
+
+  <div class="status" id="mode-note" aria-live="polite"><strong>Instrumento veterinário:</strong> protocolo completo, BCS e MCS independentes e registro condicionado à palpação.</div>
+
+  <hr>
+  <h3>Malha orgânica local</h3>
+  <div class="viz-controls" aria-label="Importação da malha orgânica">
+    <label class="form-label" for="glb-file">Arquivo GLB
+      <input class="form-control" id="glb-file" type="file" accept=".glb,model/gltf-binary">
+    </label>
+    <label class="form-label" for="glb-up-axis">Eixo vertical
+      <select class="form-select" id="glb-up-axis"><option value="y" selected>Y para cima</option><option value="z">Z para cima</option></select>
+    </label>
+    <label class="form-check form-switch"><input class="form-check-input" id="use-imported" type="checkbox" disabled><span class="form-check-label">Usar malha importada</span></label>
+  </div>
+  <div class="status" id="asset-status" aria-live="polite" hidden>Fallback procedural ativo. O GLB permanece neste dispositivo. Para deformação clínica use <code>BCS1…BCS9</code> ou <code>BCS_LEAN</code>/<code>BCS_OBESE</code> e <code>MCS_MILD</code>, <code>MCS_MODERATE</code>, <code>MCS_SEVERE</code>.</div>
+
+  <div class="viz-row">
+    <button class="btn btn-primary" id="run-morph-audit" type="button" disabled>Auditar morph targets</button>
+    <span class="viz-badge" id="audit-badge">Auditoria pendente</span>
+    <span class="viz-badge" id="release-badge">Não qualificado</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm" aria-label="Cobertura dos estados morfológicos">
+      <thead><tr><th>Escala</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr></thead>
+      <tbody><tr id="bcs-audit-row"><th>BCS</th><td colspan="9">Importe um GLB para auditar.</td></tr></tbody>
+    </table>
+    <table class="table table-sm" aria-label="Cobertura dos estados musculares">
+      <thead><tr><th>Escala</th><th>Normal</th><th>Leve</th><th>Moderada</th><th>Severa</th></tr></thead>
+      <tbody><tr id="mcs-audit-row"><th>MCS</th><td colspan="4">Importe um GLB para auditar.</td></tr></tbody>
+    </table>
+  </div>
+  <div class="status" id="audit-detail" aria-live="polite">A presença de morph targets comprova compatibilidade técnica, não validade anatômica ou clínica.</div>
+  <div class="viz-controls" aria-label="Critérios de qualificação interna">
+    <label class="form-check"><input class="form-check-input" id="anatomy-reviewed" type="checkbox" disabled><span class="form-check-label">Revisão anatômica veterinária documentada</span></label>
+    <label class="form-check"><input class="form-check-input" id="reference-documented" type="checkbox" disabled><span class="form-check-label">Referências e protocolo documentados</span></label>
+    <button class="btn" id="qualify-asset" type="button" disabled>Qualificar para teste interno</button>
+  </div>
+  <div class="text-small text-muted status" id="qualification-status" aria-live="polite">Liberação clínica exige validação externa; a qualificação desta fase serve apenas para teste interno.</div>
+
+  <div id="protocol-section">
+  <div class="viz-row">
+    <button class="btn btn-primary" id="start-exam" type="button">Iniciar exame guiado</button>
+    <button class="btn btn-ghost" id="exam-prev" type="button" disabled>Anterior</button>
+    <button class="btn" id="exam-next" type="button" disabled>Próxima etapa</button>
+    <button class="btn btn-ghost" id="exam-end" type="button" disabled>Encerrar</button>
+    <span class="viz-badge" id="exam-step">Modo livre</span>
+  </div>
+  <div class="progress" role="progressbar" aria-label="Progresso do exame" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" id="exam-progress"><div class="progress-bar" id="exam-progress-bar" style="width:0%"></div></div>
+  <div class="status" id="exam-instruction" aria-live="polite">Explore livremente ou inicie o protocolo em cinco etapas.</div>
+  </div>
+
+  <div class="card viewer" id="bcs-viewer">
+    <canvas id="bcs-canvas" role="img" aria-label="Modelo tridimensional interativo de um Border Collie com escala BCS de 1 a 9"></canvas>
+    <div class="overlay">
+      <span class="viz-badge">Arraste para girar · toque nos marcadores</span>
+    </div>
+    <div class="viz-row view-controls" role="group" aria-label="Vistas da câmera">
+      <button class="btn btn-ghost" type="button" data-view="side">Lateral</button>
+      <button class="btn btn-ghost" type="button" data-view="top">Dorsal</button>
+      <button class="btn btn-ghost" type="button" data-view="front">Frontal</button>
+    </div>
+  </div>
+  <div class="text-small text-muted status" id="bcs-status" aria-live="polite">Costelas palpáveis, cintura visível e retração abdominal presente.</div>
+  <div class="text-small text-muted status" id="mcs-status" data-min-mode="veterinary" aria-live="polite">Massa muscular preservada nas têmporas, escápulas, coluna e pelve.</div>
+  <div class="status" id="comparison-detail" data-min-mode="veterinary" aria-live="polite"><strong>Comparação:</strong> BCS atual 5 e referência 5 coincidem.</div>
+  <div class="clinical-detail" id="clinical-detail" aria-live="polite"><strong>Pontos clínicos:</strong> toque em um marcador no cão para examinar a região.</div>
+  <div id="assessment-section">
+  <hr>
+  <h3>Avaliação guiada</h3>
+  <div class="viz-grid" id="assessment-fields">
+    <label class="form-label" for="obs-ribs">Costelas
+      <select class="form-select" id="obs-ribs"><option value="">Não avaliado</option><option value="2">Muito visíveis / cobertura mínima</option><option value="5">Palpáveis com leve cobertura</option><option value="7">Difíceis de palpar</option><option value="9">Não palpáveis</option></select>
+    </label>
+    <label class="form-label" for="obs-waist">Cintura dorsal
+      <select class="form-select" id="obs-waist"><option value="">Não avaliado</option><option value="2">Muito acentuada</option><option value="5">Evidente</option><option value="7">Pouco marcada</option><option value="9">Ausente</option></select>
+    </label>
+    <label class="form-label" for="obs-tuck">Retração abdominal
+      <select class="form-select" id="obs-tuck"><option value="">Não avaliado</option><option value="2">Muito intensa</option><option value="5">Presente</option><option value="7">Reduzida</option><option value="9">Ausente / distensão</option></select>
+    </label>
+    <label class="form-label" for="obs-lumbar">Região lombar
+      <select class="form-select" id="obs-lumbar"><option value="">Não avaliado</option><option value="2">Vértebras evidentes</option><option value="5">Contorno suave</option><option value="7">Depósitos perceptíveis</option><option value="9">Depósitos amplos</option></select>
+    </label>
+    <label class="form-label" for="obs-tailbase">Base da cauda
+      <select class="form-select" id="obs-tailbase"><option value="">Não avaliado</option><option value="2">Estruturas ósseas evidentes</option><option value="5">Sem depósito relevante</option><option value="7">Depósito perceptível</option><option value="9">Depósito marcado</option></select>
+    </label>
+  </div>
+  <div class="viz-row">
+    <div class="card viz-stat" aria-live="polite">
+      <span class="text-muted">Estimativa orientativa</span>
+      <div class="viz-stat-value tabular-nums" id="estimate-value">—</div>
+      <div id="estimate-detail">Preencha pelo menos três achados.</div>
+    </div>
+    <button class="btn btn-primary" id="apply-estimate" type="button" disabled>Aplicar ao modelo</button>
+    <label class="form-check" data-min-mode="veterinary"><input class="form-check-input" id="palpation-confirmed" type="checkbox"><span class="form-check-label">Palpação realizada</span></label>
+    <button class="btn" id="finalize-evaluation" type="button" data-min-mode="veterinary" disabled>Finalizar registro clínico</button>
+  </div>
+  <div class="status" id="clinical-readiness" aria-live="polite">Registro clínico incompleto: preencha os cinco achados e confirme a palpação.</div>
+  <p class="text-small text-muted" id="assessment-disclaimer">Em cães de pelagem média ou longa, a inspeção isolada não substitui palpação nem avaliação veterinária.</p>
+  </div>
+
+  <hr>
+  <h3>Acompanhamento do animal</h3>
+  <div class="viz-controls" aria-label="Dados da avaliação longitudinal">
+    <label class="form-label" for="patient-name">Nome do animal
+      <input class="form-control" id="patient-name" type="text" autocomplete="off" placeholder="Ex.: Luna">
+    </label>
+    <label class="form-label" for="patient-id">Identificador
+      <input class="form-control" id="patient-id" type="text" autocomplete="off" placeholder="Prontuário ou microchip">
+    </label>
+    <label class="form-label" for="followup-date">Data
+      <input class="form-control" id="followup-date" type="date">
+    </label>
+    <label class="form-label" for="followup-weight">Peso em kg
+      <input class="form-control" id="followup-weight" type="number" min="0.1" max="150" step="0.1" inputmode="decimal" placeholder="0,0">
+    </label>
+    <label class="form-label" for="followup-note">Nota curta
+      <input class="form-control" id="followup-note" type="text" maxlength="80" placeholder="Contexto da avaliação">
+    </label>
+    <button class="btn btn-primary" id="save-followup" type="button">Registrar avaliação atual</button>
+  </div>
+  <div class="status" id="followup-status" aria-live="polite">Histórico vazio. Registros permanecem apenas nesta sessão.</div>
+  <div class="table-responsive">
+    <table class="table" aria-label="Histórico de avaliações do animal">
+      <thead><tr><th>Data</th><th>Origem</th><th class="text-end">Peso</th><th class="text-center">BCS</th><th>MCS</th><th>Mudança desde o anterior</th><th></th></tr></thead>
+      <tbody id="followup-history"><tr><td colspan="7">Nenhuma avaliação registrada.</td></tr></tbody>
+    </table>
+  </div>
+  <div class="text-small text-muted">Mudanças simultâneas de peso, BCS e MCS devem ser interpretadas no contexto clínico; associação temporal não demonstra causalidade.</div>
+
+  <hr>
+  <div class="viz-row">
+    <h3>Regras de revisão</h3>
+    <span class="viz-badge" id="alert-badge">Sem pares de avaliações</span>
+  </div>
+  <div class="viz-controls" aria-label="Limites provisórios para revisão">
+    <label class="form-label" for="weight-alert-threshold">Variação de peso (%)
+      <input class="form-control" id="weight-alert-threshold" type="number" min="1" max="50" step="1" value="10">
+    </label>
+    <label class="form-label" for="bcs-alert-threshold">Variação de BCS
+      <input class="form-control" id="bcs-alert-threshold" type="number" min="1" max="8" step="1" value="2">
+    </label>
+    <label class="form-label" for="mcs-alert-threshold">Piora de MCS
+      <input class="form-control" id="mcs-alert-threshold" type="number" min="1" max="3" step="1" value="1">
+    </label>
+    <button class="btn" id="evaluate-alerts" type="button">Reavaliar regras</button>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm" aria-label="Alertas explicáveis entre avaliações consecutivas">
+      <thead><tr><th>Intervalo</th><th>Resultado</th><th>Critério acionado</th><th>Leitura permitida</th></tr></thead>
+      <tbody id="alert-history"><tr><td colspan="4">Registre pelo menos duas avaliações.</td></tr></tbody>
+    </table>
+  </div>
+  <div class="status" id="alert-status" aria-live="polite">Os limites são parâmetros de protótipo configuráveis; não representam consenso clínico nem urgência médica.</div>
+
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.164.1';
+    import { OrbitControls } from 'https://esm.sh/three@0.164.1/examples/jsm/controls/OrbitControls.js';
+    import { GLTFLoader } from 'https://esm.sh/three@0.164.1/examples/jsm/loaders/GLTFLoader.js';
+
+    const root = document.getElementById('bcs-dog-3d-f14');
+    let currentMode='veterinary', clinicalFinalized=false;
+    const host = root.querySelector('#bcs-viewer');
+    const canvas = root.querySelector('#bcs-canvas');
+    const style = getComputedStyle(root);
+    const color = name => new THREE.Color(style.getPropertyValue(name).trim());
+    const fg = color('--foreground'), bg = color('--card');
+    const coat = new THREE.Color('#303d48');
+    const whiteCoat = new THREE.Color('#d7d3c8');
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
+    camera.up.set(0,0,1);
+    camera.position.set(0,-8,2.7);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0, 1);
+    controls.minDistance = 3.4;
+    controls.maxDistance = 13;
+
+    scene.add(new THREE.HemisphereLight(0xdcecf2, 0x263e4c, 1.5));
+    const key = new THREE.DirectionalLight(0xffe7c0, 2.2);
+    key.position.set(4, -5, 7); key.castShadow = true; scene.add(key);
+    const rim = new THREE.DirectionalLight(0x7bc7ed, 1.0);
+    rim.position.set(-4, 5, 4); scene.add(rim);
+
+    const floorMat = new THREE.MeshStandardMaterial({color:color('--muted'), roughness:.9, transparent:true, opacity:.45});
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(4.2, 64), floorMat);
+    floor.position.z = -.015; floor.receiveShadow = true; scene.add(floor);
+    const grid = new THREE.GridHelper(7, 14, color('--border'), color('--border'));
+    grid.rotation.x = Math.PI/2; grid.position.z = .002; scene.add(grid);
+
+    const dog = new THREE.Group(); scene.add(dog);
+    let importedRoot=null, importedMeshes=[], importedStats=null, useImportedMesh=false, builtInImported=false;
+    const skinGroup = new THREE.Group(), fatGroup = new THREE.Group(), muscleGroup = new THREE.Group(), boneGroup = new THREE.Group(), markings = new THREE.Group(), furGroup = new THREE.Group(), faceGroup = new THREE.Group(), referenceGroup = new THREE.Group(), markerGroup = new THREE.Group(), mcsMarkerGroup = new THREE.Group();
+    dog.add(referenceGroup, boneGroup, muscleGroup, fatGroup, skinGroup, markings, furGroup, faceGroup, markerGroup, mcsMarkerGroup);
+
+    const skinMat = new THREE.MeshStandardMaterial({color:coat, roughness:.72});
+    const markMat = new THREE.MeshStandardMaterial({color:whiteCoat, roughness:.82});
+    const noseMat = new THREE.MeshStandardMaterial({color:coat.clone().lerp(color('--background'),.35), roughness:.38});
+    const furDarkMat = new THREE.MeshStandardMaterial({color:coat.clone().lerp(bg,.08), roughness:1, side:THREE.DoubleSide});
+    const furWhiteMat = new THREE.MeshStandardMaterial({color:whiteCoat, roughness:1, side:THREE.DoubleSide});
+    const fatMat = new THREE.MeshStandardMaterial({color:color('--orange'), roughness:.55, transparent:true, opacity:.48, depthWrite:false});
+    const muscleMat = new THREE.MeshStandardMaterial({color:color('--red'), roughness:.62});
+    const boneMat = new THREE.MeshStandardMaterial({color:color('--yellow'), roughness:.75});
+    const referenceMat = new THREE.MeshBasicMaterial({color:color('--blue'), wireframe:true, transparent:true, opacity:.48, depthTest:false});
+    const markerBase = color('--green'), markerSelected = color('--yellow');
+    const mcsMarkerBase = color('--purple');
+    const sphereGeo = new THREE.SphereGeometry(1, 28, 18);
+    const tuftGeo = new THREE.ConeGeometry(.032,.19,5);
+
+    const parts = [];
+    function ellipsoid(group, name, pos, scale, material, region='fixed') {
+      const m = new THREE.Mesh(sphereGeo, material);
+      m.name=name; m.position.set(...pos); m.scale.set(...scale); m.userData={basePos:[...pos],baseScale:[...scale],region};
+      m.castShadow=true; m.receiveShadow=true; group.add(m); parts.push(m); return m;
+    }
+    function bone(a,b,r,material=boneMat,group=boneGroup) {
+      const A=new THREE.Vector3(...a), B=new THREE.Vector3(...b), d=B.clone().sub(A);
+      const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),10),material);
+      m.position.copy(A.clone().add(B).multiplyScalar(.5)); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize()); group.add(m); return m;
+    }
+    function tuft(group, pos, direction, length, material=furDarkMat, width=1) {
+      const m=new THREE.Mesh(tuftGeo,material), d=new THREE.Vector3(...direction).normalize();
+      m.position.set(...pos); m.scale.set(width,length/.19,width); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d); group.add(m); return m;
+    }
+    function regionGroup(name,pos,region){
+      const g=new THREE.Group(); g.name=name; g.position.set(...pos); g.userData={basePos:[...pos],baseScale:[1,1,1],region}; furGroup.add(g); return g;
+    }
+
+    ellipsoid(skinGroup,'thorax',[.10,0,1.05],[.72,.40,.48],skinMat,'thorax');
+    ellipsoid(skinGroup,'abdomen',[-.55,0,.99],[.55,.31,.34],skinMat,'abdomen');
+    ellipsoid(skinGroup,'pelvis',[-.98,0,1.00],[.42,.34,.38],skinMat,'pelvis');
+    ellipsoid(skinGroup,'neck',[.72,0,1.30],[.48,.31,.43],skinMat,'neck');
+    ellipsoid(skinGroup,'head',[1.16,0,1.48],[.43,.29,.34],skinMat);
+    ellipsoid(skinGroup,'muzzle',[1.51,0,1.41],[.30,.19,.18],skinMat);
+    ellipsoid(skinGroup,'nose',[1.78,0,1.42],[.10,.16,.13],noseMat);
+    ellipsoid(skinGroup,'earL',[1.08,.20,1.78],[.18,.09,.27],skinMat);
+    ellipsoid(skinGroup,'earR',[1.08,-.20,1.78],[.18,.09,.27],skinMat);
+    ellipsoid(skinGroup,'tailBase',[-1.27,0,1.05],[.34,.18,.18],skinMat,'tail');
+    for (const side of [-1,1]) {
+      ellipsoid(skinGroup,'frontUpper',[.45,.29*side,.76],[.17,.17,.42],skinMat,'limb');
+      ellipsoid(skinGroup,'frontLower',[.48,.29*side,.37],[.105,.11,.36],skinMat);
+      ellipsoid(skinGroup,'frontPaw',[.60,.29*side,.08],[.23,.15,.09],skinMat);
+      ellipsoid(skinGroup,'rearThigh',[-.92,.27*side,.72],[.25,.22,.42],skinMat,'limb');
+      ellipsoid(skinGroup,'rearHock',[-.82,.27*side,.33],[.11,.12,.35],skinMat);
+      ellipsoid(skinGroup,'rearPaw',[-.67,.27*side,.08],[.24,.15,.09],skinMat);
+    }
+    let tp=[-1.2,0,1.05];
+    for(let i=0;i<6;i++){ const np=[-1.5-.25*i,0,.94-.12*i]; bone(tp,np,.15-.014*i,skinMat,skinGroup); tp=np; }
+
+    ellipsoid(markings,'blaze',[1.31,-.255,1.56],[.12,.035,.22],markMat);
+    ellipsoid(markings,'chest',[.63,-.25,1.04],[.24,.055,.35],markMat,'neck');
+    for(const side of [-1,1]) ellipsoid(markings,'sock',[.51,.30*side,.25],[.115,.12,.17],markMat);
+
+    // Expressão e detalhes faciais reconhecíveis da raça.
+    const eyeMat=new THREE.MeshStandardMaterial({color:color('--blue'),roughness:.25,metalness:.08});
+    const pupilMat=new THREE.MeshStandardMaterial({color:coat.clone().lerp(color('--background'),.45),roughness:.2});
+    for(const side of [-1,1]){
+      ellipsoid(faceGroup,'eye',[1.31,.265*side,1.57],[.064,.032,.054],eyeMat);
+      ellipsoid(faceGroup,'pupil',[1.325,.292*side,1.57],[.027,.012,.029],pupilMat);
+      ellipsoid(faceGroup,'innerEar',[1.08,.265*side,1.80],[.11,.022,.19],markMat);
+    }
+
+    // Pelagem dupla: ruff, ventre, cauda e franjas dos membros.
+    const ruff=regionGroup('ruff',[.67,0,1.28],'neck');
+    for(let ring=0;ring<2;ring++) for(let i=0;i<24;i++){
+      const a=i/24*Math.PI*2, radial=.26+ring*.045;
+      tuft(ruff,[-.10+ring*.13,Math.cos(a)*radial,Math.sin(a)*(.30+ring*.03)],[.10,Math.cos(a),Math.sin(a)-.18],.17+ring*.04,i%5===0?furWhiteMat:furDarkMat,1.0+ring*.12);
+    }
+    const bellyFur=regionGroup('bellyFeathering',[-.42,0,.80],'abdomen');
+    for(let i=0;i<22;i++){
+      const x=-.42+i*.045, side=i%2?-1:1;
+      tuft(bellyFur,[x,.19*side,-.03-Math.sin(i*.8)*.025],[.08,.42*side,-1],.16+(i%4)*.012,i%7===0?furWhiteMat:furDarkMat,.9);
+    }
+    const tailFur=regionGroup('tailFeathering',[-1.26,0,1.04],'tail');
+    for(let i=0;i<34;i++){
+      const t=i/33, side=i%2?-1:1, white=i>27;
+      tuft(tailFur,[-.10-1.42*t,.08*side,.02-.60*t],[-.30,.62*side,-.75],.20+.13*(1-t),white?furWhiteMat:furDarkMat,1.1);
+    }
+    const legFur=regionGroup('legFeathering',[0,0,0],'limb');
+    for(const side of [-1,1]) for(const rear of [false,true]) for(let i=0;i<8;i++){
+      const x=rear?-.91:.45, z=.72-i*.055;
+      tuft(legFur,[x,.33*side,z],[0,.55*side,-.82],.14+(i%3)*.012,i>5?furWhiteMat:furDarkMat,.82);
+    }
+
+    // Contorno comparativo fixo do BCS 5.
+    skinGroup.children.forEach(m=>{
+      if(!m.isMesh) return;
+      const c=new THREE.Mesh(m.geometry,referenceMat);
+      c.position.copy(m.position); c.rotation.copy(m.rotation); c.quaternion.copy(m.quaternion); c.scale.copy(m.scale);
+      if(m.userData.baseScale) c.userData={basePos:[...m.userData.basePos],baseScale:[...m.userData.baseScale],region:m.userData.region};
+      referenceGroup.add(c);
+    });
+    referenceGroup.visible=false;
+
+    // Marcos clicáveis usados na avaliação clínica visual e por palpação.
+    const markerData={
+      ribs:{label:'Costelas',region:'thorax',pos:[.08,-.46,1.15]},
+      waist:{label:'Cintura dorsal',region:'abdomen',pos:[-.58,-.37,1.16]},
+      tuck:{label:'Retração abdominal',region:'abdomen',pos:[-.43,-.29,.69]},
+      lumbar:{label:'Região lombar',region:'pelvis',pos:[-.64,-.24,1.34]},
+      tailbase:{label:'Base da cauda',region:'tail',pos:[-1.18,-.30,1.11]}
+    };
+    const markerGeo=new THREE.SphereGeometry(.075,18,12);
+    Object.entries(markerData).forEach(([key,d])=>{
+      const mat=new THREE.MeshStandardMaterial({color:markerBase,emissive:markerBase,emissiveIntensity:.25,roughness:.35});
+      const m=new THREE.Mesh(markerGeo,mat); m.position.set(...d.pos); m.userData={key,kind:'bcs',region:d.region,basePos:[...d.pos]}; markerGroup.add(m);
+    });
+    const mcsMarkerData={
+      temporal:{label:'Músculos temporais',pos:[1.16,-.30,1.66]},
+      scapular:{label:'Escápulas',pos:[.48,-.36,1.26]},
+      spine:{label:'Musculatura epaxial',pos:[-.32,-.31,1.35]},
+      pelvis:{label:'Pelve',pos:[-.96,-.35,1.19]}
+    };
+    Object.entries(mcsMarkerData).forEach(([key,d])=>{
+      const mat=new THREE.MeshStandardMaterial({color:mcsMarkerBase,emissive:mcsMarkerBase,emissiveIntensity:.25,roughness:.35});
+      const m=new THREE.Mesh(markerGeo,mat); m.position.set(...d.pos); m.userData={key,kind:'mcs',basePos:[...d.pos]}; mcsMarkerGroup.add(m);
+    });
+    mcsMarkerGroup.visible=false;
+
+    const fatSpecs=[['ribs',[.08,0,1.05],[.69,.38,.45],'thorax'],['lumbar',[-.52,0,1.20],[.48,.29,.18],'pelvis'],['abdomen',[-.45,0,.82],[.43,.27,.19],'abdomen'],['tail',[-1.15,0,1.08],[.27,.25,.23],'tail'],['sternum',[.15,0,.72],[.38,.25,.14],'abdomen']];
+    fatSpecs.forEach(x=>ellipsoid(fatGroup,x[0],x[1],x[2],fatMat,x[3]));
+
+    const muscleSpecs=[['latissimus',[-.10,0,1.15],[.66,.31,.28],'spine'],['pectorals',[.35,0,.87],[.42,.30,.25],'scapular'],['abdominal',[-.55,0,.91],[.48,.26,.25],'spine'],['gluteal',[-.98,0,1.05],[.36,.31,.31],'pelvis'],['neck',[.73,0,1.35],[.43,.27,.34],'scapular'],['temporalL',[1.13,.20,1.61],[.20,.09,.16],'temporal'],['temporalR',[1.13,-.20,1.61],[.20,.09,.16],'temporal']];
+    muscleSpecs.forEach(x=>ellipsoid(muscleGroup,x[0],x[1],x[2],muscleMat,x[3]));
+    for(const side of [-1,1]){
+      ellipsoid(muscleGroup,'deltoid',[.45,.27*side,.89],[.19,.14,.28],muscleMat,'scapular');
+      ellipsoid(muscleGroup,'quadriceps',[-.91,.27*side,.70],[.23,.18,.36],muscleMat,'pelvis');
+    }
+
+    const spine=[]; for(let i=0;i<13;i++) spine.push([-1.15+i*.16,0,1.12+.13*Math.sin(i/8*Math.PI)]);
+    spine.forEach((p,i)=>{ellipsoid(boneGroup,'vertebra',p,[.06,.06,.06],boneMat); if(i) bone(spine[i-1],p,.032);});
+    ellipsoid(boneGroup,'skull',[1.18,0,1.50],[.34,.23,.27],boneMat);
+    ellipsoid(boneGroup,'pelvis',[-1.02,0,1.03],[.30,.25,.23],boneMat);
+    for(let i=0;i<7;i++){
+      const x=-.35+i*.138, z=1.14+.10*Math.cos((x+.1)*2.2), w=.30+.08*Math.cos(i/6*Math.PI);
+      for(const s of [-1,1]){bone([x,0,z],[x,s*w,z-.25],.025); bone([x,s*w,z-.25],[x,s*(w+.02),z-.43],.022);}
+    }
+    for(const s of [-1,1]){
+      const y=.24*s; bone([.36,y,1.14],[.48,y,.86],.05); bone([.48,y,.86],[.45,y,.57],.045); bone([.45,y,.57],[.50,y,.17],.034);
+      bone([-1.00,y,1.00],[-.83,y,.66],.052); bone([-.83,y,.66],[-.82,y,.25],.038);
+    }
+
+    function regional(region, lean, obese) {
+      const map={thorax:[.03,-.05,.34,-.16,.20,-.08,0,0],abdomen:[.06,-.08,.62,-.30,.58,-.35,-.20,.12],pelvis:[.08,-.04,.48,-.14,.28,-.10,-.05,.02],tail:[.18,-.05,.70,-.12,.62,-.12,-.04,.01],neck:[.04,-.03,.22,-.07,.20,-.06,-.02,.01],limb:[.02,-.03,.13,-.08,.12,-.06,-.01,.01],fixed:[0,0,.02,-.02,.02,-.02,0,0]};
+      const v=map[region]||map.fixed;
+      return [1+v[0]*obese+v[1]*lean,1+v[2]*obese+v[3]*lean,1+v[4]*obese+v[5]*lean,v[6]*obese+v[7]*lean];
+    }
+    let currentReference=5;
+    function updateComparison(){
+      const delta=currentScore-currentReference, magnitude=Math.abs(delta);
+      let text;
+      if(delta===0) text=`BCS atual ${currentScore} e referência ${currentReference} coincidem.`;
+      else if(delta>0) text=`BCS atual ${currentScore} versus ${currentReference}: maior cobertura costal e volume abdominal/lombar, cintura e retração abdominal menos marcadas.`;
+      else text=`BCS atual ${currentScore} versus ${currentReference}: menor cobertura costal e volume abdominal/lombar, cintura e retração abdominal mais marcadas.`;
+      const degree=magnitude===0?'':magnitude===1?' Diferença sutil entre escores adjacentes.':magnitude<=3?' Diferença regional moderada.':' Diferença estrutural ampla; compare também as camadas internas.';
+      root.querySelector('#comparison-detail').innerHTML=`<strong>Comparação:</strong> ${text}${degree}`;
+    }
+    function updateReference(score){
+      currentReference=Number(score);
+      const lean=Math.max(0,(5-currentReference)/4), obese=Math.max(0,(currentReference-5)/4);
+      referenceGroup.children.forEach(m=>{
+        if(!m.userData.baseScale) return;
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), b=m.userData.baseScale, p=m.userData.basePos;
+        m.scale.set(b[0]*sx,b[1]*sy,b[2]*sz); m.position.set(p[0],p[1],p[2]+dz);
+      });
+      updateComparison();
+    }
+    const descriptions=['Costelas e proeminências ósseas muito evidentes; cobertura adiposa mínima.','Costelas facilmente visíveis; cintura e retração abdominal intensas.','Costelas facilmente palpáveis e visíveis; cintura marcada.','Costelas palpáveis com pouca cobertura; cintura evidente.','Costelas palpáveis, cintura visível e retração abdominal presente.','Costelas palpáveis com leve excesso de cobertura; cintura menos marcada.','Costelas difíceis de palpar; depósitos lombares e na base da cauda.','Cintura quase ausente; abdômen arredondado e depósitos acentuados.','Depósitos maciços; cintura ausente e distensão abdominal evidente.'];
+    const labels=['muito magro','muito magro','magro','ideal baixo','ideal','sobrepeso','sobrepeso','obeso','obesidade acentuada'];
+    const clinicalFindings={
+      ribs:['Muito evidentes e quase sem cobertura adiposa.','Palpáveis com mínima cobertura; podem permanecer discretamente visíveis.','Palpáveis com dificuldade crescente devido à cobertura adiposa.','Difíceis ou impossíveis de palpar sob depósitos espessos.'],
+      waist:['Cintura muito acentuada em vista dorsal.','Cintura evidente e proporcional.','Cintura pouco marcada ou quase ausente.','Cintura ausente; tronco amplamente arredondado.'],
+      tuck:['Retração abdominal intensa.','Retração abdominal claramente presente.','Retração reduzida e abdômen progressivamente arredondado.','Retração ausente, com possível distensão ventral.'],
+      lumbar:['Vértebras lombares evidentes, com cobertura mínima.','Contorno lombar suave, sem depósitos evidentes.','Depósitos de gordura progressivos sobre a região lombar.','Depósitos amplos, podendo formar uma superfície dorsal alargada.'],
+      tailbase:['Estruturas ósseas facilmente identificáveis.','Base da cauda sem depósito adiposo relevante.','Depósito adiposo perceptível e progressivo.','Depósito adiposo marcado ao redor da base da cauda.']
+    };
+    let currentScore=5, selectedMarker=null;
+    const scoreBand=s=>s<=3?0:s<=5?1:s<=7?2:3;
+    function showClinical(key){
+      selectedMarker=key;
+      markerGroup.children.forEach(m=>{
+        const active=m.userData.key===key;
+        m.material.color.copy(active?markerSelected:markerBase); m.material.emissive.copy(active?markerSelected:markerBase); m.scale.setScalar(active?1.35:1);
+      });
+      const d=markerData[key];
+      root.querySelector('#clinical-detail').innerHTML=`<strong>${d.label} · BCS ${currentScore}:</strong> ${clinicalFindings[key][scoreBand(currentScore)]}`;
+    }
+    const mcsLabels=['normal','perda leve','perda moderada','perda severa'];
+    const mcsDescriptions=['Massa muscular preservada nas têmporas, escápulas, coluna e pelve.','Redução discreta de volume muscular; contornos ósseos começam a ficar perceptíveis.','Redução evidente de volume muscular em duas ou mais regiões.','Atrofia acentuada, com proeminências ósseas marcadas.'];
+    const mcsFindings={
+      temporal:['Volume temporal preservado.','Depressão temporal discreta.','Depressão temporal evidente.','Atrofia temporal profunda.'],
+      scapular:['Escápulas cobertas por musculatura adequada.','Contorno escapular discretamente perceptível.','Escápulas facilmente identificáveis.','Escápulas muito proeminentes.'],
+      spine:['Musculatura epaxial preenche ambos os lados da coluna.','Redução discreta ao longo da coluna.','Sulcos evidentes junto às vértebras.','Vértebras muito proeminentes por perda muscular.'],
+      pelvis:['Pelve coberta por massa muscular adequada.','Contorno pélvico discretamente aumentado.','Pelve claramente proeminente.','Atrofia glútea severa e pelve muito evidente.']
+    };
+    let currentMCS=0, selectedMCS=null;
+    function showMCS(key){
+      selectedMCS=key;
+      mcsMarkerGroup.children.forEach(m=>{
+        const active=m.userData.key===key;
+        m.material.color.copy(active?markerSelected:mcsMarkerBase); m.material.emissive.copy(active?markerSelected:mcsMarkerBase); m.scale.setScalar(active?1.35:1);
+      });
+      root.querySelector('#clinical-detail').innerHTML=`<strong>${mcsMarkerData[key].label} · MCS ${mcsLabels[currentMCS]}:</strong> ${mcsFindings[key][currentMCS]}`;
+    }
+    function skinMCSRegion(name){
+      const n=name.toLowerCase();
+      if(n.includes('head')) return ['temporal',.20];
+      if(n.includes('neck')||n.includes('thorax')||n.includes('frontupper')) return ['scapular',.12];
+      if(n.includes('abdomen')) return ['spine',.12];
+      if(n.includes('pelvis')||n.includes('rearthigh')) return ['pelvis',.16];
+      return ['fixed',0];
+    }
+    const normalizeMorph=name=>String(name).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const bcsLowAliases=['BCSLEAN','BCSLOW','BCSUNDERWEIGHT'];
+    const bcsHighAliases=['BCSOBESE','BCSHIGH','BCSOVERWEIGHT'];
+    const mcsAliases=[[],['MCSMILD','MCSLEVE'],['MCSMODERATE','MCSMODERADA'],['MCSSEVERE','MCSSEVERA']];
+    function morphIndex(mesh,aliases){
+      if(!mesh.morphTargetDictionary) return -1;
+      const wanted=new Set(aliases.map(normalizeMorph));
+      for(const [name,index] of Object.entries(mesh.morphTargetDictionary)) if(wanted.has(normalizeMorph(name))) return index;
+      return -1;
+    }
+    function managedMorphIndices(mesh){
+      if(!mesh.morphTargetDictionary) return [];
+      return Object.entries(mesh.morphTargetDictionary).filter(([name])=>{
+        const n=normalizeMorph(name);
+        return /^BCS[1-9]$/.test(n)||bcsLowAliases.includes(n)||bcsHighAliases.includes(n)||mcsAliases.flat().includes(n);
+      }).map(([,index])=>index);
+    }
+    function applyImportedMorphs(){
+      if(!importedRoot) return;
+      importedMeshes.forEach(mesh=>{
+        if(!mesh.morphTargetInfluences) return;
+        managedMorphIndices(mesh).forEach(index=>mesh.morphTargetInfluences[index]=0);
+        const exact=morphIndex(mesh,[`BCS${currentScore}`]);
+        if(exact>=0) mesh.morphTargetInfluences[exact]=1;
+        else if(currentScore<5){
+          const low=morphIndex(mesh,bcsLowAliases);
+          if(low>=0) mesh.morphTargetInfluences[low]=(5-currentScore)/4;
+        }else if(currentScore>5){
+          const high=morphIndex(mesh,bcsHighAliases);
+          if(high>=0) mesh.morphTargetInfluences[high]=(currentScore-5)/4;
+        }
+        if(currentMCS>0){
+          const mcs=morphIndex(mesh,mcsAliases[currentMCS]);
+          if(mcs>=0) mesh.morphTargetInfluences[mcs]=1;
+        }
+      });
+    }
+    function updateAssetStatus(){
+      if(!importedStats) return;
+      const {meshes,vertices,morphNames,bcsCompatible,mcsCompatible}=importedStats;
+      const compatibility=bcsCompatible||mcsCompatible
+        ? `Compatibilidade: ${bcsCompatible?'BCS':'BCS ausente'} · ${mcsCompatible?'MCS':'MCS ausente'}.`
+        : 'Nenhum morph target clínico reconhecido: o arquivo pode ser visualizado, mas BCS/MCS não deformam a malha.';
+      root.querySelector('#asset-status').textContent=`GLB local: ${meshes} malha(s), ${vertices.toLocaleString('pt-BR')} vértices, ${morphNames.length} morph target(s). ${compatibility}`;
+    }
+    let auditState={technicalComplete:false,directComplete:false};
+    function updateQualificationGate(){
+      const reviewed=root.querySelector('#anatomy-reviewed').checked;
+      const documented=root.querySelector('#reference-documented').checked;
+      const button=root.querySelector('#qualify-asset');
+      button.disabled=!(auditState.directComplete&&reviewed&&documented);
+      if(!auditState.directComplete) root.querySelector('#qualification-status').textContent='Qualificação bloqueada: são exigidos alvos diretos BCS 1–9 e MCS leve, moderada e severa.';
+      else if(!reviewed||!documented) root.querySelector('#qualification-status').textContent='Cobertura direta completa; confirme revisão veterinária e documentação das referências.';
+      else root.querySelector('#qualification-status').textContent='Critérios internos completos. A validação externa continua obrigatória antes de qualquer uso clínico.';
+    }
+    function runMorphAudit(){
+      if(!importedStats) return;
+      const names=new Set(importedStats.morphNames.map(normalizeMorph));
+      const hasAny=aliases=>aliases.some(alias=>names.has(normalizeMorph(alias)));
+      const lean=hasAny(bcsLowAliases), high=hasAny(bcsHighAliases);
+      const bcs=Array.from({length:9},(_,i)=>{
+        const score=i+1;
+        if(names.has(`BCS${score}`)) return 'Direto';
+        if(score===5) return 'Base';
+        if(score<5&&lean||score>5&&high) return 'Interpolado';
+        return 'Ausente';
+      });
+      const mcs=['Base',...mcsAliases.slice(1).map(aliases=>hasAny(aliases)?'Direto':'Ausente')];
+      root.querySelector('#bcs-audit-row').innerHTML='<th>BCS</th>'+bcs.map(value=>`<td>${value}</td>`).join('');
+      root.querySelector('#mcs-audit-row').innerHTML='<th>MCS</th>'+mcs.map(value=>`<td>${value}</td>`).join('');
+      const technicalComplete=bcs.every(value=>value!=='Ausente')&&mcs.every(value=>value!=='Ausente');
+      const directComplete=bcs.every(value=>value==='Direto')&&mcs.slice(1).every(value=>value==='Direto');
+      auditState={technicalComplete,directComplete};
+      root.querySelector('#audit-badge').textContent=directComplete?'Cobertura direta completa':technicalComplete?'Cobertura por interpolação':'Cobertura incompleta';
+      root.querySelector('#audit-detail').textContent=directComplete
+        ? 'Todos os estados possuem alvos diretos. Ainda é necessário demonstrar fidelidade anatômica, repetibilidade e concordância clínica.'
+        : technicalComplete
+          ? 'A escala pode ser visualizada, mas um ou mais estados são derivados por interpolação. Isso não demonstra uma transição anatômica real.'
+          : 'Existem estados sem deformação reconhecida. O modelo não representa toda a escala BCS/MCS.';
+      root.querySelector('#anatomy-reviewed').disabled=false;
+      root.querySelector('#reference-documented').disabled=false;
+      updateQualificationGate();
+    }
+    function updateMCS(level){
+      currentMCS=Number(level); const severity=currentMCS/3;
+      const factors={temporal:1,scapular:.78,spine:.90,pelvis:1,fixed:0};
+      muscleGroup.children.forEach(m=>{
+        if(!m.userData.baseScale) return;
+        const b=m.userData.baseScale, f=factors[m.userData.region]??0;
+        m.scale.set(b[0]*(1-.22*severity*f),b[1]*(1-.58*severity*f),b[2]*(1-.42*severity*f));
+      });
+      skinGroup.children.forEach(m=>{
+        if(!m.userData.baseScale||!m.userData.bcsScale) return;
+        const [region,effect]=skinMCSRegion(m.name), s=m.userData.bcsScale, f=factors[region]??0;
+        m.scale.set(s[0]*(1-effect*.25*severity*f),s[1]*(1-effect*severity*f),s[2]*(1-effect*.65*severity*f));
+      });
+      mcsMarkerGroup.children.forEach(m=>{const p=m.userData.basePos; m.position.set(p[0],p[1]*(1-.12*severity),p[2]);});
+      root.querySelector('#mcs-badge').textContent=`MCS ${mcsLabels[currentMCS]}`;
+      root.querySelector('#mcs-status').textContent=mcsDescriptions[currentMCS];
+      applyImportedMorphs();
+      if(selectedMCS) showMCS(selectedMCS);
+    }
+
+    function updateBCS(score){
+      currentScore=score;
+      const lean=Math.max(0,(5-score)/4), obese=Math.max(0,(score-5)/4);
+      [...skinGroup.children,...fatGroup.children,...markings.children,...furGroup.children].forEach(m=>{
+        if(!m.userData.baseScale) return;
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), b=m.userData.baseScale, p=m.userData.basePos;
+        m.scale.set(b[0]*sx,b[1]*sy,b[2]*sz); m.position.z=p[2]+dz;
+        if(m.parent===skinGroup) m.userData.bcsScale=[b[0]*sx,b[1]*sy,b[2]*sz];
+      });
+      markerGroup.children.forEach(m=>{
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), p=m.userData.basePos;
+        m.position.set(p[0]*sx,p[1]*sy,p[2]+dz); m.userData.surfaceScale=sz;
+      });
+      root.querySelector('#bcs-value').textContent=score;
+      root.querySelector('#bcs-badge').textContent=`BCS ${score} · ${labels[score-1]}`;
+      root.querySelector('#bcs-status').textContent=descriptions[score-1];
+      updateMCS(currentMCS);
+      applyImportedMorphs();
+      updateComparison();
+      if(selectedMarker) showClinical(selectedMarker);
+    }
+    function updateLayers(){
+      skinGroup.visible=!useImportedMesh&&root.querySelector('#layer-skin').checked;
+      markings.visible=skinGroup.visible;
+      faceGroup.visible=skinGroup.visible;
+      furGroup.visible=skinGroup.visible&&root.querySelector('#layer-fur').checked;
+      fatGroup.visible=root.querySelector('#layer-fat').checked;
+      muscleGroup.visible=root.querySelector('#layer-muscle').checked;
+      boneGroup.visible=root.querySelector('#layer-bone').checked;
+      if(useImportedMesh&&!builtInImported){boneGroup.visible=false;muscleGroup.visible=false;fatGroup.visible=false;}
+      markerGroup.visible=root.querySelector('#clinical-points').checked;
+      mcsMarkerGroup.visible=root.querySelector('#mcs-points').checked;
+      referenceGroup.visible=root.querySelector('#bcs-reference').checked;
+      const inner=fatGroup.visible||muscleGroup.visible||boneGroup.visible;
+      if(importedRoot){importedRoot.visible=useImportedMesh&&root.querySelector('#layer-skin').checked;for(const mesh of importedMeshes)for(const material of (Array.isArray(mesh.material)?mesh.material:[mesh.material])){material.transparent=inner;material.opacity=inner?.16:1;material.depthWrite=!inner;}}
+      skinMat.transparent=inner; skinMat.opacity=inner?.16:1; skinMat.depthWrite=!inner;
+      markMat.transparent=inner; markMat.opacity=inner?.22:1; markMat.depthWrite=!inner;
+      furDarkMat.transparent=inner; furDarkMat.opacity=inner?.12:1; furDarkMat.depthWrite=!inner;
+      furWhiteMat.transparent=inner; furWhiteMat.opacity=inner?.16:1; furWhiteMat.depthWrite=!inner;
+    }
+    const gltfLoader=new GLTFLoader();
+    let selectedGLB=null;
+    function setImportedVisibility(useImported){
+      useImportedMesh=useImported;dog.visible=true;
+      if(importedRoot) importedRoot.visible=useImported;
+      root.querySelector('#asset-badge').textContent=useImported?'Malha importada · ilustrativa':'Modelo ilustrativo';
+      updateLayers();
+    }
+    function installImportedModel(gltf,file){
+      if(importedRoot) scene.remove(importedRoot);
+      builtInImported=Boolean(file.builtin);
+      importedRoot=new THREE.Group();
+      const model=gltf.scene||gltf.scenes?.[0];
+      if(!model) throw new Error('O GLB não contém uma cena 3D.');
+      importedRoot.add(model);
+      if(!file.builtin && root.querySelector('#glb-up-axis').value==='y') model.rotation.x=Math.PI/2;
+      importedMeshes=[];
+      let vertices=0;
+      const morphSet=new Set();
+      model.traverse(object=>{
+        if(!object.isMesh) return;
+        importedMeshes.push(object);
+        vertices+=object.geometry?.attributes?.position?.count||0;
+        Object.keys(object.morphTargetDictionary||{}).forEach(name=>morphSet.add(name));
+        object.castShadow=true; object.receiveShadow=true;
+      });
+      model.updateWorldMatrix(true,true);
+      let box=new THREE.Box3().setFromObject(model), size=box.getSize(new THREE.Vector3());
+      if(!Number.isFinite(size.z)||size.z<=0) throw new Error('Dimensões inválidas na malha.');
+      const scale=file.builtin?1:2/size.z;
+      model.scale.multiplyScalar(scale);
+      model.updateWorldMatrix(true,true);
+      box=new THREE.Box3().setFromObject(model);
+      const center=box.getCenter(new THREE.Vector3());
+      if(!file.builtin){model.position.x-=center.x; model.position.y-=center.y; model.position.z-=box.min.z;}
+      const morphNames=[...morphSet], normalized=morphNames.map(normalizeMorph);
+      const bcsCompatible=normalized.some(n=>/^BCS[1-9]$/.test(n)||bcsLowAliases.includes(n)||bcsHighAliases.includes(n));
+      const mcsCompatible=normalized.some(n=>mcsAliases.flat().includes(n));
+      importedStats={meshes:importedMeshes.length,vertices,morphNames,bcsCompatible,mcsCompatible,fileName:file.name};
+      scene.add(importedRoot);
+      const toggle=root.querySelector('#use-imported'); toggle.disabled=false; toggle.checked=true;
+      root.querySelector('#run-morph-audit').disabled=false;
+      root.querySelector('#anatomy-reviewed').checked=false;
+      root.querySelector('#reference-documented').checked=false;
+      root.querySelector('#release-badge').textContent='Não qualificado';
+      setImportedVisibility(true); applyImportedMorphs(); updateAssetStatus(); runMorphAudit();
+    }
+    async function loadSelectedGLB(){
+      if(!selectedGLB) return;
+      root.querySelector('#asset-status').textContent='Lendo e validando a malha local…';
+      try{
+        const buffer=await selectedGLB.arrayBuffer();
+        gltfLoader.parse(buffer,'',gltf=>installImportedModel(gltf,selectedGLB),error=>{
+          root.querySelector('#asset-status').textContent=`Falha ao interpretar o GLB: ${error?.message||'arquivo incompatível'}.`;
+        });
+      }catch(error){
+        root.querySelector('#asset-status').textContent=`Falha ao ler o arquivo: ${error?.message||'erro desconhecido'}.`;
+      }
+    }
+    root.querySelector('#glb-file').addEventListener('change',event=>{
+      selectedGLB=event.target.files?.[0]||null;
+      if(selectedGLB) loadSelectedGLB();
+    });
+    root.querySelector('#glb-up-axis').addEventListener('change',()=>{if(selectedGLB) loadSelectedGLB();});
+    root.querySelector('#use-imported').addEventListener('change',event=>setImportedVisibility(event.target.checked));
+    root.querySelector('#run-morph-audit').addEventListener('click',runMorphAudit);
+    root.querySelector('#anatomy-reviewed').addEventListener('change',updateQualificationGate);
+    root.querySelector('#reference-documented').addEventListener('change',updateQualificationGate);
+    root.querySelector('#qualify-asset').addEventListener('click',()=>{
+      if(root.querySelector('#qualify-asset').disabled) return;
+      root.querySelector('#release-badge').textContent='Qualificado para teste interno';
+      root.querySelector('#qualification-status').textContent='Qualificação interna registrada nesta sessão. Não equivale a validação clínica nem autorização de uso diagnóstico.';
+    });
+    root.querySelector('#bcs-score').addEventListener('input',e=>{clinicalFinalized=false;updateBCS(+e.target.value);});
+    root.querySelector('#mcs-score').addEventListener('change',e=>{clinicalFinalized=false;updateMCS(+e.target.value);});
+    ['skin','fur','fat','muscle','bone'].forEach(n=>root.querySelector('#layer-'+n).addEventListener('change',updateLayers));
+    root.querySelector('#clinical-points').addEventListener('change',updateLayers);
+    root.querySelector('#mcs-points').addEventListener('change',updateLayers);
+    root.querySelector('#bcs-reference').addEventListener('change',()=>{updateLayers();updateComparison();});
+    root.querySelector('#reference-score').addEventListener('change',e=>updateReference(+e.target.value));
+    root.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
+      const v=btn.dataset.view, pos=v==='top'?[0,0,8]:v==='front'?[7,0,1.4]:[0,-8,2.7];
+      camera.up.set(...(pos[0]===0&&pos[1]===0?[0,1,0]:[0,0,1])); camera.position.set(...pos); controls.target.set(0,0,1); controls.update();
+    }));
+
+    const examSteps=[
+      {title:'1/5 · Vista dorsal',instruction:'Observe a cintura atrás das costelas. A pelagem permanece visível primeiro; confirme depois por palpação.',camera:[0,0,8],checks:{skin:true,fur:true,fat:false,muscle:false,bone:false,bcs:true,mcs:false},focus:'waist'},
+      {title:'2/5 · Vista lateral',instruction:'Observe a retração abdominal sem confundi-la com postura, inspiração ou tensão do animal.',camera:[4.8,-7.2,2.8],checks:{skin:true,fur:true,fat:false,muscle:false,bone:false,bcs:true,mcs:false},focus:'tuck'},
+      {title:'3/5 · Costelas por palpação',instruction:'A pelagem é removida e gordura/esqueleto são expostos. Julgue a pressão necessária para identificar as costelas, não apenas sua visibilidade.',camera:[3.9,-6.2,2.3],checks:{skin:true,fur:false,fat:true,muscle:false,bone:true,bcs:true,mcs:false},focus:'ribs'},
+      {title:'4/5 · Lombar e base da cauda',instruction:'Procure depósitos regionais sobre a lombar e ao redor da base da cauda; eles podem divergir do volume abdominal.',camera:[0,-6.8,3.6],checks:{skin:true,fur:false,fat:true,muscle:false,bone:false,bcs:true,mcs:false},focus:'lumbar'},
+      {title:'5/5 · Condição muscular',instruction:'Avalie têmporas, escápulas, musculatura ao lado da coluna e pelve separadamente do BCS.',camera:[4.5,-6.5,2.8],checks:{skin:true,fur:false,fat:false,muscle:true,bone:true,bcs:false,mcs:true},mcsFocus:'scapular'}
+    ];
+    const checkIds={skin:'layer-skin',fur:'layer-fur',fat:'layer-fat',muscle:'layer-muscle',bone:'layer-bone',bcs:'clinical-points',mcs:'mcs-points',ref:'bcs-reference'};
+    let examIndex=-1, examSnapshot=null;
+    const activeExamSteps=()=>currentMode==='veterinary'?examSteps:examSteps.slice(0,4);
+    function setExamCamera(pos){camera.up.set(...(pos[0]===0&&pos[1]===0?[0,1,0]:[0,0,1]));camera.position.set(...pos);controls.target.set(0,0,1);controls.update();}
+    function setExamStep(index){
+      const steps=activeExamSteps(); examIndex=Math.max(0,Math.min(steps.length-1,index)); const step=steps[examIndex];
+      Object.entries(step.checks).forEach(([key,value])=>{root.querySelector('#'+checkIds[key]).checked=value;});
+      updateLayers(); setExamCamera(step.camera);
+      if(step.focus) showClinical(step.focus); if(step.mcsFocus) showMCS(step.mcsFocus);
+      root.querySelector('#exam-step').textContent=step.title.replace('/5','/'+steps.length);
+      root.querySelector('#exam-instruction').textContent=step.instruction;
+      root.querySelector('#exam-prev').disabled=examIndex===0;
+      root.querySelector('#exam-next').disabled=false;
+      root.querySelector('#exam-next').textContent=examIndex===steps.length-1?'Concluir':'Próxima etapa';
+      const progress=root.querySelector('#exam-progress'), pct=(examIndex+1)/steps.length*100;
+      progress.setAttribute('aria-valuemax',String(steps.length));
+      progress.setAttribute('aria-valuenow',String(examIndex+1)); root.querySelector('#exam-progress-bar').style.width=pct+'%';
+    }
+    function startExam(){
+      examSnapshot={camera:camera.position.toArray(),target:controls.target.toArray(),checks:{}};
+      Object.values(checkIds).forEach(id=>examSnapshot.checks[id]=root.querySelector('#'+id).checked);
+      root.querySelector('#bcs-reference').checked=false; root.querySelector('#start-exam').disabled=true; root.querySelector('#exam-end').disabled=false;
+      setExamStep(0);
+    }
+    function endExam(){
+      if(examSnapshot){Object.entries(examSnapshot.checks).forEach(([id,value])=>root.querySelector('#'+id).checked=value);camera.position.fromArray(examSnapshot.camera);controls.target.fromArray(examSnapshot.target);controls.update();}
+      examIndex=-1; updateLayers(); root.querySelector('#start-exam').disabled=false; root.querySelector('#exam-prev').disabled=true; root.querySelector('#exam-next').disabled=true; root.querySelector('#exam-end').disabled=true;
+      root.querySelector('#exam-step').textContent='Modo livre'; root.querySelector('#exam-instruction').textContent='Exame guiado concluído. Revise achados discrepantes antes de registrar o escore.';
+      root.querySelector('#exam-progress').setAttribute('aria-valuenow','0'); root.querySelector('#exam-progress-bar').style.width='0%';
+    }
+    root.querySelector('#start-exam').addEventListener('click',startExam);
+    root.querySelector('#exam-prev').addEventListener('click',()=>setExamStep(examIndex-1));
+    root.querySelector('#exam-next').addEventListener('click',()=>examIndex===activeExamSteps().length-1?endExam():setExamStep(examIndex+1));
+    root.querySelector('#exam-end').addEventListener('click',endExam);
+
+    const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();
+    let pointerStart=null;
+    canvas.addEventListener('pointerdown',e=>{pointerStart=[e.clientX,e.clientY];});
+    canvas.addEventListener('pointerup',e=>{
+      if(!pointerStart||Math.hypot(e.clientX-pointerStart[0],e.clientY-pointerStart[1])>8||(!markerGroup.visible&&!mcsMarkerGroup.visible)) return;
+      const rect=canvas.getBoundingClientRect();
+      pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
+      raycaster.setFromCamera(pointer,camera);
+      const targets=[...(markerGroup.visible?markerGroup.children:[]),...(mcsMarkerGroup.visible?mcsMarkerGroup.children:[])];
+      const hit=raycaster.intersectObjects(targets,false)[0];
+      if(hit) hit.object.userData.kind==='mcs'?showMCS(hit.object.userData.key):showClinical(hit.object.userData.key);
+    });
+
+    const assessmentKeys=['ribs','waist','tuck','lumbar','tailbase'];
+    const assessmentWeights={ribs:1.3,waist:1.05,tuck:1,lumbar:.9,tailbase:.9};
+    let estimatedScore=null;
+    function calculateAssessment(){
+      const values=assessmentKeys.map(key=>({key,value:Number(root.querySelector('#obs-'+key).value),weight:assessmentWeights[key]})).filter(x=>x.value);
+      const result=root.querySelector('#estimate-value'), detail=root.querySelector('#estimate-detail'), apply=root.querySelector('#apply-estimate');
+      if(values.length<3){
+        estimatedScore=null; result.textContent='—'; detail.textContent=`${values.length}/5 achados — preencha pelo menos três.`; apply.disabled=true; updateClinicalReadiness(); return;
+      }
+      const totalWeight=values.reduce((s,x)=>s+x.weight,0);
+      const mean=values.reduce((s,x)=>s+x.value*x.weight,0)/totalWeight;
+      const variance=values.reduce((s,x)=>s+x.weight*(x.value-mean)**2,0)/totalWeight;
+      const spread=Math.sqrt(variance);
+      estimatedScore=Math.max(1,Math.min(9,Math.round(mean)));
+      const margin=Math.max(1,Math.ceil(spread*.8));
+      const low=Math.max(1,estimatedScore-margin), high=Math.min(9,estimatedScore+margin);
+      const consistency=spread<=.9?'alta':spread<=1.7?'moderada':'baixa';
+      result.textContent=`BCS ${estimatedScore}`;
+      detail.textContent=`Faixa plausível ${low}–${high} · concordância ${consistency}${values.length<5?' · avaliação incompleta':''}.`;
+      apply.disabled=false;
+      updateClinicalReadiness();
+    }
+    function updateClinicalReadiness(){
+      const complete=assessmentKeys.every(key=>root.querySelector('#obs-'+key).value);
+      const palpated=root.querySelector('#palpation-confirmed').checked;
+      const button=root.querySelector('#finalize-evaluation'), status=root.querySelector('#clinical-readiness');
+      if(currentMode==='triage'){
+        button.disabled=true; status.textContent='Triagem orientativa: o resultado não constitui diagnóstico nem registro veterinário.'; return;
+      }
+      if(currentMode!=='veterinary'){
+        button.disabled=true; status.textContent='Modo educacional: nenhuma conclusão clínica é produzida.'; return;
+      }
+      button.disabled=!(complete&&palpated);
+      status.textContent=!complete?'Registro clínico incompleto: preencha os cinco achados.':!palpated?'Registro clínico incompleto: confirme a palpação.':'Critérios mínimos completos; revise BCS, MCS e concordância antes de finalizar.';
+    }
+    function updateMode(mode){
+      if(examIndex>=0) endExam();
+      currentMode=mode; clinicalFinalized=false;
+      root.querySelectorAll('[data-min-mode]').forEach(el=>{el.hidden=el.dataset.minMode==='veterinary'&&mode!=='veterinary';});
+      root.querySelector('#protocol-section').hidden=mode==='education';
+      root.querySelector('#assessment-section').hidden=mode==='education';
+      const note=root.querySelector('#mode-note'), disclaimer=root.querySelector('#assessment-disclaimer');
+      if(mode==='education') note.innerHTML='<strong>Educação:</strong> exploração anatômica sem estimativa ou conclusão clínica.';
+      if(mode==='triage') note.innerHTML='<strong>Triagem do tutor:</strong> resultado orientativo para acompanhamento e decisão de procurar avaliação profissional; não é diagnóstico.';
+      if(mode==='veterinary') note.innerHTML='<strong>Instrumento veterinário:</strong> protocolo completo, BCS e MCS independentes e registro condicionado à palpação.';
+      disclaimer.textContent=mode==='triage'?'A triagem não substitui exame físico. Pelagem, postura e percepção do tutor podem alterar o resultado.':'Em cães de pelagem média ou longa, a inspeção isolada não substitui palpação nem avaliação veterinária.';
+      if(mode!=='veterinary'){
+        ['layer-fat','layer-muscle','layer-bone','mcs-points','bcs-reference'].forEach(id=>root.querySelector('#'+id).checked=false);
+        root.querySelector('#mcs-score').value='0'; updateMCS(0);
+      }
+      updateLayers(); updateClinicalReadiness();
+    }
+    assessmentKeys.forEach(key=>{
+      const select=root.querySelector('#obs-'+key);
+      select.addEventListener('change',()=>{clinicalFinalized=false;calculateAssessment(); if(select.value) showClinical(key);});
+    });
+    root.querySelector('#apply-estimate').addEventListener('click',()=>{
+      if(!estimatedScore) return;
+      clinicalFinalized=false;
+      const slider=root.querySelector('#bcs-score'); slider.value=estimatedScore; updateBCS(estimatedScore);
+      if(currentMode==='veterinary') root.querySelector('#bcs-reference').checked=true; updateLayers();
+    });
+    root.querySelector('#palpation-confirmed').addEventListener('change',()=>{clinicalFinalized=false;updateClinicalReadiness();});
+    root.querySelector('#finalize-evaluation').addEventListener('click',()=>{
+      if(root.querySelector('#finalize-evaluation').disabled) return;
+      clinicalFinalized=true;
+      root.querySelector('#clinical-readiness').textContent=`Registro estruturado revisado: BCS ${currentScore}, MCS ${mcsLabels[currentMCS]}. Persistência e assinatura profissional pertencem à implementação do app.`;
+    });
+    root.querySelector('#app-mode').addEventListener('change',e=>updateMode(e.target.value));
+
+    const followups=[];
+    let activePatient=null;
+    const modeLabels={education:'Educação',triage:'Triagem',veterinary:'Veterinário'};
+    function todayInSaoPaulo(){
+      const parts=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+      return `${parts.year}-${parts.month}-${parts.day}`;
+    }
+    root.querySelector('#followup-date').value=todayInSaoPaulo();
+    function signed(value,digits=0){
+      if(Math.abs(value)<10**(-digits)/2) return 'igual';
+      return `${value>0?'+':''}${value.toFixed(digits).replace('.',',')}`;
+    }
+    function configuredThreshold(id,fallback){
+      const value=Number(root.querySelector(id).value);
+      return Number.isFinite(value)&&value>0?value:fallback;
+    }
+    function evaluateAlerts(){
+      const body=root.querySelector('#alert-history'), badge=root.querySelector('#alert-badge'), status=root.querySelector('#alert-status');
+      const weightLimit=configuredThreshold('#weight-alert-threshold',10);
+      const bcsLimit=configuredThreshold('#bcs-alert-threshold',2);
+      const mcsLimit=configuredThreshold('#mcs-alert-threshold',1);
+      body.replaceChildren();
+      if(followups.length<2){
+        const row=document.createElement('tr'), cell=document.createElement('td'); cell.colSpan=4; cell.textContent='Registre pelo menos duas avaliações.'; row.appendChild(cell); body.appendChild(row);
+        badge.textContent='Sem pares de avaliações';
+        status.textContent='Os limites são parâmetros de protótipo configuráveis; não representam consenso clínico nem urgência médica.';
+        return;
+      }
+      let reviewCount=0;
+      for(let index=1;index<followups.length;index++){
+        const previous=followups[index-1], current=followups[index];
+        const weightPct=(current.weight-previous.weight)/previous.weight*100;
+        const bcsDelta=current.bcs-previous.bcs, mcsDelta=current.mcs-previous.mcs;
+        const reasons=[];
+        if(Math.abs(weightPct)>=weightLimit) reasons.push(`peso ${signed(weightPct,1)}% (limite ±${weightLimit}%)`);
+        if(Math.abs(bcsDelta)>=bcsLimit) reasons.push(`BCS ${signed(bcsDelta)} (limite ±${bcsLimit})`);
+        if(mcsDelta>=mcsLimit) reasons.push(`MCS piorou ${signed(mcsDelta)} (limite +${mcsLimit})`);
+        const sourceChanged=previous.mode!==current.mode;
+        if(sourceChanged) reasons.push(`origem ${modeLabels[previous.mode]} → ${modeLabels[current.mode]}`);
+        const needsReview=reasons.length>0; if(needsReview) reviewCount++;
+        const row=document.createElement('tr');
+        const start=new Date(previous.date+'T12:00:00').toLocaleDateString('pt-BR');
+        const end=new Date(current.date+'T12:00:00').toLocaleDateString('pt-BR');
+        const cells=[
+          `${start} → ${end}`,
+          needsReview?'Revisar':'Nenhuma regra acionada',
+          needsReview?reasons.join(' · '):'Abaixo dos limites configurados',
+          sourceChanged?'Comparabilidade limitada; verificar método e examinador.':needsReview?'Mudança quantitativa detectada; causa e urgência permanecem indeterminadas.':'Ausência de alerta não comprova estabilidade clínica.'
+        ];
+        cells.forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});
+        body.appendChild(row);
+      }
+      badge.textContent=reviewCount?`${reviewCount} intervalo(s) para revisar`:'Nenhuma regra acionada';
+      status.textContent=`Regras aplicadas: peso ±${weightLimit}%, BCS ±${bcsLimit} e piora de MCS +${mcsLimit}. Resultado é triagem de dados, não diagnóstico ou classificação de urgência.`;
+    }
+    function renderFollowups(){
+      const body=root.querySelector('#followup-history');
+      body.replaceChildren();
+      followups.forEach((record,index)=>{
+        const previous=index?followups[index-1]:null;
+        const row=document.createElement('tr');
+        const values=[
+          new Date(record.date+'T12:00:00').toLocaleDateString('pt-BR'),
+          modeLabels[record.mode],
+          `${record.weight.toFixed(1).replace('.',',')} kg`,
+          String(record.bcs),
+          mcsLabels[record.mcs],
+          previous?`Peso ${signed(record.weight-previous.weight,1)} kg · BCS ${signed(record.bcs-previous.bcs)} · MCS ${signed(record.mcs-previous.mcs)}`:'Linha de base'
+        ];
+        values.forEach((value,column)=>{
+          const cell=document.createElement('td'); cell.textContent=value;
+          if(column===2) cell.className='text-end'; if(column===3) cell.className='text-center';
+          row.appendChild(cell);
+        });
+        const action=document.createElement('td'), button=document.createElement('button');
+        button.type='button'; button.className='btn btn-ghost'; button.textContent='Ver no modelo'; button.dataset.followupIndex=String(index);
+        action.appendChild(button); row.appendChild(action); body.appendChild(row);
+        if(record.note){
+          const noteRow=document.createElement('tr'), noteCell=document.createElement('td');
+          noteCell.colSpan=7; noteCell.className='text-small text-muted'; noteCell.textContent=`Nota: ${record.note}`;
+          noteRow.appendChild(noteCell); body.appendChild(noteRow);
+        }
+      });
+      evaluateAlerts();
+    }
+    function saveFollowup(){
+      const name=root.querySelector('#patient-name').value.trim();
+      const id=root.querySelector('#patient-id').value.trim();
+      const date=root.querySelector('#followup-date').value;
+      const weight=Number(root.querySelector('#followup-weight').value);
+      const note=root.querySelector('#followup-note').value.trim();
+      const status=root.querySelector('#followup-status');
+      if(currentMode==='education'){status.textContent='O perfil Educação não grava dados de saúde. Selecione Triagem ou Instrumento veterinário.';return;}
+      if(!name||!id||!date||!Number.isFinite(weight)||weight<=0){status.textContent='Preencha nome, identificador, data e um peso válido.';return;}
+      if(currentMode==='veterinary'&&!clinicalFinalized){status.textContent='Finalize a avaliação clínica estruturada antes de registrar uma entrada veterinária.';return;}
+      if(followups.some(item=>item.date===date)){status.textContent='Já existe uma avaliação nesta data. Use outra data para evitar registros ambíguos.';return;}
+      if(activePatient&&(activePatient.name!==name||activePatient.id!==id)){status.textContent='Esta sessão já pertence a outro animal. Não misture históricos distintos.';return;}
+      if(!activePatient){
+        activePatient={name,id};
+        root.querySelector('#patient-name').disabled=true; root.querySelector('#patient-id').disabled=true;
+      }
+      followups.push({date,weight,bcs:currentScore,mcs:currentMCS,mode:currentMode,note});
+      followups.sort((a,b)=>a.date.localeCompare(b.date));
+      renderFollowups();
+      const currentIndex=followups.findIndex(item=>item.date===date), previous=currentIndex>0?followups[currentIndex-1]:null;
+      status.textContent=previous
+        ? `${name}: nova observação registrada. Peso ${signed(weight-previous.weight,1)} kg, BCS ${signed(currentScore-previous.bcs)} e MCS ${signed(currentMCS-previous.mcs)} versus a avaliação anterior; nenhuma causa foi inferida.`
+        : `${name}: linha de base registrada como ${currentMode==='veterinary'?'avaliação veterinária':'triagem não diagnóstica'}.`;
+      root.querySelector('#followup-note').value='';
+    }
+    root.querySelector('#save-followup').addEventListener('click',saveFollowup);
+    root.querySelector('#evaluate-alerts').addEventListener('click',evaluateAlerts);
+    ['weight-alert-threshold','bcs-alert-threshold','mcs-alert-threshold'].forEach(id=>root.querySelector('#'+id).addEventListener('change',evaluateAlerts));
+    root.querySelector('#followup-history').addEventListener('click',event=>{
+      const button=event.target.closest('button[data-followup-index]'); if(!button) return;
+      const record=followups[Number(button.dataset.followupIndex)]; if(!record) return;
+      clinicalFinalized=false;
+      root.querySelector('#bcs-score').value=String(record.bcs); root.querySelector('#mcs-score').value=String(record.mcs);
+      updateBCS(record.bcs); updateMCS(record.mcs);
+      root.querySelector('#followup-status').textContent=`Exibindo ${new Date(record.date+'T12:00:00').toLocaleDateString('pt-BR')}: BCS ${record.bcs}, MCS ${mcsLabels[record.mcs]}, ${record.weight.toFixed(1).replace('.',',')} kg.`;
+    });
+
+    async function loadBuiltInMesh(){
+      try {
+        const response=await fetch('/models/border-collie-illustrative.glb');
+        if(!response.ok)throw new Error('Malha padrão indisponível');
+        const buffer=await response.arrayBuffer();
+        await new Promise((resolve,reject)=>gltfLoader.parse(buffer,'',gltf=>{installImportedModel(gltf,{name:'Meu Bichu — malha ilustrativa padrão',builtin:true});resolve();},reject));
+        root.querySelector('#release-badge').textContent='Modelo ilustrativo · revisão anatômica pendente';
+      }catch(error){root.querySelector('#asset-badge').textContent='Modelo ilustrativo';console.error('Falha ao carregar malha padrão',error);}
+    }
+
+    function resize(){ const w=host.clientWidth,h=host.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+    new ResizeObserver(resize).observe(host); resize(); updateBCS(5); updateReference(5); updateLayers(); updateMode('veterinary');
+    void loadBuiltInMesh();
+    function animate(){ controls.update(); renderer.render(scene,camera); requestAnimationFrame(animate); } animate();
+  </script>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('bcs-dog-3d-f14');
+  const send = () => window.parent.postMessage({ source: 'meu-bichu-bcs-f14', type: 'assessment', score: Number(root.querySelector('#bcs-score').value), mcs: Number(root.querySelector('#mcs-score').value), mode: root.querySelector('#app-mode').value, finalized: root.querySelector('#clinical-readiness').textContent.startsWith('Registro estruturado revisado'), palpated: root.querySelector('#palpation-confirmed').checked }, window.location.origin);
+  root.addEventListener('input', send);
+  root.addEventListener('change', send);
+  const reportHeight = () => window.parent.postMessage({ source: 'meu-bichu-bcs-f14', type: 'height', height: Math.ceil(document.documentElement.scrollHeight) }, window.location.origin);
+  new ResizeObserver(reportHeight).observe(root);
+  window.addEventListener('load', reportHeight);
+  root.addEventListener('click', e => { if (e.target.closest('#finalize-evaluation, #apply-estimate')) setTimeout(send, 0); });
+  window.addEventListener('message', e => {
+    if (e.origin !== window.location.origin || e.data?.source !== 'meu-bichu-app' || e.data.type !== 'patient') return;
+    root.querySelector('#patient-name').value = e.data.name || '';
+    root.querySelector('#patient-id').value = e.data.id || '';
+    root.querySelector('#followup-weight').value = e.data.weight || '';
+    root.querySelector('#followup-date').value = new Intl.DateTimeFormat('en-CA', {timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    root.querySelector('#bcs-score').value = e.data.score || 5;
+    root.querySelector('#bcs-score').dispatchEvent(new Event('input', {bubbles:true}));
+  });
+  send();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,3282 @@
+<!doctype html>
+<html lang="pt-BR" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Meu Bichu — Avaliação BCS/MCS 3D — Fase 14</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="Meu Bichu — Avaliação BCS/MCS 3D — Fase 14" data-srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;pt-BR&quot; data-visualize-standalone&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Meu Bichu — Avaliação BCS/MCS 3D — Fase 14&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+:root:not([data-app-block-surface], [data-visualize-standalone]) &gt; body {
+  padding: 12px;
+}
+
+.cursor-interaction {
+  cursor: var(--cursor-interaction, pointer);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: var(--cursor-interaction, pointer);
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+.widget {
+  min-width: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  box-shadow: 0 0 0 0.5px var(--border-strong, var(--border));
+  color: var(--foreground);
+  background: var(--background);
+}
+
+#widget &gt; :not(.card, .widget, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The shared runtime owns data-tooltip; suppress AppBlock&#x27;s pseudo-tooltip. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: var(--cursor-interaction, pointer);
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled=&quot;true&quot;]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+/* Shared preview chrome; product styles stay inside each variant. */
+.viz-dotted-background {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--foreground) 14%, transparent) 0.8px,
+    transparent 0.8px
+  );
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.viz-carousel {
+  position: relative;
+  min-width: 0;
+}
+
+.viz-carousel:has(&gt; .viz-carousel-controls) {
+  min-height: calc(60px + var(--viz-carousel-picker-height, 0px));
+  padding-bottom: 60px;
+}
+
+.viz-carousel &gt; [data-variant][hidden] {
+  display: none !important;
+}
+
+.viz-carousel &gt; [data-variant] {
+  isolation: isolate;
+}
+
+.viz-carousel-controls {
+  --viz-carousel-hover: light-dark(
+    color-mix(in srgb, var(--foreground) 5.4%, transparent),
+    color-mix(in srgb, var(--foreground) 7.8%, transparent)
+  );
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  left: 50%;
+  display: flex;
+  width: max-content;
+  /* Leave room for the host&#x27;s design-controls launcher at the trailing edge. */
+  max-width: calc(100% - 96px);
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  /* Match the settings dropdown chrome independently of the content font size. */
+  font-size: 13px;
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+/* Keep authored mockup button styles out of the shared carousel chrome. */
+.viz-carousel-controls button,
+.viz-carousel-picker &gt; summary {
+  display: flex !important;
+  height: auto !important;
+  min-height: 30px;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px;
+  padding: 0 6px !important;
+  -webkit-app-region: no-drag;
+  border: 0 !important;
+  border-radius: 14px !important;
+  color: inherit !important;
+  background: transparent !important;
+  font: inherit !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.viz-carousel-controls &gt; button,
+.viz-carousel-picker &gt; summary {
+  position: relative;
+  isolation: isolate;
+}
+
+.viz-carousel-controls &gt; button {
+  --icon-size: 16px;
+  width: 30px !important;
+  padding: 0 !important;
+}
+
+.viz-carousel-picker &gt; summary {
+  padding-inline: 12px !important;
+}
+
+.viz-carousel-controls .viz-carousel-caret {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin: 0;
+  color: inherit;
+  transform: rotate(180deg);
+}
+
+.viz-carousel-controls &gt; button &gt; svg,
+.viz-carousel-controls .viz-carousel-caret,
+.viz-carousel-count {
+  opacity: 0.5;
+}
+
+.viz-carousel-controls &gt; button::before,
+.viz-carousel-picker &gt; summary::before {
+  position: absolute;
+  z-index: -1;
+  inset: 3px;
+  border-radius: 12px;
+  content: &quot;&quot;;
+  pointer-events: none;
+}
+
+.viz-carousel-controls &gt; button:hover::before,
+.viz-carousel-picker &gt; summary:hover::before {
+  background: var(--viz-carousel-hover);
+}
+
+.viz-carousel-controls &gt; button,
+.viz-carousel-controls [data-lucide],
+.viz-carousel-controls .lucide {
+  flex-shrink: 0;
+}
+
+.viz-carousel-picker {
+  min-width: 0;
+}
+
+.viz-carousel-picker &gt; summary {
+  min-width: 0;
+  list-style: none;
+}
+
+.viz-carousel-picker &gt; summary::-webkit-details-marker {
+  display: none;
+}
+
+.viz-carousel-count {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.viz-carousel-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viz-carousel-options {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  max-height: 240px;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  box-shadow: 0 4px 12px light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 25%));
+}
+
+.viz-carousel-options &gt; button {
+  border-radius: max(0px, calc(var(--radius-lg) - 5px)) !important;
+  width: 100% !important;
+  min-height: 28px;
+  justify-content: flex-start !important;
+  padding: 4px 8px !important;
+  font-size: var(--font-size-small) !important;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.viz-carousel-options &gt; [aria-current=&quot;true&quot;],
+.viz-carousel-options &gt; button:hover {
+  background: var(--viz-carousel-hover) !important;
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled=&quot;true&quot;] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed=&quot;true&quot;],
+  [aria-selected=&quot;true&quot;],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.viz-carousel-controls :is(button, summary):focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 2px !important;
+}
+
+@media (pointer: coarse) {
+  .viz-carousel:has(&gt; .viz-carousel-controls) {
+    min-height: calc(76px + var(--viz-carousel-picker-height, 0px));
+    padding-bottom: 76px;
+  }
+
+  .btn,
+  .nav-link,
+  .viz-carousel-controls button,
+  .viz-carousel-picker &gt; summary,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type=&quot;file&quot;]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type=&quot;color&quot;] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type=&quot;date&quot;],
+    [type=&quot;datetime-local&quot;],
+    [type=&quot;month&quot;],
+    [type=&quot;time&quot;],
+    [type=&quot;week&quot;]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: &quot;&quot;;
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type=&quot;application/json&quot; id=&quot;codex-visualization-widget-state&quot;&gt;__CODEX_VISUALIZATION_WIDGET_STATE__&lt;/script&gt;
+&lt;script&gt;(() =&gt; {
+  const root = document.documentElement;
+  const mediaQuery = globalThis.matchMedia(&quot;(prefers-color-scheme: dark)&quot;);
+  const apply = Reflect.apply;
+  const isArray = Array.isArray;
+  const hasOwn = Object.hasOwn;
+  const parentWindow = globalThis.parent;
+  const stringify = JSON.stringify;
+  const parse = JSON.parse;
+  const encode = TextEncoder.prototype.encode.bind(new TextEncoder());
+  const initialStateElement = document.getElementById(
+    &quot;codex-visualization-widget-state&quot;,
+  );
+  const initialGlobals = parse(initialStateElement?.textContent ?? &quot;{}&quot;);
+  initialStateElement?.remove();
+  /** @type {Record&lt;string, unknown&gt; | null} */
+  let state = initialGlobals.widgetState ?? null;
+  const statePersistence = initialGlobals.statePersistence ?? &quot;none&quot;;
+  let nextStateRequestId = 0;
+  /** @type {Map&lt;number, { resolve: () =&gt; void; reject: (error: Error) =&gt; void; timeout: ReturnType&lt;typeof globalThis.setTimeout&gt;; serializedState: string }&gt;} */
+  const pendingStateWrites = new Map();
+  const persistenceError = () =&gt;
+    Object.assign(
+      new Error(&quot;The host could not persist the widget state update&quot;),
+      {
+        code: -32000,
+        data: { code: &quot;widget_state_persistence_failed&quot;, retryable: false },
+      },
+    );
+  /**
+   * @param {object} prototype
+   * @param {string} property
+   */
+  const getPrototypeGetter = (prototype, property) =&gt; {
+    // oxlint-disable-next-line typescript/unbound-method -- invoked through captured Reflect.apply
+    const getter = Object.getOwnPropertyDescriptor(prototype, property)?.get;
+    if (getter == null) {
+      throw new Error(`Missing ${property} getter`);
+    }
+    return getter;
+  };
+  const getMessageData = getPrototypeGetter(MessageEvent.prototype, &quot;data&quot;);
+  const getMessagePorts = getPrototypeGetter(MessageEvent.prototype, &quot;ports&quot;);
+  const getMessageSource = getPrototypeGetter(MessageEvent.prototype, &quot;source&quot;);
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const addHostMessageListener = MessagePort.prototype.addEventListener;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const postHostMessage = MessagePort.prototype.postMessage;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const startHostPort = MessagePort.prototype.start;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const stopMessagePropagation = Event.prototype.stopImmediatePropagation;
+  /** @type {MessagePort | null} */
+  let hostPort = null;
+  const postToHost = (type, payload) =&gt; {
+    if (hostPort != null) {
+      apply(postHostMessage, hostPort, [{ type, ...payload }]);
+    }
+  };
+  const openExternal = ({ href }) =&gt; {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost(&quot;open-external&quot;, { href });
+    }
+  };
+  const sendFollowUpMessage = ({ context, prompt, title }) =&gt; {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost(&quot;follow-up&quot;, { context, prompt, title });
+    }
+    return Promise.resolve();
+  };
+  /**
+   * @param {Record&lt;string, unknown&gt; | ((previous: Record&lt;string, unknown&gt; | null) =&gt; Record&lt;string, unknown&gt;)} next
+   * @returns {Promise&lt;void&gt;}
+   */
+  const setWidgetState = async (next) =&gt; {
+    const nextState = typeof next === &quot;function&quot; ? next(state) : next;
+    if (
+      nextState == null ||
+      typeof nextState !== &quot;object&quot; ||
+      isArray(nextState)
+    ) {
+      throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+    }
+    const inputState = stringify(
+      nextState,
+      (_key, /** @type {unknown} */ value) =&gt; {
+        if (
+          typeof value === &quot;undefined&quot; ||
+          typeof value === &quot;function&quot; ||
+          typeof value === &quot;symbol&quot; ||
+          (typeof value === &quot;number&quot; &amp;&amp; !Number.isFinite(value))
+        ) {
+          throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+        }
+        return value;
+      },
+    );
+    const parsedState = parse(inputState);
+    if (
+      parsedState == null ||
+      typeof parsedState !== &quot;object&quot; ||
+      isArray(parsedState)
+    ) {
+      throw new TypeError(&quot;Widget state must be a JSON object&quot;);
+    }
+    const storedState = {
+      modelContent: null,
+      privateContent: null,
+      ...parsedState,
+    };
+    const serializedState = stringify(storedState);
+    if (encode(serializedState).length &gt; 16 * 1024) {
+      throw new TypeError(
+        &quot;Widget state must be a JSON object of at most 16 KiB&quot;,
+      );
+    }
+    if (
+      hasOwn(storedState, &quot;imageIds&quot;) &amp;&amp;
+      (!isArray(storedState.imageIds) ||
+        storedState.imageIds.some(
+          (/** @type {unknown} */ id) =&gt; typeof id !== &quot;string&quot;,
+        ))
+    ) {
+      throw new TypeError(&quot;Widget state imageIds must be an array of strings&quot;);
+    }
+    if (storedState.imageIds?.length &gt; 0) {
+      throw Object.assign(
+        new TypeError(&quot;Visualization state does not support image attachments&quot;),
+        { code: -32602, data: { code: &quot;images_unsupported&quot; } },
+      );
+    }
+    state = storedState;
+    globalThis.openai.widgetState = state;
+    globalThis.dispatchEvent(
+      new CustomEvent(&quot;openai:set_globals&quot;, {
+        detail: { globals: { widgetState: state } },
+      }),
+    );
+    if (statePersistence === &quot;none&quot;) {
+      throw persistenceError();
+    }
+    const id = ++nextStateRequestId;
+    return new Promise((resolve, reject) =&gt; {
+      const timeout = globalThis.setTimeout(() =&gt; {
+        pendingStateWrites.delete(id);
+        reject(persistenceError());
+      }, 30_000);
+      pendingStateWrites.set(id, { resolve, reject, timeout, serializedState });
+      postToHost(&quot;widget-state-write&quot;, { id, state: serializedState });
+    });
+  };
+  const syncTheme = () =&gt; {
+    const theme = mediaQuery.matches ? &quot;dark&quot; : &quot;light&quot;;
+    root.dataset.theme = theme;
+    globalThis.openai = {
+      ...globalThis.openai,
+      openExternal,
+      sendFollowUpMessage,
+      setWidgetState,
+      theme,
+      visualizationStyleVariables: {},
+      visualizationTheme: theme,
+      widgetState: state,
+      statePersistence,
+      stateModelContext: &quot;none&quot;,
+    };
+    globalThis.dispatchEvent(
+      new CustomEvent(&quot;openai:set_globals&quot;, {
+        detail: { globals: globalThis.openai },
+      }),
+    );
+  };
+  const sendHeight = () =&gt; {
+    postToHost(&quot;height&quot;, {
+      height: Math.ceil(
+        Math.max(
+          document.body.scrollHeight,
+          document.body.getBoundingClientRect().height,
+        ),
+      ),
+    });
+  };
+
+  globalThis.addEventListener(
+    &quot;message&quot;,
+    (event) =&gt; {
+      const data = apply(getMessageData, event, []);
+      const ports = apply(getMessagePorts, event, []);
+      const source = apply(getMessageSource, event, []);
+      if (
+        hostPort != null ||
+        source !== parentWindow ||
+        typeof data !== &quot;object&quot; ||
+        data?.type !== &quot;codex-visualization-initialize&quot; ||
+        !isArray(ports) ||
+        ports.length !== 1
+      ) {
+        return;
+      }
+      apply(stopMessagePropagation, event, []);
+      const nextHostPort = ports[0];
+      try {
+        apply(addHostMessageListener, nextHostPort, [
+          &quot;message&quot;,
+          (event) =&gt; {
+            const data = apply(getMessageData, event, []);
+            if (typeof data === &quot;object&quot; &amp;&amp; data?.type === &quot;measure&quot;) {
+              sendHeight();
+            } else if (
+              typeof data === &quot;object&quot; &amp;&amp;
+              data?.type === &quot;widget-state-result&quot;
+            ) {
+              /** @type {unknown} */
+              const id = data.id;
+              if (typeof id !== &quot;number&quot;) {
+                return;
+              }
+              const pending = pendingStateWrites.get(id);
+              if (pending != null) {
+                pendingStateWrites.delete(id);
+                globalThis.clearTimeout(pending.timeout);
+                if (data.ok === true) {
+                  pending.resolve();
+                } else {
+                  pending.reject(persistenceError());
+                }
+              }
+            }
+          },
+        ]);
+        apply(startHostPort, nextHostPort, []);
+      } catch {
+        return;
+      }
+      hostPort = nextHostPort;
+      for (const [id, { serializedState }] of pendingStateWrites) {
+        postToHost(&quot;widget-state-write&quot;, { id, state: serializedState });
+      }
+      sendHeight();
+    },
+    { capture: true },
+  );
+  document.currentScript?.remove();
+  mediaQuery.addEventListener(&quot;change&quot;, syncTheme);
+  globalThis.addEventListener(&quot;click&quot;, (event) =&gt; {
+    if (event.defaultPrevented) {
+      return;
+    }
+    let element = null;
+    if (event.target instanceof globalThis.Element) {
+      element = event.target;
+    } else if (event.target instanceof globalThis.Node) {
+      element = event.target.parentElement;
+    }
+    const link = element?.closest(&quot;a[href]&quot;);
+    const href = link?.getAttribute(&quot;href&quot;);
+    if (href == null) {
+      return;
+    }
+    if (href.startsWith(&quot;#&quot;)) {
+      let id;
+      try {
+        id = decodeURIComponent(href.slice(1));
+      } catch {
+        return;
+      }
+      const target = id.length === 0 ? root : document.getElementById(id);
+      if (
+        target == null ||
+        globalThis.navigator.userActivation?.isActive !== true
+      ) {
+        return;
+      }
+      event.preventDefault();
+      postToHost(&quot;scroll-to&quot;, {
+        top: target.getBoundingClientRect().top + globalThis.scrollY,
+      });
+      return;
+    }
+    event.preventDefault();
+    openExternal({ href });
+  });
+  new ResizeObserver(sendHeight).observe(document.body);
+  syncTheme();
+})();
+&lt;/script&gt;
+&lt;div id=&quot;bcs-dog-3d-f14&quot;&gt;
+  &lt;style&gt;
+    #bcs-dog-3d-f14 { color: var(--foreground); }
+    #bcs-dog-3d-f14 .viewer { position: relative; min-height: 360px; height: min(62vw, 540px); overflow: hidden; }
+    #bcs-dog-3d-f14 canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    #bcs-dog-3d-f14 .overlay { position: absolute; inset: 12px 12px auto 12px; pointer-events: none; display: flex; justify-content: space-between; gap: 12px; }
+    #bcs-dog-3d-f14 .overlay &gt; * { pointer-events: auto; }
+    #bcs-dog-3d-f14 .view-controls { position: absolute; right: 12px; bottom: 12px; }
+    #bcs-dog-3d-f14 .layer-row { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    #bcs-dog-3d-f14 .status { min-height: 1.5em; }
+    #bcs-dog-3d-f14 .clinical-detail { min-height: 2.8em; }
+    @media (max-width: 520px) {
+      #bcs-dog-3d-f14 .viewer { min-height: 390px; }
+      #bcs-dog-3d-f14 .overlay { flex-direction: column; }
+      #bcs-dog-3d-f14 .view-controls { left: 12px; right: auto; }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;h2&gt;Border Collie — alertas longitudinais explicáveis · Fase 14&lt;/h2&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;bcs-badge&quot;&gt;BCS 5 · ideal&lt;/span&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;mcs-badge&quot; data-min-mode=&quot;veterinary&quot;&gt;MCS normal&lt;/span&gt;
+    &lt;span class=&quot;viz-badge&quot;&gt;Protótipo não validado&lt;/span&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;asset-badge&quot;&gt;Modelo procedural&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Controles do modelo&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;app-mode&quot;&gt;Perfil de uso
+      &lt;select class=&quot;form-select&quot; id=&quot;app-mode&quot;&gt;&lt;option value=&quot;education&quot;&gt;Educação&lt;/option&gt;&lt;option value=&quot;triage&quot;&gt;Triagem do tutor&lt;/option&gt;&lt;option value=&quot;veterinary&quot; selected&gt;Instrumento veterinário&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;bcs-score&quot;&gt;
+      Escore: &lt;strong class=&quot;tabular-nums&quot; id=&quot;bcs-value&quot;&gt;5&lt;/strong&gt;
+      &lt;input class=&quot;form-range&quot; id=&quot;bcs-score&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;9&quot; step=&quot;1&quot; value=&quot;5&quot; aria-describedby=&quot;bcs-status&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;mcs-score&quot; data-min-mode=&quot;veterinary&quot;&gt;Condição muscular
+      &lt;select class=&quot;form-select&quot; id=&quot;mcs-score&quot;&gt;&lt;option value=&quot;0&quot;&gt;Normal&lt;/option&gt;&lt;option value=&quot;1&quot;&gt;Perda leve&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Perda moderada&lt;/option&gt;&lt;option value=&quot;3&quot;&gt;Perda severa&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;reference-score&quot; data-min-mode=&quot;veterinary&quot;&gt;Comparar com BCS
+      &lt;select class=&quot;form-select&quot; id=&quot;reference-score&quot;&gt;&lt;option&gt;1&lt;/option&gt;&lt;option&gt;2&lt;/option&gt;&lt;option&gt;3&lt;/option&gt;&lt;option&gt;4&lt;/option&gt;&lt;option selected&gt;5&lt;/option&gt;&lt;option&gt;6&lt;/option&gt;&lt;option&gt;7&lt;/option&gt;&lt;option&gt;8&lt;/option&gt;&lt;option&gt;9&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;div class=&quot;layer-row&quot; role=&quot;group&quot; aria-label=&quot;Camadas anatômicas&quot;&gt;
+      &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;layer-skin&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;Pele&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;layer-fur&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;Pelagem&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;layer-fat&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Gordura&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;layer-muscle&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Músculos&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;layer-bone&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Esqueleto&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;clinical-points&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;Pontos clínicos&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;mcs-points&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Pontos MCS&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;form-check form-switch&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;bcs-reference&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Sobrepor referência&lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;status&quot; id=&quot;mode-note&quot; aria-live=&quot;polite&quot;&gt;&lt;strong&gt;Instrumento veterinário:&lt;/strong&gt; protocolo completo, BCS e MCS independentes e registro condicionado à palpação.&lt;/div&gt;
+
+  &lt;hr&gt;
+  &lt;h3&gt;Malha orgânica local&lt;/h3&gt;
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Importação da malha orgânica&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;glb-file&quot;&gt;Arquivo GLB
+      &lt;input class=&quot;form-control&quot; id=&quot;glb-file&quot; type=&quot;file&quot; accept=&quot;.glb,model/gltf-binary&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;glb-up-axis&quot;&gt;Eixo vertical
+      &lt;select class=&quot;form-select&quot; id=&quot;glb-up-axis&quot;&gt;&lt;option value=&quot;y&quot; selected&gt;Y para cima&lt;/option&gt;&lt;option value=&quot;z&quot;&gt;Z para cima&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;use-imported&quot; type=&quot;checkbox&quot; disabled&gt;&lt;span class=&quot;form-check-label&quot;&gt;Usar malha importada&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;asset-status&quot; aria-live=&quot;polite&quot;&gt;Fallback procedural ativo. O GLB permanece neste dispositivo. Para deformação clínica use &lt;code&gt;BCS1…BCS9&lt;/code&gt; ou &lt;code&gt;BCS_LEAN&lt;/code&gt;/&lt;code&gt;BCS_OBESE&lt;/code&gt; e &lt;code&gt;MCS_MILD&lt;/code&gt;, &lt;code&gt;MCS_MODERATE&lt;/code&gt;, &lt;code&gt;MCS_SEVERE&lt;/code&gt;.&lt;/div&gt;
+
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;button class=&quot;btn btn-primary&quot; id=&quot;run-morph-audit&quot; type=&quot;button&quot; disabled&gt;Auditar morph targets&lt;/button&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;audit-badge&quot;&gt;Auditoria pendente&lt;/span&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;release-badge&quot;&gt;Não qualificado&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;table-responsive&quot;&gt;
+    &lt;table class=&quot;table table-sm&quot; aria-label=&quot;Cobertura dos estados morfológicos&quot;&gt;
+      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Escala&lt;/th&gt;&lt;th&gt;1&lt;/th&gt;&lt;th&gt;2&lt;/th&gt;&lt;th&gt;3&lt;/th&gt;&lt;th&gt;4&lt;/th&gt;&lt;th&gt;5&lt;/th&gt;&lt;th&gt;6&lt;/th&gt;&lt;th&gt;7&lt;/th&gt;&lt;th&gt;8&lt;/th&gt;&lt;th&gt;9&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody&gt;&lt;tr id=&quot;bcs-audit-row&quot;&gt;&lt;th&gt;BCS&lt;/th&gt;&lt;td colspan=&quot;9&quot;&gt;Importe um GLB para auditar.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;table table-sm&quot; aria-label=&quot;Cobertura dos estados musculares&quot;&gt;
+      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Escala&lt;/th&gt;&lt;th&gt;Normal&lt;/th&gt;&lt;th&gt;Leve&lt;/th&gt;&lt;th&gt;Moderada&lt;/th&gt;&lt;th&gt;Severa&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody&gt;&lt;tr id=&quot;mcs-audit-row&quot;&gt;&lt;th&gt;MCS&lt;/th&gt;&lt;td colspan=&quot;4&quot;&gt;Importe um GLB para auditar.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;audit-detail&quot; aria-live=&quot;polite&quot;&gt;A presença de morph targets comprova compatibilidade técnica, não validade anatômica ou clínica.&lt;/div&gt;
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Critérios de qualificação interna&quot;&gt;
+    &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;anatomy-reviewed&quot; type=&quot;checkbox&quot; disabled&gt;&lt;span class=&quot;form-check-label&quot;&gt;Revisão anatômica veterinária documentada&lt;/span&gt;&lt;/label&gt;
+    &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;reference-documented&quot; type=&quot;checkbox&quot; disabled&gt;&lt;span class=&quot;form-check-label&quot;&gt;Referências e protocolo documentados&lt;/span&gt;&lt;/label&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;qualify-asset&quot; type=&quot;button&quot; disabled&gt;Qualificar para teste interno&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;text-small text-muted status&quot; id=&quot;qualification-status&quot; aria-live=&quot;polite&quot;&gt;Liberação clínica exige validação externa; a qualificação desta fase serve apenas para teste interno.&lt;/div&gt;
+
+  &lt;div id=&quot;protocol-section&quot;&gt;
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;button class=&quot;btn btn-primary&quot; id=&quot;start-exam&quot; type=&quot;button&quot;&gt;Iniciar exame guiado&lt;/button&gt;
+    &lt;button class=&quot;btn btn-ghost&quot; id=&quot;exam-prev&quot; type=&quot;button&quot; disabled&gt;Anterior&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;exam-next&quot; type=&quot;button&quot; disabled&gt;Próxima etapa&lt;/button&gt;
+    &lt;button class=&quot;btn btn-ghost&quot; id=&quot;exam-end&quot; type=&quot;button&quot; disabled&gt;Encerrar&lt;/button&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;exam-step&quot;&gt;Modo livre&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;progress&quot; role=&quot;progressbar&quot; aria-label=&quot;Progresso do exame&quot; aria-valuenow=&quot;0&quot; aria-valuemin=&quot;0&quot; aria-valuemax=&quot;5&quot; id=&quot;exam-progress&quot;&gt;&lt;div class=&quot;progress-bar&quot; id=&quot;exam-progress-bar&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;exam-instruction&quot; aria-live=&quot;polite&quot;&gt;Explore livremente ou inicie o protocolo em cinco etapas.&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;card viewer&quot; id=&quot;bcs-viewer&quot;&gt;
+    &lt;canvas id=&quot;bcs-canvas&quot; role=&quot;img&quot; aria-label=&quot;Modelo tridimensional interativo de um Border Collie com escala BCS de 1 a 9&quot;&gt;&lt;/canvas&gt;
+    &lt;div class=&quot;overlay&quot;&gt;
+      &lt;span class=&quot;viz-badge&quot;&gt;Arraste para girar · toque nos marcadores&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;viz-row view-controls&quot; role=&quot;group&quot; aria-label=&quot;Vistas da câmera&quot;&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-view=&quot;side&quot;&gt;Lateral&lt;/button&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-view=&quot;top&quot;&gt;Dorsal&lt;/button&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-view=&quot;front&quot;&gt;Frontal&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;text-small text-muted status&quot; id=&quot;bcs-status&quot; aria-live=&quot;polite&quot;&gt;Costelas palpáveis, cintura visível e retração abdominal presente.&lt;/div&gt;
+  &lt;div class=&quot;text-small text-muted status&quot; id=&quot;mcs-status&quot; data-min-mode=&quot;veterinary&quot; aria-live=&quot;polite&quot;&gt;Massa muscular preservada nas têmporas, escápulas, coluna e pelve.&lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;comparison-detail&quot; data-min-mode=&quot;veterinary&quot; aria-live=&quot;polite&quot;&gt;&lt;strong&gt;Comparação:&lt;/strong&gt; BCS atual 5 e referência 5 coincidem.&lt;/div&gt;
+  &lt;div class=&quot;clinical-detail&quot; id=&quot;clinical-detail&quot; aria-live=&quot;polite&quot;&gt;&lt;strong&gt;Pontos clínicos:&lt;/strong&gt; toque em um marcador no cão para examinar a região.&lt;/div&gt;
+  &lt;div id=&quot;assessment-section&quot;&gt;
+  &lt;hr&gt;
+  &lt;h3&gt;Avaliação guiada&lt;/h3&gt;
+  &lt;div class=&quot;viz-grid&quot; id=&quot;assessment-fields&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;obs-ribs&quot;&gt;Costelas
+      &lt;select class=&quot;form-select&quot; id=&quot;obs-ribs&quot;&gt;&lt;option value=&quot;&quot;&gt;Não avaliado&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Muito visíveis / cobertura mínima&lt;/option&gt;&lt;option value=&quot;5&quot;&gt;Palpáveis com leve cobertura&lt;/option&gt;&lt;option value=&quot;7&quot;&gt;Difíceis de palpar&lt;/option&gt;&lt;option value=&quot;9&quot;&gt;Não palpáveis&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;obs-waist&quot;&gt;Cintura dorsal
+      &lt;select class=&quot;form-select&quot; id=&quot;obs-waist&quot;&gt;&lt;option value=&quot;&quot;&gt;Não avaliado&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Muito acentuada&lt;/option&gt;&lt;option value=&quot;5&quot;&gt;Evidente&lt;/option&gt;&lt;option value=&quot;7&quot;&gt;Pouco marcada&lt;/option&gt;&lt;option value=&quot;9&quot;&gt;Ausente&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;obs-tuck&quot;&gt;Retração abdominal
+      &lt;select class=&quot;form-select&quot; id=&quot;obs-tuck&quot;&gt;&lt;option value=&quot;&quot;&gt;Não avaliado&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Muito intensa&lt;/option&gt;&lt;option value=&quot;5&quot;&gt;Presente&lt;/option&gt;&lt;option value=&quot;7&quot;&gt;Reduzida&lt;/option&gt;&lt;option value=&quot;9&quot;&gt;Ausente / distensão&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;obs-lumbar&quot;&gt;Região lombar
+      &lt;select class=&quot;form-select&quot; id=&quot;obs-lumbar&quot;&gt;&lt;option value=&quot;&quot;&gt;Não avaliado&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Vértebras evidentes&lt;/option&gt;&lt;option value=&quot;5&quot;&gt;Contorno suave&lt;/option&gt;&lt;option value=&quot;7&quot;&gt;Depósitos perceptíveis&lt;/option&gt;&lt;option value=&quot;9&quot;&gt;Depósitos amplos&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;obs-tailbase&quot;&gt;Base da cauda
+      &lt;select class=&quot;form-select&quot; id=&quot;obs-tailbase&quot;&gt;&lt;option value=&quot;&quot;&gt;Não avaliado&lt;/option&gt;&lt;option value=&quot;2&quot;&gt;Estruturas ósseas evidentes&lt;/option&gt;&lt;option value=&quot;5&quot;&gt;Sem depósito relevante&lt;/option&gt;&lt;option value=&quot;7&quot;&gt;Depósito perceptível&lt;/option&gt;&lt;option value=&quot;9&quot;&gt;Depósito marcado&lt;/option&gt;&lt;/select&gt;
+    &lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;div class=&quot;card viz-stat&quot; aria-live=&quot;polite&quot;&gt;
+      &lt;span class=&quot;text-muted&quot;&gt;Estimativa orientativa&lt;/span&gt;
+      &lt;div class=&quot;viz-stat-value tabular-nums&quot; id=&quot;estimate-value&quot;&gt;—&lt;/div&gt;
+      &lt;div id=&quot;estimate-detail&quot;&gt;Preencha pelo menos três achados.&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;button class=&quot;btn btn-primary&quot; id=&quot;apply-estimate&quot; type=&quot;button&quot; disabled&gt;Aplicar ao modelo&lt;/button&gt;
+    &lt;label class=&quot;form-check&quot; data-min-mode=&quot;veterinary&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;palpation-confirmed&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;Palpação realizada&lt;/span&gt;&lt;/label&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;finalize-evaluation&quot; type=&quot;button&quot; data-min-mode=&quot;veterinary&quot; disabled&gt;Finalizar registro clínico&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;clinical-readiness&quot; aria-live=&quot;polite&quot;&gt;Registro clínico incompleto: preencha os cinco achados e confirme a palpação.&lt;/div&gt;
+  &lt;p class=&quot;text-small text-muted&quot; id=&quot;assessment-disclaimer&quot;&gt;Em cães de pelagem média ou longa, a inspeção isolada não substitui palpação nem avaliação veterinária.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;hr&gt;
+  &lt;h3&gt;Acompanhamento do animal&lt;/h3&gt;
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Dados da avaliação longitudinal&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;patient-name&quot;&gt;Nome do animal
+      &lt;input class=&quot;form-control&quot; id=&quot;patient-name&quot; type=&quot;text&quot; autocomplete=&quot;off&quot; placeholder=&quot;Ex.: Luna&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;patient-id&quot;&gt;Identificador
+      &lt;input class=&quot;form-control&quot; id=&quot;patient-id&quot; type=&quot;text&quot; autocomplete=&quot;off&quot; placeholder=&quot;Prontuário ou microchip&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;followup-date&quot;&gt;Data
+      &lt;input class=&quot;form-control&quot; id=&quot;followup-date&quot; type=&quot;date&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;followup-weight&quot;&gt;Peso em kg
+      &lt;input class=&quot;form-control&quot; id=&quot;followup-weight&quot; type=&quot;number&quot; min=&quot;0.1&quot; max=&quot;150&quot; step=&quot;0.1&quot; inputmode=&quot;decimal&quot; placeholder=&quot;0,0&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;followup-note&quot;&gt;Nota curta
+      &lt;input class=&quot;form-control&quot; id=&quot;followup-note&quot; type=&quot;text&quot; maxlength=&quot;80&quot; placeholder=&quot;Contexto da avaliação&quot;&gt;
+    &lt;/label&gt;
+    &lt;button class=&quot;btn btn-primary&quot; id=&quot;save-followup&quot; type=&quot;button&quot;&gt;Registrar avaliação atual&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;followup-status&quot; aria-live=&quot;polite&quot;&gt;Histórico vazio. Registros permanecem apenas nesta sessão.&lt;/div&gt;
+  &lt;div class=&quot;table-responsive&quot;&gt;
+    &lt;table class=&quot;table&quot; aria-label=&quot;Histórico de avaliações do animal&quot;&gt;
+      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Data&lt;/th&gt;&lt;th&gt;Origem&lt;/th&gt;&lt;th class=&quot;text-end&quot;&gt;Peso&lt;/th&gt;&lt;th class=&quot;text-center&quot;&gt;BCS&lt;/th&gt;&lt;th&gt;MCS&lt;/th&gt;&lt;th&gt;Mudança desde o anterior&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody id=&quot;followup-history&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;7&quot;&gt;Nenhuma avaliação registrada.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;text-small text-muted&quot;&gt;Mudanças simultâneas de peso, BCS e MCS devem ser interpretadas no contexto clínico; associação temporal não demonstra causalidade.&lt;/div&gt;
+
+  &lt;hr&gt;
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;h3&gt;Regras de revisão&lt;/h3&gt;
+    &lt;span class=&quot;viz-badge&quot; id=&quot;alert-badge&quot;&gt;Sem pares de avaliações&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Limites provisórios para revisão&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;weight-alert-threshold&quot;&gt;Variação de peso (%)
+      &lt;input class=&quot;form-control&quot; id=&quot;weight-alert-threshold&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;50&quot; step=&quot;1&quot; value=&quot;10&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;bcs-alert-threshold&quot;&gt;Variação de BCS
+      &lt;input class=&quot;form-control&quot; id=&quot;bcs-alert-threshold&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;8&quot; step=&quot;1&quot; value=&quot;2&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;mcs-alert-threshold&quot;&gt;Piora de MCS
+      &lt;input class=&quot;form-control&quot; id=&quot;mcs-alert-threshold&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;3&quot; step=&quot;1&quot; value=&quot;1&quot;&gt;
+    &lt;/label&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;evaluate-alerts&quot; type=&quot;button&quot;&gt;Reavaliar regras&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;table-responsive&quot;&gt;
+    &lt;table class=&quot;table table-sm&quot; aria-label=&quot;Alertas explicáveis entre avaliações consecutivas&quot;&gt;
+      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Intervalo&lt;/th&gt;&lt;th&gt;Resultado&lt;/th&gt;&lt;th&gt;Critério acionado&lt;/th&gt;&lt;th&gt;Leitura permitida&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody id=&quot;alert-history&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;4&quot;&gt;Registre pelo menos duas avaliações.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;status&quot; id=&quot;alert-status&quot; aria-live=&quot;polite&quot;&gt;Os limites são parâmetros de protótipo configuráveis; não representam consenso clínico nem urgência médica.&lt;/div&gt;
+
+  &lt;script type=&quot;module&quot;&gt;
+    import * as THREE from &#x27;https://esm.sh/three@0.164.1&#x27;;
+    import { OrbitControls } from &#x27;https://esm.sh/three@0.164.1/examples/jsm/controls/OrbitControls.js&#x27;;
+    import { GLTFLoader } from &#x27;https://esm.sh/three@0.164.1/examples/jsm/loaders/GLTFLoader.js&#x27;;
+
+    const root = document.getElementById(&#x27;bcs-dog-3d-f14&#x27;);
+    let currentMode=&#x27;veterinary&#x27;, clinicalFinalized=false;
+    const host = root.querySelector(&#x27;#bcs-viewer&#x27;);
+    const canvas = root.querySelector(&#x27;#bcs-canvas&#x27;);
+    const style = getComputedStyle(root);
+    const color = name =&gt; new THREE.Color(style.getPropertyValue(name).trim());
+    const fg = color(&#x27;--foreground&#x27;), bg = color(&#x27;--card&#x27;);
+    const coat = fg.clone().lerp(bg, .28);
+    const whiteCoat = bg.clone().lerp(fg, .12);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
+    camera.position.set(5.0, -7.0, 3.0);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0, 1);
+    controls.minDistance = 3.4;
+    controls.maxDistance = 13;
+
+    scene.add(new THREE.HemisphereLight(color(&#x27;--background&#x27;), color(&#x27;--muted&#x27;), 2.4));
+    const key = new THREE.DirectionalLight(color(&#x27;--foreground&#x27;), 3.2);
+    key.position.set(4, -5, 7); key.castShadow = true; scene.add(key);
+    const rim = new THREE.DirectionalLight(color(&#x27;--blue&#x27;), 1.7);
+    rim.position.set(-4, 5, 4); scene.add(rim);
+
+    const floorMat = new THREE.MeshStandardMaterial({color:color(&#x27;--muted&#x27;), roughness:.9, transparent:true, opacity:.45});
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(4.2, 64), floorMat);
+    floor.rotation.x = -Math.PI/2; floor.position.z = -.015; floor.receiveShadow = true; scene.add(floor);
+    const grid = new THREE.GridHelper(7, 14, color(&#x27;--border&#x27;), color(&#x27;--border&#x27;));
+    grid.rotation.x = Math.PI/2; grid.position.z = .002; scene.add(grid);
+
+    const dog = new THREE.Group(); scene.add(dog);
+    let importedRoot=null, importedMeshes=[], importedStats=null;
+    const skinGroup = new THREE.Group(), fatGroup = new THREE.Group(), muscleGroup = new THREE.Group(), boneGroup = new THREE.Group(), markings = new THREE.Group(), furGroup = new THREE.Group(), faceGroup = new THREE.Group(), referenceGroup = new THREE.Group(), markerGroup = new THREE.Group(), mcsMarkerGroup = new THREE.Group();
+    dog.add(referenceGroup, boneGroup, muscleGroup, fatGroup, skinGroup, markings, furGroup, faceGroup, markerGroup, mcsMarkerGroup);
+
+    const skinMat = new THREE.MeshStandardMaterial({color:coat, roughness:.72});
+    const markMat = new THREE.MeshStandardMaterial({color:whiteCoat, roughness:.82});
+    const noseMat = new THREE.MeshStandardMaterial({color:coat.clone().lerp(color(&#x27;--background&#x27;),.35), roughness:.38});
+    const furDarkMat = new THREE.MeshStandardMaterial({color:coat.clone().lerp(bg,.08), roughness:1, side:THREE.DoubleSide});
+    const furWhiteMat = new THREE.MeshStandardMaterial({color:whiteCoat, roughness:1, side:THREE.DoubleSide});
+    const fatMat = new THREE.MeshStandardMaterial({color:color(&#x27;--orange&#x27;), roughness:.55, transparent:true, opacity:.48, depthWrite:false});
+    const muscleMat = new THREE.MeshStandardMaterial({color:color(&#x27;--red&#x27;), roughness:.62});
+    const boneMat = new THREE.MeshStandardMaterial({color:color(&#x27;--yellow&#x27;), roughness:.75});
+    const referenceMat = new THREE.MeshBasicMaterial({color:color(&#x27;--blue&#x27;), wireframe:true, transparent:true, opacity:.48, depthTest:false});
+    const markerBase = color(&#x27;--green&#x27;), markerSelected = color(&#x27;--yellow&#x27;);
+    const mcsMarkerBase = color(&#x27;--purple&#x27;);
+    const sphereGeo = new THREE.SphereGeometry(1, 28, 18);
+    const tuftGeo = new THREE.ConeGeometry(.032,.19,5);
+
+    const parts = [];
+    function ellipsoid(group, name, pos, scale, material, region=&#x27;fixed&#x27;) {
+      const m = new THREE.Mesh(sphereGeo, material);
+      m.name=name; m.position.set(...pos); m.scale.set(...scale); m.userData={basePos:[...pos],baseScale:[...scale],region};
+      m.castShadow=true; m.receiveShadow=true; group.add(m); parts.push(m); return m;
+    }
+    function bone(a,b,r,material=boneMat,group=boneGroup) {
+      const A=new THREE.Vector3(...a), B=new THREE.Vector3(...b), d=B.clone().sub(A);
+      const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),10),material);
+      m.position.copy(A.clone().add(B).multiplyScalar(.5)); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize()); group.add(m); return m;
+    }
+    function tuft(group, pos, direction, length, material=furDarkMat, width=1) {
+      const m=new THREE.Mesh(tuftGeo,material), d=new THREE.Vector3(...direction).normalize();
+      m.position.set(...pos); m.scale.set(width,length/.19,width); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d); group.add(m); return m;
+    }
+    function regionGroup(name,pos,region){
+      const g=new THREE.Group(); g.name=name; g.position.set(...pos); g.userData={basePos:[...pos],baseScale:[1,1,1],region}; furGroup.add(g); return g;
+    }
+
+    ellipsoid(skinGroup,&#x27;thorax&#x27;,[.10,0,1.05],[.72,.40,.48],skinMat,&#x27;thorax&#x27;);
+    ellipsoid(skinGroup,&#x27;abdomen&#x27;,[-.55,0,.99],[.55,.31,.34],skinMat,&#x27;abdomen&#x27;);
+    ellipsoid(skinGroup,&#x27;pelvis&#x27;,[-.98,0,1.00],[.42,.34,.38],skinMat,&#x27;pelvis&#x27;);
+    ellipsoid(skinGroup,&#x27;neck&#x27;,[.72,0,1.30],[.48,.31,.43],skinMat,&#x27;neck&#x27;);
+    ellipsoid(skinGroup,&#x27;head&#x27;,[1.16,0,1.48],[.43,.29,.34],skinMat);
+    ellipsoid(skinGroup,&#x27;muzzle&#x27;,[1.51,0,1.41],[.30,.19,.18],skinMat);
+    ellipsoid(skinGroup,&#x27;nose&#x27;,[1.78,0,1.42],[.10,.16,.13],noseMat);
+    ellipsoid(skinGroup,&#x27;earL&#x27;,[1.08,.20,1.78],[.18,.09,.27],skinMat);
+    ellipsoid(skinGroup,&#x27;earR&#x27;,[1.08,-.20,1.78],[.18,.09,.27],skinMat);
+    ellipsoid(skinGroup,&#x27;tailBase&#x27;,[-1.27,0,1.05],[.34,.18,.18],skinMat,&#x27;tail&#x27;);
+    for (const side of [-1,1]) {
+      ellipsoid(skinGroup,&#x27;frontUpper&#x27;,[.45,.29*side,.76],[.17,.17,.42],skinMat,&#x27;limb&#x27;);
+      ellipsoid(skinGroup,&#x27;frontLower&#x27;,[.48,.29*side,.37],[.105,.11,.36],skinMat);
+      ellipsoid(skinGroup,&#x27;frontPaw&#x27;,[.60,.29*side,.08],[.23,.15,.09],skinMat);
+      ellipsoid(skinGroup,&#x27;rearThigh&#x27;,[-.92,.27*side,.72],[.25,.22,.42],skinMat,&#x27;limb&#x27;);
+      ellipsoid(skinGroup,&#x27;rearHock&#x27;,[-.82,.27*side,.33],[.11,.12,.35],skinMat);
+      ellipsoid(skinGroup,&#x27;rearPaw&#x27;,[-.67,.27*side,.08],[.24,.15,.09],skinMat);
+    }
+    let tp=[-1.2,0,1.05];
+    for(let i=0;i&lt;6;i++){ const np=[-1.5-.25*i,0,.94-.12*i]; bone(tp,np,.15-.014*i,skinMat,skinGroup); tp=np; }
+
+    ellipsoid(markings,&#x27;blaze&#x27;,[1.31,-.255,1.56],[.12,.035,.22],markMat);
+    ellipsoid(markings,&#x27;chest&#x27;,[.63,-.25,1.04],[.24,.055,.35],markMat,&#x27;neck&#x27;);
+    for(const side of [-1,1]) ellipsoid(markings,&#x27;sock&#x27;,[.51,.30*side,.25],[.115,.12,.17],markMat);
+
+    // Expressão e detalhes faciais reconhecíveis da raça.
+    const eyeMat=new THREE.MeshStandardMaterial({color:color(&#x27;--blue&#x27;),roughness:.25,metalness:.08});
+    const pupilMat=new THREE.MeshStandardMaterial({color:coat.clone().lerp(color(&#x27;--background&#x27;),.45),roughness:.2});
+    for(const side of [-1,1]){
+      ellipsoid(faceGroup,&#x27;eye&#x27;,[1.31,.265*side,1.57],[.064,.032,.054],eyeMat);
+      ellipsoid(faceGroup,&#x27;pupil&#x27;,[1.325,.292*side,1.57],[.027,.012,.029],pupilMat);
+      ellipsoid(faceGroup,&#x27;innerEar&#x27;,[1.08,.265*side,1.80],[.11,.022,.19],markMat);
+    }
+
+    // Pelagem dupla: ruff, ventre, cauda e franjas dos membros.
+    const ruff=regionGroup(&#x27;ruff&#x27;,[.67,0,1.28],&#x27;neck&#x27;);
+    for(let ring=0;ring&lt;2;ring++) for(let i=0;i&lt;24;i++){
+      const a=i/24*Math.PI*2, radial=.26+ring*.045;
+      tuft(ruff,[-.10+ring*.13,Math.cos(a)*radial,Math.sin(a)*(.30+ring*.03)],[.10,Math.cos(a),Math.sin(a)-.18],.17+ring*.04,i%5===0?furWhiteMat:furDarkMat,1.0+ring*.12);
+    }
+    const bellyFur=regionGroup(&#x27;bellyFeathering&#x27;,[-.42,0,.80],&#x27;abdomen&#x27;);
+    for(let i=0;i&lt;22;i++){
+      const x=-.42+i*.045, side=i%2?-1:1;
+      tuft(bellyFur,[x,.19*side,-.03-Math.sin(i*.8)*.025],[.08,.42*side,-1],.16+(i%4)*.012,i%7===0?furWhiteMat:furDarkMat,.9);
+    }
+    const tailFur=regionGroup(&#x27;tailFeathering&#x27;,[-1.26,0,1.04],&#x27;tail&#x27;);
+    for(let i=0;i&lt;34;i++){
+      const t=i/33, side=i%2?-1:1, white=i&gt;27;
+      tuft(tailFur,[-.10-1.42*t,.08*side,.02-.60*t],[-.30,.62*side,-.75],.20+.13*(1-t),white?furWhiteMat:furDarkMat,1.1);
+    }
+    const legFur=regionGroup(&#x27;legFeathering&#x27;,[0,0,0],&#x27;limb&#x27;);
+    for(const side of [-1,1]) for(const rear of [false,true]) for(let i=0;i&lt;8;i++){
+      const x=rear?-.91:.45, z=.72-i*.055;
+      tuft(legFur,[x,.33*side,z],[0,.55*side,-.82],.14+(i%3)*.012,i&gt;5?furWhiteMat:furDarkMat,.82);
+    }
+
+    // Contorno comparativo fixo do BCS 5.
+    skinGroup.children.forEach(m=&gt;{
+      if(!m.isMesh) return;
+      const c=new THREE.Mesh(m.geometry,referenceMat);
+      c.position.copy(m.position); c.rotation.copy(m.rotation); c.quaternion.copy(m.quaternion); c.scale.copy(m.scale);
+      if(m.userData.baseScale) c.userData={basePos:[...m.userData.basePos],baseScale:[...m.userData.baseScale],region:m.userData.region};
+      referenceGroup.add(c);
+    });
+    referenceGroup.visible=false;
+
+    // Marcos clicáveis usados na avaliação clínica visual e por palpação.
+    const markerData={
+      ribs:{label:&#x27;Costelas&#x27;,region:&#x27;thorax&#x27;,pos:[.08,-.46,1.15]},
+      waist:{label:&#x27;Cintura dorsal&#x27;,region:&#x27;abdomen&#x27;,pos:[-.58,-.37,1.16]},
+      tuck:{label:&#x27;Retração abdominal&#x27;,region:&#x27;abdomen&#x27;,pos:[-.43,-.29,.69]},
+      lumbar:{label:&#x27;Região lombar&#x27;,region:&#x27;pelvis&#x27;,pos:[-.64,-.24,1.34]},
+      tailbase:{label:&#x27;Base da cauda&#x27;,region:&#x27;tail&#x27;,pos:[-1.18,-.30,1.11]}
+    };
+    const markerGeo=new THREE.SphereGeometry(.075,18,12);
+    Object.entries(markerData).forEach(([key,d])=&gt;{
+      const mat=new THREE.MeshStandardMaterial({color:markerBase,emissive:markerBase,emissiveIntensity:.25,roughness:.35});
+      const m=new THREE.Mesh(markerGeo,mat); m.position.set(...d.pos); m.userData={key,kind:&#x27;bcs&#x27;,region:d.region,basePos:[...d.pos]}; markerGroup.add(m);
+    });
+    const mcsMarkerData={
+      temporal:{label:&#x27;Músculos temporais&#x27;,pos:[1.16,-.30,1.66]},
+      scapular:{label:&#x27;Escápulas&#x27;,pos:[.48,-.36,1.26]},
+      spine:{label:&#x27;Musculatura epaxial&#x27;,pos:[-.32,-.31,1.35]},
+      pelvis:{label:&#x27;Pelve&#x27;,pos:[-.96,-.35,1.19]}
+    };
+    Object.entries(mcsMarkerData).forEach(([key,d])=&gt;{
+      const mat=new THREE.MeshStandardMaterial({color:mcsMarkerBase,emissive:mcsMarkerBase,emissiveIntensity:.25,roughness:.35});
+      const m=new THREE.Mesh(markerGeo,mat); m.position.set(...d.pos); m.userData={key,kind:&#x27;mcs&#x27;,basePos:[...d.pos]}; mcsMarkerGroup.add(m);
+    });
+    mcsMarkerGroup.visible=false;
+
+    const fatSpecs=[[&#x27;ribs&#x27;,[.08,0,1.05],[.69,.38,.45],&#x27;thorax&#x27;],[&#x27;lumbar&#x27;,[-.52,0,1.20],[.48,.29,.18],&#x27;pelvis&#x27;],[&#x27;abdomen&#x27;,[-.45,0,.82],[.43,.27,.19],&#x27;abdomen&#x27;],[&#x27;tail&#x27;,[-1.15,0,1.08],[.27,.25,.23],&#x27;tail&#x27;],[&#x27;sternum&#x27;,[.15,0,.72],[.38,.25,.14],&#x27;abdomen&#x27;]];
+    fatSpecs.forEach(x=&gt;ellipsoid(fatGroup,x[0],x[1],x[2],fatMat,x[3]));
+
+    const muscleSpecs=[[&#x27;latissimus&#x27;,[-.10,0,1.15],[.66,.31,.28],&#x27;spine&#x27;],[&#x27;pectorals&#x27;,[.35,0,.87],[.42,.30,.25],&#x27;scapular&#x27;],[&#x27;abdominal&#x27;,[-.55,0,.91],[.48,.26,.25],&#x27;spine&#x27;],[&#x27;gluteal&#x27;,[-.98,0,1.05],[.36,.31,.31],&#x27;pelvis&#x27;],[&#x27;neck&#x27;,[.73,0,1.35],[.43,.27,.34],&#x27;scapular&#x27;],[&#x27;temporalL&#x27;,[1.13,.20,1.61],[.20,.09,.16],&#x27;temporal&#x27;],[&#x27;temporalR&#x27;,[1.13,-.20,1.61],[.20,.09,.16],&#x27;temporal&#x27;]];
+    muscleSpecs.forEach(x=&gt;ellipsoid(muscleGroup,x[0],x[1],x[2],muscleMat,x[3]));
+    for(const side of [-1,1]){
+      ellipsoid(muscleGroup,&#x27;deltoid&#x27;,[.45,.27*side,.89],[.19,.14,.28],muscleMat,&#x27;scapular&#x27;);
+      ellipsoid(muscleGroup,&#x27;quadriceps&#x27;,[-.91,.27*side,.70],[.23,.18,.36],muscleMat,&#x27;pelvis&#x27;);
+    }
+
+    const spine=[]; for(let i=0;i&lt;13;i++) spine.push([-1.15+i*.16,0,1.12+.13*Math.sin(i/8*Math.PI)]);
+    spine.forEach((p,i)=&gt;{ellipsoid(boneGroup,&#x27;vertebra&#x27;,p,[.06,.06,.06],boneMat); if(i) bone(spine[i-1],p,.032);});
+    ellipsoid(boneGroup,&#x27;skull&#x27;,[1.18,0,1.50],[.34,.23,.27],boneMat);
+    ellipsoid(boneGroup,&#x27;pelvis&#x27;,[-1.02,0,1.03],[.30,.25,.23],boneMat);
+    for(let i=0;i&lt;7;i++){
+      const x=-.35+i*.138, z=1.14+.10*Math.cos((x+.1)*2.2), w=.30+.08*Math.cos(i/6*Math.PI);
+      for(const s of [-1,1]){bone([x,0,z],[x,s*w,z-.25],.025); bone([x,s*w,z-.25],[x,s*(w+.02),z-.43],.022);}
+    }
+    for(const s of [-1,1]){
+      const y=.24*s; bone([.36,y,1.14],[.48,y,.86],.05); bone([.48,y,.86],[.45,y,.57],.045); bone([.45,y,.57],[.50,y,.17],.034);
+      bone([-1.00,y,1.00],[-.83,y,.66],.052); bone([-.83,y,.66],[-.82,y,.25],.038);
+    }
+
+    function regional(region, lean, obese) {
+      const map={thorax:[.03,-.05,.34,-.16,.20,-.08,0,0],abdomen:[.06,-.08,.62,-.30,.58,-.35,-.20,.12],pelvis:[.08,-.04,.48,-.14,.28,-.10,-.05,.02],tail:[.18,-.05,.70,-.12,.62,-.12,-.04,.01],neck:[.04,-.03,.22,-.07,.20,-.06,-.02,.01],limb:[.02,-.03,.13,-.08,.12,-.06,-.01,.01],fixed:[0,0,.02,-.02,.02,-.02,0,0]};
+      const v=map[region]||map.fixed;
+      return [1+v[0]*obese+v[1]*lean,1+v[2]*obese+v[3]*lean,1+v[4]*obese+v[5]*lean,v[6]*obese+v[7]*lean];
+    }
+    let currentReference=5;
+    function updateComparison(){
+      const delta=currentScore-currentReference, magnitude=Math.abs(delta);
+      let text;
+      if(delta===0) text=`BCS atual ${currentScore} e referência ${currentReference} coincidem.`;
+      else if(delta&gt;0) text=`BCS atual ${currentScore} versus ${currentReference}: maior cobertura costal e volume abdominal/lombar, cintura e retração abdominal menos marcadas.`;
+      else text=`BCS atual ${currentScore} versus ${currentReference}: menor cobertura costal e volume abdominal/lombar, cintura e retração abdominal mais marcadas.`;
+      const degree=magnitude===0?&#x27;&#x27;:magnitude===1?&#x27; Diferença sutil entre escores adjacentes.&#x27;:magnitude&lt;=3?&#x27; Diferença regional moderada.&#x27;:&#x27; Diferença estrutural ampla; compare também as camadas internas.&#x27;;
+      root.querySelector(&#x27;#comparison-detail&#x27;).innerHTML=`&lt;strong&gt;Comparação:&lt;/strong&gt; ${text}${degree}`;
+    }
+    function updateReference(score){
+      currentReference=Number(score);
+      const lean=Math.max(0,(5-currentReference)/4), obese=Math.max(0,(currentReference-5)/4);
+      referenceGroup.children.forEach(m=&gt;{
+        if(!m.userData.baseScale) return;
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), b=m.userData.baseScale, p=m.userData.basePos;
+        m.scale.set(b[0]*sx,b[1]*sy,b[2]*sz); m.position.set(p[0],p[1],p[2]+dz);
+      });
+      updateComparison();
+    }
+    const descriptions=[&#x27;Costelas e proeminências ósseas muito evidentes; cobertura adiposa mínima.&#x27;,&#x27;Costelas facilmente visíveis; cintura e retração abdominal intensas.&#x27;,&#x27;Costelas facilmente palpáveis e visíveis; cintura marcada.&#x27;,&#x27;Costelas palpáveis com pouca cobertura; cintura evidente.&#x27;,&#x27;Costelas palpáveis, cintura visível e retração abdominal presente.&#x27;,&#x27;Costelas palpáveis com leve excesso de cobertura; cintura menos marcada.&#x27;,&#x27;Costelas difíceis de palpar; depósitos lombares e na base da cauda.&#x27;,&#x27;Cintura quase ausente; abdômen arredondado e depósitos acentuados.&#x27;,&#x27;Depósitos maciços; cintura ausente e distensão abdominal evidente.&#x27;];
+    const labels=[&#x27;muito magro&#x27;,&#x27;muito magro&#x27;,&#x27;magro&#x27;,&#x27;ideal baixo&#x27;,&#x27;ideal&#x27;,&#x27;sobrepeso&#x27;,&#x27;sobrepeso&#x27;,&#x27;obeso&#x27;,&#x27;obesidade acentuada&#x27;];
+    const clinicalFindings={
+      ribs:[&#x27;Muito evidentes e quase sem cobertura adiposa.&#x27;,&#x27;Palpáveis com mínima cobertura; podem permanecer discretamente visíveis.&#x27;,&#x27;Palpáveis com dificuldade crescente devido à cobertura adiposa.&#x27;,&#x27;Difíceis ou impossíveis de palpar sob depósitos espessos.&#x27;],
+      waist:[&#x27;Cintura muito acentuada em vista dorsal.&#x27;,&#x27;Cintura evidente e proporcional.&#x27;,&#x27;Cintura pouco marcada ou quase ausente.&#x27;,&#x27;Cintura ausente; tronco amplamente arredondado.&#x27;],
+      tuck:[&#x27;Retração abdominal intensa.&#x27;,&#x27;Retração abdominal claramente presente.&#x27;,&#x27;Retração reduzida e abdômen progressivamente arredondado.&#x27;,&#x27;Retração ausente, com possível distensão ventral.&#x27;],
+      lumbar:[&#x27;Vértebras lombares evidentes, com cobertura mínima.&#x27;,&#x27;Contorno lombar suave, sem depósitos evidentes.&#x27;,&#x27;Depósitos de gordura progressivos sobre a região lombar.&#x27;,&#x27;Depósitos amplos, podendo formar uma superfície dorsal alargada.&#x27;],
+      tailbase:[&#x27;Estruturas ósseas facilmente identificáveis.&#x27;,&#x27;Base da cauda sem depósito adiposo relevante.&#x27;,&#x27;Depósito adiposo perceptível e progressivo.&#x27;,&#x27;Depósito adiposo marcado ao redor da base da cauda.&#x27;]
+    };
+    let currentScore=5, selectedMarker=null;
+    const scoreBand=s=&gt;s&lt;=3?0:s&lt;=5?1:s&lt;=7?2:3;
+    function showClinical(key){
+      selectedMarker=key;
+      markerGroup.children.forEach(m=&gt;{
+        const active=m.userData.key===key;
+        m.material.color.copy(active?markerSelected:markerBase); m.material.emissive.copy(active?markerSelected:markerBase); m.scale.setScalar(active?1.35:1);
+      });
+      const d=markerData[key];
+      root.querySelector(&#x27;#clinical-detail&#x27;).innerHTML=`&lt;strong&gt;${d.label} · BCS ${currentScore}:&lt;/strong&gt; ${clinicalFindings[key][scoreBand(currentScore)]}`;
+    }
+    const mcsLabels=[&#x27;normal&#x27;,&#x27;perda leve&#x27;,&#x27;perda moderada&#x27;,&#x27;perda severa&#x27;];
+    const mcsDescriptions=[&#x27;Massa muscular preservada nas têmporas, escápulas, coluna e pelve.&#x27;,&#x27;Redução discreta de volume muscular; contornos ósseos começam a ficar perceptíveis.&#x27;,&#x27;Redução evidente de volume muscular em duas ou mais regiões.&#x27;,&#x27;Atrofia acentuada, com proeminências ósseas marcadas.&#x27;];
+    const mcsFindings={
+      temporal:[&#x27;Volume temporal preservado.&#x27;,&#x27;Depressão temporal discreta.&#x27;,&#x27;Depressão temporal evidente.&#x27;,&#x27;Atrofia temporal profunda.&#x27;],
+      scapular:[&#x27;Escápulas cobertas por musculatura adequada.&#x27;,&#x27;Contorno escapular discretamente perceptível.&#x27;,&#x27;Escápulas facilmente identificáveis.&#x27;,&#x27;Escápulas muito proeminentes.&#x27;],
+      spine:[&#x27;Musculatura epaxial preenche ambos os lados da coluna.&#x27;,&#x27;Redução discreta ao longo da coluna.&#x27;,&#x27;Sulcos evidentes junto às vértebras.&#x27;,&#x27;Vértebras muito proeminentes por perda muscular.&#x27;],
+      pelvis:[&#x27;Pelve coberta por massa muscular adequada.&#x27;,&#x27;Contorno pélvico discretamente aumentado.&#x27;,&#x27;Pelve claramente proeminente.&#x27;,&#x27;Atrofia glútea severa e pelve muito evidente.&#x27;]
+    };
+    let currentMCS=0, selectedMCS=null;
+    function showMCS(key){
+      selectedMCS=key;
+      mcsMarkerGroup.children.forEach(m=&gt;{
+        const active=m.userData.key===key;
+        m.material.color.copy(active?markerSelected:mcsMarkerBase); m.material.emissive.copy(active?markerSelected:mcsMarkerBase); m.scale.setScalar(active?1.35:1);
+      });
+      root.querySelector(&#x27;#clinical-detail&#x27;).innerHTML=`&lt;strong&gt;${mcsMarkerData[key].label} · MCS ${mcsLabels[currentMCS]}:&lt;/strong&gt; ${mcsFindings[key][currentMCS]}`;
+    }
+    function skinMCSRegion(name){
+      const n=name.toLowerCase();
+      if(n.includes(&#x27;head&#x27;)) return [&#x27;temporal&#x27;,.20];
+      if(n.includes(&#x27;neck&#x27;)||n.includes(&#x27;thorax&#x27;)||n.includes(&#x27;frontupper&#x27;)) return [&#x27;scapular&#x27;,.12];
+      if(n.includes(&#x27;abdomen&#x27;)) return [&#x27;spine&#x27;,.12];
+      if(n.includes(&#x27;pelvis&#x27;)||n.includes(&#x27;rearthigh&#x27;)) return [&#x27;pelvis&#x27;,.16];
+      return [&#x27;fixed&#x27;,0];
+    }
+    const normalizeMorph=name=&gt;String(name).toUpperCase().replace(/[^A-Z0-9]/g,&#x27;&#x27;);
+    const bcsLowAliases=[&#x27;BCSLEAN&#x27;,&#x27;BCSLOW&#x27;,&#x27;BCSUNDERWEIGHT&#x27;];
+    const bcsHighAliases=[&#x27;BCSOBESE&#x27;,&#x27;BCSHIGH&#x27;,&#x27;BCSOVERWEIGHT&#x27;];
+    const mcsAliases=[[],[&#x27;MCSMILD&#x27;,&#x27;MCSLEVE&#x27;],[&#x27;MCSMODERATE&#x27;,&#x27;MCSMODERADA&#x27;],[&#x27;MCSSEVERE&#x27;,&#x27;MCSSEVERA&#x27;]];
+    function morphIndex(mesh,aliases){
+      if(!mesh.morphTargetDictionary) return -1;
+      const wanted=new Set(aliases.map(normalizeMorph));
+      for(const [name,index] of Object.entries(mesh.morphTargetDictionary)) if(wanted.has(normalizeMorph(name))) return index;
+      return -1;
+    }
+    function managedMorphIndices(mesh){
+      if(!mesh.morphTargetDictionary) return [];
+      return Object.entries(mesh.morphTargetDictionary).filter(([name])=&gt;{
+        const n=normalizeMorph(name);
+        return /^BCS[1-9]$/.test(n)||bcsLowAliases.includes(n)||bcsHighAliases.includes(n)||mcsAliases.flat().includes(n);
+      }).map(([,index])=&gt;index);
+    }
+    function applyImportedMorphs(){
+      if(!importedRoot) return;
+      importedMeshes.forEach(mesh=&gt;{
+        if(!mesh.morphTargetInfluences) return;
+        managedMorphIndices(mesh).forEach(index=&gt;mesh.morphTargetInfluences[index]=0);
+        const exact=morphIndex(mesh,[`BCS${currentScore}`]);
+        if(exact&gt;=0) mesh.morphTargetInfluences[exact]=1;
+        else if(currentScore&lt;5){
+          const low=morphIndex(mesh,bcsLowAliases);
+          if(low&gt;=0) mesh.morphTargetInfluences[low]=(5-currentScore)/4;
+        }else if(currentScore&gt;5){
+          const high=morphIndex(mesh,bcsHighAliases);
+          if(high&gt;=0) mesh.morphTargetInfluences[high]=(currentScore-5)/4;
+        }
+        if(currentMCS&gt;0){
+          const mcs=morphIndex(mesh,mcsAliases[currentMCS]);
+          if(mcs&gt;=0) mesh.morphTargetInfluences[mcs]=1;
+        }
+      });
+    }
+    function updateAssetStatus(){
+      if(!importedStats) return;
+      const {meshes,vertices,morphNames,bcsCompatible,mcsCompatible}=importedStats;
+      const compatibility=bcsCompatible||mcsCompatible
+        ? `Compatibilidade: ${bcsCompatible?&#x27;BCS&#x27;:&#x27;BCS ausente&#x27;} · ${mcsCompatible?&#x27;MCS&#x27;:&#x27;MCS ausente&#x27;}.`
+        : &#x27;Nenhum morph target clínico reconhecido: o arquivo pode ser visualizado, mas BCS/MCS não deformam a malha.&#x27;;
+      root.querySelector(&#x27;#asset-status&#x27;).textContent=`GLB local: ${meshes} malha(s), ${vertices.toLocaleString(&#x27;pt-BR&#x27;)} vértices, ${morphNames.length} morph target(s). ${compatibility}`;
+    }
+    let auditState={technicalComplete:false,directComplete:false};
+    function updateQualificationGate(){
+      const reviewed=root.querySelector(&#x27;#anatomy-reviewed&#x27;).checked;
+      const documented=root.querySelector(&#x27;#reference-documented&#x27;).checked;
+      const button=root.querySelector(&#x27;#qualify-asset&#x27;);
+      button.disabled=!(auditState.directComplete&amp;&amp;reviewed&amp;&amp;documented);
+      if(!auditState.directComplete) root.querySelector(&#x27;#qualification-status&#x27;).textContent=&#x27;Qualificação bloqueada: são exigidos alvos diretos BCS 1–9 e MCS leve, moderada e severa.&#x27;;
+      else if(!reviewed||!documented) root.querySelector(&#x27;#qualification-status&#x27;).textContent=&#x27;Cobertura direta completa; confirme revisão veterinária e documentação das referências.&#x27;;
+      else root.querySelector(&#x27;#qualification-status&#x27;).textContent=&#x27;Critérios internos completos. A validação externa continua obrigatória antes de qualquer uso clínico.&#x27;;
+    }
+    function runMorphAudit(){
+      if(!importedStats) return;
+      const names=new Set(importedStats.morphNames.map(normalizeMorph));
+      const hasAny=aliases=&gt;aliases.some(alias=&gt;names.has(normalizeMorph(alias)));
+      const lean=hasAny(bcsLowAliases), high=hasAny(bcsHighAliases);
+      const bcs=Array.from({length:9},(_,i)=&gt;{
+        const score=i+1;
+        if(names.has(`BCS${score}`)) return &#x27;Direto&#x27;;
+        if(score===5) return &#x27;Base&#x27;;
+        if(score&lt;5&amp;&amp;lean||score&gt;5&amp;&amp;high) return &#x27;Interpolado&#x27;;
+        return &#x27;Ausente&#x27;;
+      });
+      const mcs=[&#x27;Base&#x27;,...mcsAliases.slice(1).map(aliases=&gt;hasAny(aliases)?&#x27;Direto&#x27;:&#x27;Ausente&#x27;)];
+      root.querySelector(&#x27;#bcs-audit-row&#x27;).innerHTML=&#x27;&lt;th&gt;BCS&lt;/th&gt;&#x27;+bcs.map(value=&gt;`&lt;td&gt;${value}&lt;/td&gt;`).join(&#x27;&#x27;);
+      root.querySelector(&#x27;#mcs-audit-row&#x27;).innerHTML=&#x27;&lt;th&gt;MCS&lt;/th&gt;&#x27;+mcs.map(value=&gt;`&lt;td&gt;${value}&lt;/td&gt;`).join(&#x27;&#x27;);
+      const technicalComplete=bcs.every(value=&gt;value!==&#x27;Ausente&#x27;)&amp;&amp;mcs.every(value=&gt;value!==&#x27;Ausente&#x27;);
+      const directComplete=bcs.every(value=&gt;value===&#x27;Direto&#x27;)&amp;&amp;mcs.slice(1).every(value=&gt;value===&#x27;Direto&#x27;);
+      auditState={technicalComplete,directComplete};
+      root.querySelector(&#x27;#audit-badge&#x27;).textContent=directComplete?&#x27;Cobertura direta completa&#x27;:technicalComplete?&#x27;Cobertura por interpolação&#x27;:&#x27;Cobertura incompleta&#x27;;
+      root.querySelector(&#x27;#audit-detail&#x27;).textContent=directComplete
+        ? &#x27;Todos os estados possuem alvos diretos. Ainda é necessário demonstrar fidelidade anatômica, repetibilidade e concordância clínica.&#x27;
+        : technicalComplete
+          ? &#x27;A escala pode ser visualizada, mas um ou mais estados são derivados por interpolação. Isso não demonstra uma transição anatômica real.&#x27;
+          : &#x27;Existem estados sem deformação reconhecida. O modelo não representa toda a escala BCS/MCS.&#x27;;
+      root.querySelector(&#x27;#anatomy-reviewed&#x27;).disabled=false;
+      root.querySelector(&#x27;#reference-documented&#x27;).disabled=false;
+      updateQualificationGate();
+    }
+    function updateMCS(level){
+      currentMCS=Number(level); const severity=currentMCS/3;
+      const factors={temporal:1,scapular:.78,spine:.90,pelvis:1,fixed:0};
+      muscleGroup.children.forEach(m=&gt;{
+        if(!m.userData.baseScale) return;
+        const b=m.userData.baseScale, f=factors[m.userData.region]??0;
+        m.scale.set(b[0]*(1-.22*severity*f),b[1]*(1-.58*severity*f),b[2]*(1-.42*severity*f));
+      });
+      skinGroup.children.forEach(m=&gt;{
+        if(!m.userData.baseScale||!m.userData.bcsScale) return;
+        const [region,effect]=skinMCSRegion(m.name), s=m.userData.bcsScale, f=factors[region]??0;
+        m.scale.set(s[0]*(1-effect*.25*severity*f),s[1]*(1-effect*severity*f),s[2]*(1-effect*.65*severity*f));
+      });
+      mcsMarkerGroup.children.forEach(m=&gt;{const p=m.userData.basePos; m.position.set(p[0],p[1]*(1-.12*severity),p[2]);});
+      root.querySelector(&#x27;#mcs-badge&#x27;).textContent=`MCS ${mcsLabels[currentMCS]}`;
+      root.querySelector(&#x27;#mcs-status&#x27;).textContent=mcsDescriptions[currentMCS];
+      applyImportedMorphs();
+      if(selectedMCS) showMCS(selectedMCS);
+    }
+
+    function updateBCS(score){
+      currentScore=score;
+      const lean=Math.max(0,(5-score)/4), obese=Math.max(0,(score-5)/4);
+      [...skinGroup.children,...fatGroup.children,...markings.children,...furGroup.children].forEach(m=&gt;{
+        if(!m.userData.baseScale) return;
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), b=m.userData.baseScale, p=m.userData.basePos;
+        m.scale.set(b[0]*sx,b[1]*sy,b[2]*sz); m.position.z=p[2]+dz;
+        if(m.parent===skinGroup) m.userData.bcsScale=[b[0]*sx,b[1]*sy,b[2]*sz];
+      });
+      markerGroup.children.forEach(m=&gt;{
+        const [sx,sy,sz,dz]=regional(m.userData.region,lean,obese), p=m.userData.basePos;
+        m.position.set(p[0]*sx,p[1]*sy,p[2]+dz); m.userData.surfaceScale=sz;
+      });
+      root.querySelector(&#x27;#bcs-value&#x27;).textContent=score;
+      root.querySelector(&#x27;#bcs-badge&#x27;).textContent=`BCS ${score} · ${labels[score-1]}`;
+      root.querySelector(&#x27;#bcs-status&#x27;).textContent=descriptions[score-1];
+      updateMCS(currentMCS);
+      applyImportedMorphs();
+      updateComparison();
+      if(selectedMarker) showClinical(selectedMarker);
+    }
+    function updateLayers(){
+      skinGroup.visible=root.querySelector(&#x27;#layer-skin&#x27;).checked;
+      markings.visible=skinGroup.visible;
+      faceGroup.visible=skinGroup.visible;
+      furGroup.visible=skinGroup.visible&amp;&amp;root.querySelector(&#x27;#layer-fur&#x27;).checked;
+      fatGroup.visible=root.querySelector(&#x27;#layer-fat&#x27;).checked;
+      muscleGroup.visible=root.querySelector(&#x27;#layer-muscle&#x27;).checked;
+      boneGroup.visible=root.querySelector(&#x27;#layer-bone&#x27;).checked;
+      markerGroup.visible=root.querySelector(&#x27;#clinical-points&#x27;).checked;
+      mcsMarkerGroup.visible=root.querySelector(&#x27;#mcs-points&#x27;).checked;
+      referenceGroup.visible=root.querySelector(&#x27;#bcs-reference&#x27;).checked;
+      const inner=fatGroup.visible||muscleGroup.visible||boneGroup.visible;
+      skinMat.transparent=inner; skinMat.opacity=inner?.16:1; skinMat.depthWrite=!inner;
+      markMat.transparent=inner; markMat.opacity=inner?.22:1; markMat.depthWrite=!inner;
+      furDarkMat.transparent=inner; furDarkMat.opacity=inner?.12:1; furDarkMat.depthWrite=!inner;
+      furWhiteMat.transparent=inner; furWhiteMat.opacity=inner?.16:1; furWhiteMat.depthWrite=!inner;
+    }
+    const gltfLoader=new GLTFLoader();
+    let selectedGLB=null;
+    function setImportedVisibility(useImported){
+      dog.visible=!useImported;
+      if(importedRoot) importedRoot.visible=useImported;
+      root.querySelector(&#x27;#asset-badge&#x27;).textContent=useImported?&#x27;Malha GLB local&#x27;:&#x27;Modelo procedural&#x27;;
+    }
+    function installImportedModel(gltf,file){
+      if(importedRoot) scene.remove(importedRoot);
+      importedRoot=new THREE.Group();
+      const model=gltf.scene||gltf.scenes?.[0];
+      if(!model) throw new Error(&#x27;O GLB não contém uma cena 3D.&#x27;);
+      importedRoot.add(model);
+      if(root.querySelector(&#x27;#glb-up-axis&#x27;).value===&#x27;y&#x27;) model.rotation.x=Math.PI/2;
+      importedMeshes=[];
+      let vertices=0;
+      const morphSet=new Set();
+      model.traverse(object=&gt;{
+        if(!object.isMesh) return;
+        importedMeshes.push(object);
+        vertices+=object.geometry?.attributes?.position?.count||0;
+        Object.keys(object.morphTargetDictionary||{}).forEach(name=&gt;morphSet.add(name));
+        object.castShadow=true; object.receiveShadow=true;
+      });
+      model.updateWorldMatrix(true,true);
+      let box=new THREE.Box3().setFromObject(model), size=box.getSize(new THREE.Vector3());
+      if(!Number.isFinite(size.z)||size.z&lt;=0) throw new Error(&#x27;Dimensões inválidas na malha.&#x27;);
+      const scale=2/size.z;
+      model.scale.multiplyScalar(scale);
+      model.updateWorldMatrix(true,true);
+      box=new THREE.Box3().setFromObject(model);
+      const center=box.getCenter(new THREE.Vector3());
+      model.position.x-=center.x; model.position.y-=center.y; model.position.z-=box.min.z;
+      const morphNames=[...morphSet], normalized=morphNames.map(normalizeMorph);
+      const bcsCompatible=normalized.some(n=&gt;/^BCS[1-9]$/.test(n)||bcsLowAliases.includes(n)||bcsHighAliases.includes(n));
+      const mcsCompatible=normalized.some(n=&gt;mcsAliases.flat().includes(n));
+      importedStats={meshes:importedMeshes.length,vertices,morphNames,bcsCompatible,mcsCompatible,fileName:file.name};
+      scene.add(importedRoot);
+      const toggle=root.querySelector(&#x27;#use-imported&#x27;); toggle.disabled=false; toggle.checked=true;
+      root.querySelector(&#x27;#run-morph-audit&#x27;).disabled=false;
+      root.querySelector(&#x27;#anatomy-reviewed&#x27;).checked=false;
+      root.querySelector(&#x27;#reference-documented&#x27;).checked=false;
+      root.querySelector(&#x27;#release-badge&#x27;).textContent=&#x27;Não qualificado&#x27;;
+      setImportedVisibility(true); applyImportedMorphs(); updateAssetStatus(); runMorphAudit();
+    }
+    async function loadSelectedGLB(){
+      if(!selectedGLB) return;
+      root.querySelector(&#x27;#asset-status&#x27;).textContent=&#x27;Lendo e validando a malha local…&#x27;;
+      try{
+        const buffer=await selectedGLB.arrayBuffer();
+        gltfLoader.parse(buffer,&#x27;&#x27;,gltf=&gt;installImportedModel(gltf,selectedGLB),error=&gt;{
+          root.querySelector(&#x27;#asset-status&#x27;).textContent=`Falha ao interpretar o GLB: ${error?.message||&#x27;arquivo incompatível&#x27;}.`;
+        });
+      }catch(error){
+        root.querySelector(&#x27;#asset-status&#x27;).textContent=`Falha ao ler o arquivo: ${error?.message||&#x27;erro desconhecido&#x27;}.`;
+      }
+    }
+    root.querySelector(&#x27;#glb-file&#x27;).addEventListener(&#x27;change&#x27;,event=&gt;{
+      selectedGLB=event.target.files?.[0]||null;
+      if(selectedGLB) loadSelectedGLB();
+    });
+    root.querySelector(&#x27;#glb-up-axis&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{if(selectedGLB) loadSelectedGLB();});
+    root.querySelector(&#x27;#use-imported&#x27;).addEventListener(&#x27;change&#x27;,event=&gt;setImportedVisibility(event.target.checked));
+    root.querySelector(&#x27;#run-morph-audit&#x27;).addEventListener(&#x27;click&#x27;,runMorphAudit);
+    root.querySelector(&#x27;#anatomy-reviewed&#x27;).addEventListener(&#x27;change&#x27;,updateQualificationGate);
+    root.querySelector(&#x27;#reference-documented&#x27;).addEventListener(&#x27;change&#x27;,updateQualificationGate);
+    root.querySelector(&#x27;#qualify-asset&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{
+      if(root.querySelector(&#x27;#qualify-asset&#x27;).disabled) return;
+      root.querySelector(&#x27;#release-badge&#x27;).textContent=&#x27;Qualificado para teste interno&#x27;;
+      root.querySelector(&#x27;#qualification-status&#x27;).textContent=&#x27;Qualificação interna registrada nesta sessão. Não equivale a validação clínica nem autorização de uso diagnóstico.&#x27;;
+    });
+    root.querySelector(&#x27;#bcs-score&#x27;).addEventListener(&#x27;input&#x27;,e=&gt;{clinicalFinalized=false;updateBCS(+e.target.value);});
+    root.querySelector(&#x27;#mcs-score&#x27;).addEventListener(&#x27;change&#x27;,e=&gt;{clinicalFinalized=false;updateMCS(+e.target.value);});
+    [&#x27;skin&#x27;,&#x27;fur&#x27;,&#x27;fat&#x27;,&#x27;muscle&#x27;,&#x27;bone&#x27;].forEach(n=&gt;root.querySelector(&#x27;#layer-&#x27;+n).addEventListener(&#x27;change&#x27;,updateLayers));
+    root.querySelector(&#x27;#clinical-points&#x27;).addEventListener(&#x27;change&#x27;,updateLayers);
+    root.querySelector(&#x27;#mcs-points&#x27;).addEventListener(&#x27;change&#x27;,updateLayers);
+    root.querySelector(&#x27;#bcs-reference&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{updateLayers();updateComparison();});
+    root.querySelector(&#x27;#reference-score&#x27;).addEventListener(&#x27;change&#x27;,e=&gt;updateReference(+e.target.value));
+    root.querySelectorAll(&#x27;[data-view]&#x27;).forEach(btn=&gt;btn.addEventListener(&#x27;click&#x27;,()=&gt;{
+      const v=btn.dataset.view, pos=v===&#x27;top&#x27;?[0,0,8]:v===&#x27;front&#x27;?[7,0,1.4]:[4.8,-7.2,2.8];
+      camera.position.set(...pos); controls.target.set(0,0,1); controls.update();
+    }));
+
+    const examSteps=[
+      {title:&#x27;1/5 · Vista dorsal&#x27;,instruction:&#x27;Observe a cintura atrás das costelas. A pelagem permanece visível primeiro; confirme depois por palpação.&#x27;,camera:[0,0,8],checks:{skin:true,fur:true,fat:false,muscle:false,bone:false,bcs:true,mcs:false},focus:&#x27;waist&#x27;},
+      {title:&#x27;2/5 · Vista lateral&#x27;,instruction:&#x27;Observe a retração abdominal sem confundi-la com postura, inspiração ou tensão do animal.&#x27;,camera:[4.8,-7.2,2.8],checks:{skin:true,fur:true,fat:false,muscle:false,bone:false,bcs:true,mcs:false},focus:&#x27;tuck&#x27;},
+      {title:&#x27;3/5 · Costelas por palpação&#x27;,instruction:&#x27;A pelagem é removida e gordura/esqueleto são expostos. Julgue a pressão necessária para identificar as costelas, não apenas sua visibilidade.&#x27;,camera:[3.9,-6.2,2.3],checks:{skin:true,fur:false,fat:true,muscle:false,bone:true,bcs:true,mcs:false},focus:&#x27;ribs&#x27;},
+      {title:&#x27;4/5 · Lombar e base da cauda&#x27;,instruction:&#x27;Procure depósitos regionais sobre a lombar e ao redor da base da cauda; eles podem divergir do volume abdominal.&#x27;,camera:[0,-6.8,3.6],checks:{skin:true,fur:false,fat:true,muscle:false,bone:false,bcs:true,mcs:false},focus:&#x27;lumbar&#x27;},
+      {title:&#x27;5/5 · Condição muscular&#x27;,instruction:&#x27;Avalie têmporas, escápulas, musculatura ao lado da coluna e pelve separadamente do BCS.&#x27;,camera:[4.5,-6.5,2.8],checks:{skin:true,fur:false,fat:false,muscle:true,bone:true,bcs:false,mcs:true},mcsFocus:&#x27;scapular&#x27;}
+    ];
+    const checkIds={skin:&#x27;layer-skin&#x27;,fur:&#x27;layer-fur&#x27;,fat:&#x27;layer-fat&#x27;,muscle:&#x27;layer-muscle&#x27;,bone:&#x27;layer-bone&#x27;,bcs:&#x27;clinical-points&#x27;,mcs:&#x27;mcs-points&#x27;,ref:&#x27;bcs-reference&#x27;};
+    let examIndex=-1, examSnapshot=null;
+    const activeExamSteps=()=&gt;currentMode===&#x27;veterinary&#x27;?examSteps:examSteps.slice(0,4);
+    function setExamCamera(pos){camera.position.set(...pos);controls.target.set(0,0,1);controls.update();}
+    function setExamStep(index){
+      const steps=activeExamSteps(); examIndex=Math.max(0,Math.min(steps.length-1,index)); const step=steps[examIndex];
+      Object.entries(step.checks).forEach(([key,value])=&gt;{root.querySelector(&#x27;#&#x27;+checkIds[key]).checked=value;});
+      updateLayers(); setExamCamera(step.camera);
+      if(step.focus) showClinical(step.focus); if(step.mcsFocus) showMCS(step.mcsFocus);
+      root.querySelector(&#x27;#exam-step&#x27;).textContent=step.title.replace(&#x27;/5&#x27;,&#x27;/&#x27;+steps.length);
+      root.querySelector(&#x27;#exam-instruction&#x27;).textContent=step.instruction;
+      root.querySelector(&#x27;#exam-prev&#x27;).disabled=examIndex===0;
+      root.querySelector(&#x27;#exam-next&#x27;).disabled=false;
+      root.querySelector(&#x27;#exam-next&#x27;).textContent=examIndex===steps.length-1?&#x27;Concluir&#x27;:&#x27;Próxima etapa&#x27;;
+      const progress=root.querySelector(&#x27;#exam-progress&#x27;), pct=(examIndex+1)/steps.length*100;
+      progress.setAttribute(&#x27;aria-valuemax&#x27;,String(steps.length));
+      progress.setAttribute(&#x27;aria-valuenow&#x27;,String(examIndex+1)); root.querySelector(&#x27;#exam-progress-bar&#x27;).style.width=pct+&#x27;%&#x27;;
+    }
+    function startExam(){
+      examSnapshot={camera:camera.position.toArray(),target:controls.target.toArray(),checks:{}};
+      Object.values(checkIds).forEach(id=&gt;examSnapshot.checks[id]=root.querySelector(&#x27;#&#x27;+id).checked);
+      root.querySelector(&#x27;#bcs-reference&#x27;).checked=false; root.querySelector(&#x27;#start-exam&#x27;).disabled=true; root.querySelector(&#x27;#exam-end&#x27;).disabled=false;
+      setExamStep(0);
+    }
+    function endExam(){
+      if(examSnapshot){Object.entries(examSnapshot.checks).forEach(([id,value])=&gt;root.querySelector(&#x27;#&#x27;+id).checked=value);camera.position.fromArray(examSnapshot.camera);controls.target.fromArray(examSnapshot.target);controls.update();}
+      examIndex=-1; updateLayers(); root.querySelector(&#x27;#start-exam&#x27;).disabled=false; root.querySelector(&#x27;#exam-prev&#x27;).disabled=true; root.querySelector(&#x27;#exam-next&#x27;).disabled=true; root.querySelector(&#x27;#exam-end&#x27;).disabled=true;
+      root.querySelector(&#x27;#exam-step&#x27;).textContent=&#x27;Modo livre&#x27;; root.querySelector(&#x27;#exam-instruction&#x27;).textContent=&#x27;Exame guiado concluído. Revise achados discrepantes antes de registrar o escore.&#x27;;
+      root.querySelector(&#x27;#exam-progress&#x27;).setAttribute(&#x27;aria-valuenow&#x27;,&#x27;0&#x27;); root.querySelector(&#x27;#exam-progress-bar&#x27;).style.width=&#x27;0%&#x27;;
+    }
+    root.querySelector(&#x27;#start-exam&#x27;).addEventListener(&#x27;click&#x27;,startExam);
+    root.querySelector(&#x27;#exam-prev&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setExamStep(examIndex-1));
+    root.querySelector(&#x27;#exam-next&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;examIndex===activeExamSteps().length-1?endExam():setExamStep(examIndex+1));
+    root.querySelector(&#x27;#exam-end&#x27;).addEventListener(&#x27;click&#x27;,endExam);
+
+    const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();
+    let pointerStart=null;
+    canvas.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{pointerStart=[e.clientX,e.clientY];});
+    canvas.addEventListener(&#x27;pointerup&#x27;,e=&gt;{
+      if(!pointerStart||Math.hypot(e.clientX-pointerStart[0],e.clientY-pointerStart[1])&gt;8||(!markerGroup.visible&amp;&amp;!mcsMarkerGroup.visible)) return;
+      const rect=canvas.getBoundingClientRect();
+      pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
+      raycaster.setFromCamera(pointer,camera);
+      const targets=[...(markerGroup.visible?markerGroup.children:[]),...(mcsMarkerGroup.visible?mcsMarkerGroup.children:[])];
+      const hit=raycaster.intersectObjects(targets,false)[0];
+      if(hit) hit.object.userData.kind===&#x27;mcs&#x27;?showMCS(hit.object.userData.key):showClinical(hit.object.userData.key);
+    });
+
+    const assessmentKeys=[&#x27;ribs&#x27;,&#x27;waist&#x27;,&#x27;tuck&#x27;,&#x27;lumbar&#x27;,&#x27;tailbase&#x27;];
+    const assessmentWeights={ribs:1.3,waist:1.05,tuck:1,lumbar:.9,tailbase:.9};
+    let estimatedScore=null;
+    function calculateAssessment(){
+      const values=assessmentKeys.map(key=&gt;({key,value:Number(root.querySelector(&#x27;#obs-&#x27;+key).value),weight:assessmentWeights[key]})).filter(x=&gt;x.value);
+      const result=root.querySelector(&#x27;#estimate-value&#x27;), detail=root.querySelector(&#x27;#estimate-detail&#x27;), apply=root.querySelector(&#x27;#apply-estimate&#x27;);
+      if(values.length&lt;3){
+        estimatedScore=null; result.textContent=&#x27;—&#x27;; detail.textContent=`${values.length}/5 achados — preencha pelo menos três.`; apply.disabled=true; updateClinicalReadiness(); return;
+      }
+      const totalWeight=values.reduce((s,x)=&gt;s+x.weight,0);
+      const mean=values.reduce((s,x)=&gt;s+x.value*x.weight,0)/totalWeight;
+      const variance=values.reduce((s,x)=&gt;s+x.weight*(x.value-mean)**2,0)/totalWeight;
+      const spread=Math.sqrt(variance);
+      estimatedScore=Math.max(1,Math.min(9,Math.round(mean)));
+      const margin=Math.max(1,Math.ceil(spread*.8));
+      const low=Math.max(1,estimatedScore-margin), high=Math.min(9,estimatedScore+margin);
+      const consistency=spread&lt;=.9?&#x27;alta&#x27;:spread&lt;=1.7?&#x27;moderada&#x27;:&#x27;baixa&#x27;;
+      result.textContent=`BCS ${estimatedScore}`;
+      detail.textContent=`Faixa plausível ${low}–${high} · concordância ${consistency}${values.length&lt;5?&#x27; · avaliação incompleta&#x27;:&#x27;&#x27;}.`;
+      apply.disabled=false;
+      updateClinicalReadiness();
+    }
+    function updateClinicalReadiness(){
+      const complete=assessmentKeys.every(key=&gt;root.querySelector(&#x27;#obs-&#x27;+key).value);
+      const palpated=root.querySelector(&#x27;#palpation-confirmed&#x27;).checked;
+      const button=root.querySelector(&#x27;#finalize-evaluation&#x27;), status=root.querySelector(&#x27;#clinical-readiness&#x27;);
+      if(currentMode===&#x27;triage&#x27;){
+        button.disabled=true; status.textContent=&#x27;Triagem orientativa: o resultado não constitui diagnóstico nem registro veterinário.&#x27;; return;
+      }
+      if(currentMode!==&#x27;veterinary&#x27;){
+        button.disabled=true; status.textContent=&#x27;Modo educacional: nenhuma conclusão clínica é produzida.&#x27;; return;
+      }
+      button.disabled=!(complete&amp;&amp;palpated);
+      status.textContent=!complete?&#x27;Registro clínico incompleto: preencha os cinco achados.&#x27;:!palpated?&#x27;Registro clínico incompleto: confirme a palpação.&#x27;:&#x27;Critérios mínimos completos; revise BCS, MCS e concordância antes de finalizar.&#x27;;
+    }
+    function updateMode(mode){
+      if(examIndex&gt;=0) endExam();
+      currentMode=mode; clinicalFinalized=false;
+      root.querySelectorAll(&#x27;[data-min-mode]&#x27;).forEach(el=&gt;{el.hidden=el.dataset.minMode===&#x27;veterinary&#x27;&amp;&amp;mode!==&#x27;veterinary&#x27;;});
+      root.querySelector(&#x27;#protocol-section&#x27;).hidden=mode===&#x27;education&#x27;;
+      root.querySelector(&#x27;#assessment-section&#x27;).hidden=mode===&#x27;education&#x27;;
+      const note=root.querySelector(&#x27;#mode-note&#x27;), disclaimer=root.querySelector(&#x27;#assessment-disclaimer&#x27;);
+      if(mode===&#x27;education&#x27;) note.innerHTML=&#x27;&lt;strong&gt;Educação:&lt;/strong&gt; exploração anatômica sem estimativa ou conclusão clínica.&#x27;;
+      if(mode===&#x27;triage&#x27;) note.innerHTML=&#x27;&lt;strong&gt;Triagem do tutor:&lt;/strong&gt; resultado orientativo para acompanhamento e decisão de procurar avaliação profissional; não é diagnóstico.&#x27;;
+      if(mode===&#x27;veterinary&#x27;) note.innerHTML=&#x27;&lt;strong&gt;Instrumento veterinário:&lt;/strong&gt; protocolo completo, BCS e MCS independentes e registro condicionado à palpação.&#x27;;
+      disclaimer.textContent=mode===&#x27;triage&#x27;?&#x27;A triagem não substitui exame físico. Pelagem, postura e percepção do tutor podem alterar o resultado.&#x27;:&#x27;Em cães de pelagem média ou longa, a inspeção isolada não substitui palpação nem avaliação veterinária.&#x27;;
+      if(mode!==&#x27;veterinary&#x27;){
+        [&#x27;layer-fat&#x27;,&#x27;layer-muscle&#x27;,&#x27;layer-bone&#x27;,&#x27;mcs-points&#x27;,&#x27;bcs-reference&#x27;].forEach(id=&gt;root.querySelector(&#x27;#&#x27;+id).checked=false);
+        root.querySelector(&#x27;#mcs-score&#x27;).value=&#x27;0&#x27;; updateMCS(0);
+      }
+      updateLayers(); updateClinicalReadiness();
+    }
+    assessmentKeys.forEach(key=&gt;{
+      const select=root.querySelector(&#x27;#obs-&#x27;+key);
+      select.addEventListener(&#x27;change&#x27;,()=&gt;{clinicalFinalized=false;calculateAssessment(); if(select.value) showClinical(key);});
+    });
+    root.querySelector(&#x27;#apply-estimate&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{
+      if(!estimatedScore) return;
+      clinicalFinalized=false;
+      const slider=root.querySelector(&#x27;#bcs-score&#x27;); slider.value=estimatedScore; updateBCS(estimatedScore);
+      if(currentMode===&#x27;veterinary&#x27;) root.querySelector(&#x27;#bcs-reference&#x27;).checked=true; updateLayers();
+    });
+    root.querySelector(&#x27;#palpation-confirmed&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{clinicalFinalized=false;updateClinicalReadiness();});
+    root.querySelector(&#x27;#finalize-evaluation&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{
+      if(root.querySelector(&#x27;#finalize-evaluation&#x27;).disabled) return;
+      clinicalFinalized=true;
+      root.querySelector(&#x27;#clinical-readiness&#x27;).textContent=`Registro estruturado revisado: BCS ${currentScore}, MCS ${mcsLabels[currentMCS]}. Persistência e assinatura profissional pertencem à implementação do app.`;
+    });
+    root.querySelector(&#x27;#app-mode&#x27;).addEventListener(&#x27;change&#x27;,e=&gt;updateMode(e.target.value));
+
+    const followups=[];
+    let activePatient=null;
+    const modeLabels={education:&#x27;Educação&#x27;,triage:&#x27;Triagem&#x27;,veterinary:&#x27;Veterinário&#x27;};
+    function todayInSaoPaulo(){
+      const parts=Object.fromEntries(new Intl.DateTimeFormat(&#x27;en&#x27;,{timeZone:&#x27;America/Sao_Paulo&#x27;,year:&#x27;numeric&#x27;,month:&#x27;2-digit&#x27;,day:&#x27;2-digit&#x27;}).formatToParts(new Date()).filter(p=&gt;p.type!==&#x27;literal&#x27;).map(p=&gt;[p.type,p.value]));
+      return `${parts.year}-${parts.month}-${parts.day}`;
+    }
+    root.querySelector(&#x27;#followup-date&#x27;).value=todayInSaoPaulo();
+    function signed(value,digits=0){
+      if(Math.abs(value)&lt;10**(-digits)/2) return &#x27;igual&#x27;;
+      return `${value&gt;0?&#x27;+&#x27;:&#x27;&#x27;}${value.toFixed(digits).replace(&#x27;.&#x27;,&#x27;,&#x27;)}`;
+    }
+    function configuredThreshold(id,fallback){
+      const value=Number(root.querySelector(id).value);
+      return Number.isFinite(value)&amp;&amp;value&gt;0?value:fallback;
+    }
+    function evaluateAlerts(){
+      const body=root.querySelector(&#x27;#alert-history&#x27;), badge=root.querySelector(&#x27;#alert-badge&#x27;), status=root.querySelector(&#x27;#alert-status&#x27;);
+      const weightLimit=configuredThreshold(&#x27;#weight-alert-threshold&#x27;,10);
+      const bcsLimit=configuredThreshold(&#x27;#bcs-alert-threshold&#x27;,2);
+      const mcsLimit=configuredThreshold(&#x27;#mcs-alert-threshold&#x27;,1);
+      body.replaceChildren();
+      if(followups.length&lt;2){
+        const row=document.createElement(&#x27;tr&#x27;), cell=document.createElement(&#x27;td&#x27;); cell.colSpan=4; cell.textContent=&#x27;Registre pelo menos duas avaliações.&#x27;; row.appendChild(cell); body.appendChild(row);
+        badge.textContent=&#x27;Sem pares de avaliações&#x27;;
+        status.textContent=&#x27;Os limites são parâmetros de protótipo configuráveis; não representam consenso clínico nem urgência médica.&#x27;;
+        return;
+      }
+      let reviewCount=0;
+      for(let index=1;index&lt;followups.length;index++){
+        const previous=followups[index-1], current=followups[index];
+        const weightPct=(current.weight-previous.weight)/previous.weight*100;
+        const bcsDelta=current.bcs-previous.bcs, mcsDelta=current.mcs-previous.mcs;
+        const reasons=[];
+        if(Math.abs(weightPct)&gt;=weightLimit) reasons.push(`peso ${signed(weightPct,1)}% (limite ±${weightLimit}%)`);
+        if(Math.abs(bcsDelta)&gt;=bcsLimit) reasons.push(`BCS ${signed(bcsDelta)} (limite ±${bcsLimit})`);
+        if(mcsDelta&gt;=mcsLimit) reasons.push(`MCS piorou ${signed(mcsDelta)} (limite +${mcsLimit})`);
+        const sourceChanged=previous.mode!==current.mode;
+        if(sourceChanged) reasons.push(`origem ${modeLabels[previous.mode]} → ${modeLabels[current.mode]}`);
+        const needsReview=reasons.length&gt;0; if(needsReview) reviewCount++;
+        const row=document.createElement(&#x27;tr&#x27;);
+        const start=new Date(previous.date+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;pt-BR&#x27;);
+        const end=new Date(current.date+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;pt-BR&#x27;);
+        const cells=[
+          `${start} → ${end}`,
+          needsReview?&#x27;Revisar&#x27;:&#x27;Nenhuma regra acionada&#x27;,
+          needsReview?reasons.join(&#x27; · &#x27;):&#x27;Abaixo dos limites configurados&#x27;,
+          sourceChanged?&#x27;Comparabilidade limitada; verificar método e examinador.&#x27;:needsReview?&#x27;Mudança quantitativa detectada; causa e urgência permanecem indeterminadas.&#x27;:&#x27;Ausência de alerta não comprova estabilidade clínica.&#x27;
+        ];
+        cells.forEach(value=&gt;{const cell=document.createElement(&#x27;td&#x27;);cell.textContent=value;row.appendChild(cell);});
+        body.appendChild(row);
+      }
+      badge.textContent=reviewCount?`${reviewCount} intervalo(s) para revisar`:&#x27;Nenhuma regra acionada&#x27;;
+      status.textContent=`Regras aplicadas: peso ±${weightLimit}%, BCS ±${bcsLimit} e piora de MCS +${mcsLimit}. Resultado é triagem de dados, não diagnóstico ou classificação de urgência.`;
+    }
+    function renderFollowups(){
+      const body=root.querySelector(&#x27;#followup-history&#x27;);
+      body.replaceChildren();
+      followups.forEach((record,index)=&gt;{
+        const previous=index?followups[index-1]:null;
+        const row=document.createElement(&#x27;tr&#x27;);
+        const values=[
+          new Date(record.date+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;pt-BR&#x27;),
+          modeLabels[record.mode],
+          `${record.weight.toFixed(1).replace(&#x27;.&#x27;,&#x27;,&#x27;)} kg`,
+          String(record.bcs),
+          mcsLabels[record.mcs],
+          previous?`Peso ${signed(record.weight-previous.weight,1)} kg · BCS ${signed(record.bcs-previous.bcs)} · MCS ${signed(record.mcs-previous.mcs)}`:&#x27;Linha de base&#x27;
+        ];
+        values.forEach((value,column)=&gt;{
+          const cell=document.createElement(&#x27;td&#x27;); cell.textContent=value;
+          if(column===2) cell.className=&#x27;text-end&#x27;; if(column===3) cell.className=&#x27;text-center&#x27;;
+          row.appendChild(cell);
+        });
+        const action=document.createElement(&#x27;td&#x27;), button=document.createElement(&#x27;button&#x27;);
+        button.type=&#x27;button&#x27;; button.className=&#x27;btn btn-ghost&#x27;; button.textContent=&#x27;Ver no modelo&#x27;; button.dataset.followupIndex=String(index);
+        action.appendChild(button); row.appendChild(action); body.appendChild(row);
+        if(record.note){
+          const noteRow=document.createElement(&#x27;tr&#x27;), noteCell=document.createElement(&#x27;td&#x27;);
+          noteCell.colSpan=7; noteCell.className=&#x27;text-small text-muted&#x27;; noteCell.textContent=`Nota: ${record.note}`;
+          noteRow.appendChild(noteCell); body.appendChild(noteRow);
+        }
+      });
+      evaluateAlerts();
+    }
+    function saveFollowup(){
+      const name=root.querySelector(&#x27;#patient-name&#x27;).value.trim();
+      const id=root.querySelector(&#x27;#patient-id&#x27;).value.trim();
+      const date=root.querySelector(&#x27;#followup-date&#x27;).value;
+      const weight=Number(root.querySelector(&#x27;#followup-weight&#x27;).value);
+      const note=root.querySelector(&#x27;#followup-note&#x27;).value.trim();
+      const status=root.querySelector(&#x27;#followup-status&#x27;);
+      if(currentMode===&#x27;education&#x27;){status.textContent=&#x27;O perfil Educação não grava dados de saúde. Selecione Triagem ou Instrumento veterinário.&#x27;;return;}
+      if(!name||!id||!date||!Number.isFinite(weight)||weight&lt;=0){status.textContent=&#x27;Preencha nome, identificador, data e um peso válido.&#x27;;return;}
+      if(currentMode===&#x27;veterinary&#x27;&amp;&amp;!clinicalFinalized){status.textContent=&#x27;Finalize a avaliação clínica estruturada antes de registrar uma entrada veterinária.&#x27;;return;}
+      if(followups.some(item=&gt;item.date===date)){status.textContent=&#x27;Já existe uma avaliação nesta data. Use outra data para evitar registros ambíguos.&#x27;;return;}
+      if(activePatient&amp;&amp;(activePatient.name!==name||activePatient.id!==id)){status.textContent=&#x27;Esta sessão já pertence a outro animal. Não misture históricos distintos.&#x27;;return;}
+      if(!activePatient){
+        activePatient={name,id};
+        root.querySelector(&#x27;#patient-name&#x27;).disabled=true; root.querySelector(&#x27;#patient-id&#x27;).disabled=true;
+      }
+      followups.push({date,weight,bcs:currentScore,mcs:currentMCS,mode:currentMode,note});
+      followups.sort((a,b)=&gt;a.date.localeCompare(b.date));
+      renderFollowups();
+      const currentIndex=followups.findIndex(item=&gt;item.date===date), previous=currentIndex&gt;0?followups[currentIndex-1]:null;
+      status.textContent=previous
+        ? `${name}: nova observação registrada. Peso ${signed(weight-previous.weight,1)} kg, BCS ${signed(currentScore-previous.bcs)} e MCS ${signed(currentMCS-previous.mcs)} versus a avaliação anterior; nenhuma causa foi inferida.`
+        : `${name}: linha de base registrada como ${currentMode===&#x27;veterinary&#x27;?&#x27;avaliação veterinária&#x27;:&#x27;triagem não diagnóstica&#x27;}.`;
+      root.querySelector(&#x27;#followup-note&#x27;).value=&#x27;&#x27;;
+    }
+    root.querySelector(&#x27;#save-followup&#x27;).addEventListener(&#x27;click&#x27;,saveFollowup);
+    root.querySelector(&#x27;#evaluate-alerts&#x27;).addEventListener(&#x27;click&#x27;,evaluateAlerts);
+    [&#x27;weight-alert-threshold&#x27;,&#x27;bcs-alert-threshold&#x27;,&#x27;mcs-alert-threshold&#x27;].forEach(id=&gt;root.querySelector(&#x27;#&#x27;+id).addEventListener(&#x27;change&#x27;,evaluateAlerts));
+    root.querySelector(&#x27;#followup-history&#x27;).addEventListener(&#x27;click&#x27;,event=&gt;{
+      const button=event.target.closest(&#x27;button[data-followup-index]&#x27;); if(!button) return;
+      const record=followups[Number(button.dataset.followupIndex)]; if(!record) return;
+      clinicalFinalized=false;
+      root.querySelector(&#x27;#bcs-score&#x27;).value=String(record.bcs); root.querySelector(&#x27;#mcs-score&#x27;).value=String(record.mcs);
+      updateBCS(record.bcs); updateMCS(record.mcs);
+      root.querySelector(&#x27;#followup-status&#x27;).textContent=`Exibindo ${new Date(record.date+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;pt-BR&#x27;)}: BCS ${record.bcs}, MCS ${mcsLabels[record.mcs]}, ${record.weight.toFixed(1).replace(&#x27;.&#x27;,&#x27;,&#x27;)} kg.`;
+    });
+
+    function resize(){ const w=host.clientWidth,h=host.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+    new ResizeObserver(resize).observe(host); resize(); updateBCS(5); updateReference(5); updateLayers(); updateMode(&#x27;veterinary&#x27;);
+    function animate(){ controls.update(); renderer.render(scene,camera); requestAnimationFrame(animate); } animate();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
+
+  const getTrigger = (event) =&gt; {
+    for (const target of event.composedPath()) {
+      if (target?.nodeType === Node.ELEMENT_NODE) {
+        const trigger = target.closest(&quot;[data-tooltip]&quot;);
+        if (trigger) return trigger;
+      }
+    }
+    return null;
+  };
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) =&gt; {
+    lastPointerWasTouch =
+      event.type === &quot;pointerdown&quot; &amp;&amp; event.pointerType === &quot;touch&quot;;
+  };
+  const handleTouchClick = (event) =&gt; {
+    const isTouch = event.pointerType === &quot;touch&quot; || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch &amp;&amp; activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() =&gt; {
+      if (activeTrigger === trigger &amp;&amp; !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) =&gt; {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handlers = {
+    pointerover: handlePointerOpen,
+    pointerdown: handlePointer,
+    pointercancel: handlePointer,
+    click: handleTouchClick,
+    pointerout: handleLeave,
+    focusin: handleFocusIn,
+    focusout: handleLeave,
+    keydown: handleKeyDown,
+    contextmenu: handleContextMenu,
+  };
+  const roots = new Map();
+  const handledEvents = new WeakSet();
+  const handleEvent = (event) =&gt; {
+    if (handledEvents.has(event)) return;
+    handledEvents.add(event);
+    handlers[event.type](event);
+  };
+  const discoverRoots = (node) =&gt; {
+    if (node.shadowRoot) listen(node.shadowRoot);
+    for (const element of node.querySelectorAll(&quot;*&quot;)) {
+      if (element.shadowRoot) listen(element.shadowRoot);
+    }
+  };
+  const listen = (root) =&gt; {
+    if (roots.has(root)) return;
+    for (const type of Object.keys(handlers)) root.addEventListener(type, handleEvent);
+    const observer = new window.MutationObserver((records) =&gt; {
+      for (const { addedNodes } of records) {
+        for (const node of addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) discoverRoots(node);
+        }
+      }
+      for (const [root, cleanup] of roots) {
+        if (root.host &amp;&amp; !root.host.isConnected) {
+          cleanup();
+          roots.delete(root);
+        }
+      }
+      if (activeTrigger &amp;&amp; !activeTrigger.isConnected) closeTooltip(false);
+    });
+    observer.observe(root, { childList: true, subtree: true });
+    roots.set(root, () =&gt; {
+      observer.disconnect();
+      for (const type of Object.keys(handlers)) root.removeEventListener(type, handleEvent);
+    });
+    discoverRoots(root);
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    for (const cleanup of roots.values()) cleanup();
+    roots.clear();
+    tooltip = null;
+  };
+
+  // Events between children of one shadow root never reach the document.
+  listen(document);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-tabs&quot;&gt;
+(() =&gt; {
+  const selector = &#x27;.nav[role=&quot;tablist&quot;] [role=&quot;tab&quot;]&#x27;;
+  const disabled = &#x27;:disabled,[aria-disabled=&quot;true&quot;]&#x27;;
+  const selectTab = (selected) =&gt; {
+    const panelId = selected.getAttribute(&quot;aria-controls&quot;);
+    for (const tab of selected.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;)) {
+      const active = tab === selected;
+      tab.classList.toggle(&quot;active&quot;, active);
+      tab.setAttribute(&quot;aria-selected&quot;, String(active));
+      const id = tab.getAttribute(&quot;aria-controls&quot;);
+      const panel = id &amp;&amp; document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden &amp;&amp; selected.id) {
+          panel.setAttribute(&quot;aria-labelledby&quot;, selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) =&gt; {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === &quot;click&quot;) {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;),
+    ).filter((candidate) =&gt; !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === &quot;ArrowRight&quot; || event.key === &quot;ArrowDown&quot;) {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === &quot;ArrowLeft&quot; || event.key === &quot;ArrowUp&quot;) {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === &quot;Home&quot;) {
+      next = 0;
+    } else if (event.key === &quot;End&quot;) {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll(&#x27;.nav[role=&quot;tablist&quot;]&#x27;)) {
+    const selected =
+      list.querySelector(&#x27;[role=&quot;tab&quot;][aria-selected=&quot;true&quot;]&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;].active&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;]&#x27;);
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener(&quot;click&quot;, interact);
+  document.addEventListener(&quot;keydown&quot;, interact);
+  window.addEventListener(&quot;pagehide&quot;, () =&gt; {
+    document.removeEventListener(&quot;click&quot;, interact);
+    document.removeEventListener(&quot;keydown&quot;, interact);
+  }, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-carousel&quot;&gt;
+  (() =&gt; {
+    for (const root of document.querySelectorAll(&quot;.viz-carousel&quot;)) {
+      const panels = Array.from(
+        root.querySelectorAll(&quot;:scope &gt; [data-variant]&quot;),
+      );
+      if (panels.length === 0) {
+        continue;
+      }
+      root.setAttribute(&quot;role&quot;, &quot;group&quot;);
+      panels.forEach((panel, index) =&gt; {
+        panel.hidden = index !== 0;
+        panel.setAttribute(&quot;role&quot;, &quot;group&quot;);
+        if (!panel.hasAttribute(&quot;aria-label&quot;)) {
+          panel.setAttribute(&quot;aria-label&quot;, panel.dataset.variant);
+        }
+      });
+      root.dataset.activeVariant = panels[0].dataset.variant;
+      if (panels.length === 1) {
+        continue;
+      }
+
+      const controls = document.createElement(&quot;div&quot;);
+      controls.className = &quot;viz-carousel-controls&quot;;
+      // Portable copy of the settings dropdown&#x27;s legacy glyph; no 14px icon-package preset matches it.
+      // https://github.com/openai/openai/blob/master/codex/codex-apps/webview/src/icons/chevron.svg
+      controls.innerHTML = `
+      &lt;button type=&quot;button&quot; class=&quot;viz-carousel-previous cursor-interaction&quot;&gt;&lt;i data-lucide=&quot;chevron-left&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+      &lt;details class=&quot;viz-carousel-picker&quot;&gt;
+        &lt;summary class=&quot;cursor-interaction&quot;&gt;
+          &lt;span class=&quot;viz-carousel-count tabular-nums&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;viz-carousel-name&quot;&gt;&lt;/span&gt;
+          &lt;svg class=&quot;viz-carousel-caret&quot; width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 20 21&quot; fill=&quot;none&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;
+            &lt;path d=&quot;M15.2793 7.71101C15.539 7.45131 15.961 7.45131 16.2207 7.71101C16.4804 7.97071 16.4804 8.39272 16.2207 8.65242L10.4707 14.4024C10.211 14.6621 9.78902 14.6621 9.52932 14.4024L3.77932 8.65242L3.69436 8.54792C3.52385 8.28979 3.55205 7.93828 3.77932 7.71101C4.00659 7.48374 4.3581 7.45554 4.61623 7.62605L4.72073 7.71101L10 12.9903L15.2793 7.71101Z&quot; fill=&quot;currentColor&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;0.6&quot; /&gt;
+          &lt;/svg&gt;
+        &lt;/summary&gt;
+        &lt;div class=&quot;viz-carousel-options&quot;&gt;&lt;/div&gt;
+      &lt;/details&gt;
+      &lt;button type=&quot;button&quot; class=&quot;viz-carousel-next cursor-interaction&quot;&gt;&lt;i data-lucide=&quot;chevron-right&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;`;
+      const previous = controls.querySelector(&quot;.viz-carousel-previous&quot;);
+      const next = controls.querySelector(&quot;.viz-carousel-next&quot;);
+      const picker = controls.querySelector(&quot;.viz-carousel-picker&quot;);
+      const summary = picker.querySelector(&quot;summary&quot;);
+      const count = controls.querySelector(&quot;.viz-carousel-count&quot;);
+      const name = controls.querySelector(&quot;.viz-carousel-name&quot;);
+      const options = controls.querySelector(&quot;.viz-carousel-options&quot;);
+      const status = document.createElement(&quot;span&quot;);
+      status.className = &quot;sr-only&quot;;
+      status.setAttribute(&quot;role&quot;, &quot;status&quot;);
+      status.setAttribute(&quot;aria-live&quot;, &quot;polite&quot;);
+      status.setAttribute(&quot;aria-atomic&quot;, &quot;true&quot;);
+      previous.setAttribute(
+        &quot;aria-label&quot;,
+        root.dataset.previousLabel ?? &quot;Previous variant&quot;,
+      );
+      next.setAttribute(&quot;aria-label&quot;, root.dataset.nextLabel ?? &quot;Next variant&quot;);
+
+      let active = 0;
+      let mousePointerId = null;
+      let summaryPointerHandled = false;
+      summary.addEventListener(&quot;pointerdown&quot;, (event) =&gt; {
+        summaryPointerHandled =
+          event.pointerType === &quot;mouse&quot; &amp;&amp; event.button === 0 &amp;&amp; !event.ctrlKey;
+        if (!summaryPointerHandled) {
+          return;
+        }
+        event.preventDefault();
+        summary.focus({ preventScroll: true });
+        picker.open = !picker.open;
+        mousePointerId = picker.open ? event.pointerId : null;
+      });
+      summary.addEventListener(&quot;click&quot;, (event) =&gt; {
+        if (summaryPointerHandled &amp;&amp; event.detail &gt; 0) {
+          event.preventDefault();
+        }
+      });
+      const choices = panels.map((panel, index) =&gt; {
+        const choice = document.createElement(&quot;button&quot;);
+        choice.type = &quot;button&quot;;
+        choice.className = &quot;cursor-interaction&quot;;
+        choice.textContent = panel.dataset.variant;
+        choice.addEventListener(&quot;click&quot;, () =&gt; {
+          select(index);
+          summary.focus();
+        });
+        choice.addEventListener(&quot;pointerup&quot;, (event) =&gt; {
+          if (
+            picker.open &amp;&amp;
+            event.pointerType === &quot;mouse&quot; &amp;&amp;
+            event.button === 0 &amp;&amp;
+            event.pointerId === mousePointerId
+          ) {
+            choice.click();
+          }
+        });
+        options.appendChild(choice);
+        return choice;
+      });
+      const select = (index) =&gt; {
+        const changed = active !== index;
+        active = index;
+        panels.forEach((panel, position) =&gt; {
+          panel.hidden = position !== active;
+          choices[position].setAttribute(
+            &quot;aria-current&quot;,
+            String(position === active),
+          );
+        });
+        root.dataset.activeVariant = panels[active].dataset.variant;
+        count.textContent = `${active + 1} / ${panels.length}`;
+        name.textContent = panels[active].dataset.variant;
+        picker.open = false;
+        mousePointerId = null;
+        if (changed) {
+          status.textContent = `${count.textContent}: ${name.textContent}`;
+        }
+      };
+      previous.addEventListener(&quot;click&quot;, () =&gt;
+        select((active + panels.length - 1) % panels.length),
+      );
+      next.addEventListener(&quot;click&quot;, () =&gt;
+        select((active + 1) % panels.length),
+      );
+      picker.addEventListener(&quot;keydown&quot;, (event) =&gt; {
+        if (event.key === &quot;Escape&quot; &amp;&amp; picker.open) {
+          event.preventDefault();
+          picker.open = false;
+          mousePointerId = null;
+          summary.focus();
+          return;
+        }
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        const index = choices.indexOf(document.activeElement);
+        let nextIndex;
+        if (event.key === &quot;ArrowDown&quot;) {
+          nextIndex = index &lt; 0 ? active : (index + 1) % choices.length;
+        } else if (event.key === &quot;ArrowUp&quot;) {
+          nextIndex = index &lt; 0 ? active : (index + choices.length - 1) % choices.length;
+        } else if (picker.open &amp;&amp; event.key === &quot;Home&quot;) {
+          nextIndex = 0;
+        } else if (picker.open &amp;&amp; event.key === &quot;End&quot;) {
+          nextIndex = choices.length - 1;
+        } else {
+          return;
+        }
+        event.preventDefault();
+        picker.open = true;
+        choices[nextIndex].focus();
+      });
+      picker.addEventListener(&quot;focusout&quot;, (event) =&gt; {
+        if (!picker.contains(event.relatedTarget)) {
+          picker.open = false;
+          mousePointerId = null;
+        }
+      });
+      const dismiss = (event) =&gt; {
+        if (!summary.contains(event.target)) {
+          mousePointerId = null;
+        }
+        if (!picker.contains(event.target)) {
+          picker.open = false;
+        }
+      };
+      const endPointerSelection = () =&gt; {
+        mousePointerId = null;
+      };
+      const sizePicker = () =&gt; {
+        root.style.setProperty(
+          &quot;--viz-carousel-picker-height&quot;,
+          `${picker.open ? options.offsetHeight : 0}px`,
+        );
+      };
+      picker.addEventListener(&quot;toggle&quot;, sizePicker);
+      window.addEventListener(&quot;resize&quot;, sizePicker);
+      document.addEventListener(&quot;pointerdown&quot;, dismiss);
+      document.addEventListener(&quot;pointerup&quot;, endPointerSelection);
+      document.addEventListener(&quot;pointercancel&quot;, endPointerSelection);
+      window.addEventListener(&quot;blur&quot;, endPointerSelection);
+      window.addEventListener(
+        &quot;pagehide&quot;,
+        () =&gt; {
+          document.removeEventListener(&quot;pointerdown&quot;, dismiss);
+          document.removeEventListener(&quot;pointerup&quot;, endPointerSelection);
+          document.removeEventListener(&quot;pointercancel&quot;, endPointerSelection);
+          window.removeEventListener(&quot;blur&quot;, endPointerSelection);
+          window.removeEventListener(&quot;resize&quot;, sizePicker);
+        },
+        { once: true },
+      );
+      root.append(controls, status);
+      select(0);
+    }
+  })();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+<script>(() => {
+  const frame = document.getElementById("codex-visualization");
+  if (!(frame instanceof HTMLIFrameElement)) {
+    return;
+  }
+  let viewportHeight = globalThis.innerHeight;
+  const storageKey = `codex:visualization-widget-state-v2:${JSON.stringify([
+    globalThis.location.pathname,
+    globalThis.location.search,
+  ])}`;
+  const parseState = (serializedState) => {
+    if (
+      typeof serializedState !== "string" ||
+      new TextEncoder().encode(serializedState).length > 16 * 1024
+    ) {
+      throw new TypeError(
+        "Widget state must be a JSON object of at most 16 KiB",
+      );
+    }
+    /** @type {unknown} */
+    const state = JSON.parse(serializedState);
+    if (
+      state == null ||
+      typeof state !== "object" ||
+      Array.isArray(state) ||
+      ("imageIds" in state &&
+        (!Array.isArray(state.imageIds) || state.imageIds.length > 0))
+    ) {
+      throw new TypeError("Widget state must be a JSON object");
+    }
+    const storedState = { modelContent: null, privateContent: null, ...state };
+    const canonicalState = JSON.stringify(
+      storedState,
+      (_key, /** @type {unknown} */ value) => {
+        if (typeof value === "number" && !Number.isFinite(value)) {
+          throw new TypeError("Widget state must contain finite numbers");
+        }
+        return value;
+      },
+    );
+    if (new TextEncoder().encode(canonicalState).length > 16 * 1024) {
+      throw new TypeError(
+        "Widget state must be a JSON object of at most 16 KiB",
+      );
+    }
+    return storedState;
+  };
+  let storage = null;
+  let state = null;
+  try {
+    const localStorage = globalThis.localStorage;
+    const probeKey = `${storageKey}:probe`;
+    localStorage.setItem(probeKey, "1");
+    localStorage.removeItem(probeKey);
+    storage = localStorage;
+    const savedState = storage.getItem(storageKey);
+    if (savedState != null) {
+      try {
+        state = parseState(savedState);
+      } catch {
+        // Invalid saved state does not disable future writes.
+      }
+    }
+  } catch {
+    storage = null;
+  }
+  const initialGlobals = {
+    widgetState: state,
+    statePersistence: storage == null ? "none" : "local",
+  };
+
+  const channel = new MessageChannel();
+  channel.port1.addEventListener("message", (event) => {
+    const data = event.data;
+    if (typeof data !== "object" || data == null) {
+      return;
+    }
+    if (data.type === "widget-state-write") {
+      if (!Number.isSafeInteger(data.id) || data.id <= 0) {
+        return;
+      }
+      let ok = false;
+      try {
+        if (storage != null) {
+          const state = parseState(data.state);
+          storage.setItem(storageKey, JSON.stringify(state));
+          ok = true;
+        }
+      } catch {
+        // Storage denial, quota limits, and invalid state return a failed receipt.
+      }
+      channel.port1.postMessage({
+        type: "widget-state-result",
+        id: data.id,
+        ok,
+      });
+      return;
+    }
+    if (data.type === "height") {
+      const height = data.height;
+      if (
+        typeof height === "number" &&
+        Number.isFinite(height) &&
+        height >= 0 &&
+        height <= 10_000
+      ) {
+        frame.style.height = Math.ceil(height) + "px";
+      }
+      return;
+    }
+    if (data.type === "scroll-to") {
+      const top = data.top;
+      if (
+        typeof top === "number" &&
+        Number.isFinite(top) &&
+        top >= 0 &&
+        globalThis.navigator.userActivation?.isActive === true
+      ) {
+        globalThis.scrollTo({
+          top: Math.ceil(
+            globalThis.scrollY + frame.getBoundingClientRect().top + top,
+          ),
+        });
+      }
+      return;
+    }
+    if (data.type === "open-external") {
+      const rawHref = data.href;
+      if (typeof rawHref !== "string") {
+        return;
+      }
+      let href;
+      try {
+        const url = new URL(rawHref, document.baseURI);
+        if (url.protocol !== "https:") {
+          return;
+        }
+        href = url.href;
+      } catch {
+        return;
+      }
+      if (globalThis.navigator.userActivation?.isActive === true) {
+        const anchor = document.createElement("a");
+        anchor.href = href;
+        anchor.rel = "noopener noreferrer";
+        anchor.target = "_blank";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      }
+      return;
+    }
+    if (data.type === "follow-up") {
+      const prompt = data.prompt;
+      if (
+        typeof prompt !== "string" ||
+        globalThis.navigator.userActivation?.isActive !== true
+      ) {
+        return;
+      }
+      const title = data.title;
+      globalThis.prompt(typeof title === "string" ? title : prompt, prompt);
+    }
+  });
+  channel.port1.start();
+  const srcdoc = frame.dataset.srcdoc;
+  if (srcdoc == null) {
+    return;
+  }
+  globalThis.addEventListener("resize", () => {
+    const height = Number.parseFloat(frame.style.height);
+    if (!Number.isFinite(height) || height <= viewportHeight) {
+      frame.style.removeProperty("height");
+    }
+    viewportHeight = globalThis.innerHeight;
+    channel.port1.postMessage({ type: "measure" });
+  });
+  frame.addEventListener(
+    "load",
+    () => {
+      frame.contentWindow?.postMessage(
+        { type: "codex-visualization-initialize" },
+        "*",
+        [channel.port2],
+      );
+    },
+    { once: true },
+  );
+  // Match the trusted bootstrap element, not the same text in an authored title.
+  frame.srcdoc = srcdoc.replace(
+    '<script type="application/json" id="codex-visualization-widget-state">__CODEX_VISUALIZATION_WIDGET_STATE__<\/script>',
+    () =>
+      '<script type="application/json" id="codex-visualization-widget-state">' +
+      JSON.stringify(initialGlobals).replaceAll("<", "\\u003c") +
+      "<\/script>",
+  );
+  delete frame.dataset.srcdoc;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+import type { FoodRecord, DogRecord } from '@/types/nutrition'
+export default function FoodQuality({food,pet}:{food:FoodRecord;pet:DogRecord|null}) {
+  const dry = (n:number|undefined) => n!==undefined && food.moisture_pct!==undefined && food.moisture_pct<100 ? `${(n/(100-food.moisture_pct)*100).toFixed(1)}% na matéria seca`:'Matéria seca: falta teor de umidade'
+  return <details className="my-3 rounded-xl border border-border bg-muted/30 p-3 text-sm"><summary className="cursor-pointer font-semibold">Qualidade e adequação ao pet</summary><dl className="mt-3 space-y-2">
+    <div><dt className="font-bold">Condição de {pet?.name||'seu pet'}</dt><dd>{pet?.body_condition?.replaceAll('_',' ')||'não informada'} · {pet?.species==='felina'?'gato':'cão'}. {food.health_indication || 'Indicação clínica não informada; a adequação exige avaliação veterinária.'}</dd></div>
+    <div><dt className="font-bold">Proteína / extrato etéreo</dt><dd>{food.protein_pct??'—'}% / {food.fat_pct??'—'}% no alimento. {dry(food.protein_pct)} · {dry(food.fat_pct)}.</dd></div>
+    {[['Composição',food.ingredients],['Origem dos ingredientes',food.ingredient_origin],['Controle de qualidade',food.quality_control],['Adequação nutricional',food.nutritional_adequacy],['Benefícios declarados pelo fabricante',food.benefits],['Fonte dos dados',food.source_url]].map(([k,v])=><div key={k}><dt className="font-bold">{k}</dt><dd className="whitespace-pre-wrap break-words">{v||'Não informado'}</dd></div>)}
+  </dl><p className="mt-3 text-xs text-muted-foreground">Dados do rótulo ou informados pelo tutor, sem verificação independente. A lista de ingredientes e percentuais isolados não comprovam digestibilidade, qualidade ou benefício clínico. <a href="https://wsava.org/global-guidelines/global-nutrition-guidelines/" target="_blank" rel="noreferrer" className="underline">Critérios WSAVA</a></p></details>
+}

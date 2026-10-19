@@ -1,0 +1,6 @@
+import type { FeedingPlanRecord } from '@/types/nutrition'
+export default function DietPlanSummary({plan}:{plan:FeedingPlanRecord|null}) {
+  if(!plan?.diet_mode)return null
+  const d=plan.diet_details,fmt=(n:number|null|undefined)=>n==null?'não informado':n.toLocaleString('pt-BR',{maximumFractionDigits:1})
+  return <section className="rounded-xl border border-primary/40 bg-primary/10 p-4 space-y-2"><h2 className="font-bold">Plano em vigência: {{commercial:'alimento comercial',natural:'alimentação natural',mixed:'alimentação mista'}[plan.diet_mode]}</h2><p>{plan.food_name} · {fmt(plan.daily_kcal)} kcal/dia</p>{d&&<><p>Ração {fmt(d.commercialGrams)} g/dia · natural {fmt(d.naturalGrams)} g/dia · proteína {fmt(d.proteinGrams)} g · gordura {fmt(d.fatGrams)} g</p><p className="text-sm">Responsável informado: {d.professional}</p><details><summary className="cursor-pointer">Composição da porção natural diária</summary><ul className="mt-2 space-y-1">{(d.ingredients as {id:string;name:string;grams:number;preparation:string}[]).map(i=><li key={i.id}>{i.name} · {i.preparation} · {fmt(i.grams)} g</li>)}</ul></details></>}<a className="underline text-sm" href="/comparador">Editar alimentação natural / mista no comparador</a></section>
+}

@@ -1,0 +1,8 @@
+node_modules
+.git
+data
+backups
+.env*
+dist
+owner-app/dist
+owner-app/node_modules

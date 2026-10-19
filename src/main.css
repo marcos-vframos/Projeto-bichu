@@ -1,0 +1,493 @@
+/* Global styles - Theme, font, utilities, animations and global components */
+
+/* CHANGE THE FONT BELOW TO WHATEVER YOU WANT */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Lora:ital,wght@0,500;0,700;1,400&family=Space+Grotesk:wght@500;700;900&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&family=Press+Start+2P&family=Fredoka:wght@400;600;700&family=Cinzel:wght@600;800&family=Chakra+Petch:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,600&family=DM+Sans:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Font families and visual tokens */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+    --heading-weight: 800;
+    --heading-letter-spacing: -0.025em;
+    --heading-text-transform: none;
+    --theme-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --theme-card-border-width: 1px;
+    --theme-btn-transform: none;
+    --theme-btn-weight: 700;
+    --theme-btn-letter-spacing: normal;
+    --theme-btn-shadow: none;
+
+    /* Change the colors to match the design system */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 84% 4.9%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 98%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 222.2 84% 4.9%;
+
+    --sidebar-primary: 222.2 84% 4.9%;
+
+    --sidebar-primary-foreground: 0 0% 100%;
+
+    --sidebar-accent: 210 40% 98%;
+
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+
+    --sidebar-border: 214.3 31.8% 91.4%;
+
+    --sidebar-ring: 222.2 84% 4.9%;
+
+    --chart-1: 34 100% 44%;
+    --chart-2: 189 100% 38%;
+    --chart-3: 209 100% 32%;
+    --chart-4: 42 100% 50%;
+    --chart-5: 33 100% 50%;
+  }
+
+  :root,
+  .dark {
+    /* Meu Bichu Dark Theme Default */
+    --background: 222.2 47% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 40% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 40% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 151 70% 48%;
+    --primary-foreground: 150 90% 6%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 15%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 151 70% 48%;
+    --accent-foreground: 150 90% 6%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 18.5%;
+    --input: 217.2 32.6% 18.5%;
+    --ring: 151 70% 48%;
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 222.2 84% 4.9%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222.2 84% 4.9%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222.2 84% 4.9%;
+    --sidebar-ring: 222.2 84% 4.9%;
+
+    --chart-1: 270 100% 44%;
+    --chart-2: 164 100% 38%;
+    --chart-3: 43 100% 32%;
+    --chart-4: 340 100% 50%;
+    --chart-5: 10 100% 50%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
+  }
+
+  /* Enhanced cards and button themes (apenas em cards com borda explícita) */
+  [data-card-bordered='true'] {
+    border-width: var(--theme-card-border-width);
+  }
+
+  /* Transição de temas fluida, aveludada e nativa (~380ms) */
+  html,
+  body {
+    transition-property: background-color, color;
+    transition-duration: 380ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-property:
+      background-color, border-color, color, fill, stroke, box-shadow, border-radius;
+    transition-duration: 340ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Durante transição de tema ativa, reforça a suavidade sem saltos */
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition-duration: 420ms !important;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
+  /* NEVER REMOVE THIS */
+  section[aria-label='Notifications alt+T'] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+@layer utilities {
+  /* KEEP ALL THE ANIMATIONS CLASSES THAT ARE USED BELOW */
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-down {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out-up {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-out-down {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes spotlight {
+    from {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  @keyframes tail-wag {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    20% {
+      transform: rotate(-14deg);
+    }
+    40% {
+      transform: rotate(12deg);
+    }
+    60% {
+      transform: rotate(-10deg);
+    }
+    80% {
+      transform: rotate(6deg);
+    }
+  }
+
+  .animate-tail-wag {
+    animation: tail-wag 0.8s ease-in-out;
+    transform-origin: bottom center;
+  }
+
+  /* Micro-movimento orgânico contínuo no Hero (respiração sutil) */
+  @keyframes hero-breathe {
+    0%,
+    100% {
+      transform: scale(1) translate3d(0, 0, 0);
+    }
+    50% {
+      transform: scale(1.022) translate3d(-4px, -3px, 0);
+    }
+  }
+
+  /* Luz ambiente que atravessa lentamente a cena */
+  @keyframes ambient-light-drift {
+    0% {
+      transform: translate3d(-35%, -20%, 0) rotate(0deg);
+      opacity: 0.25;
+    }
+    50% {
+      transform: translate3d(25%, 15%, 0) rotate(180deg);
+      opacity: 0.55;
+    }
+    100% {
+      transform: translate3d(-35%, -20%, 0) rotate(360deg);
+      opacity: 0.25;
+    }
+  }
+
+  /* Partículas de luz ambiente / poeira dourada */
+  @keyframes float-dust {
+    0% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.15;
+    }
+    50% {
+      transform: translateY(-24px) translateX(12px);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-50px) translateX(-6px);
+      opacity: 0;
+    }
+  }
+
+  .animate-hero-breathe {
+    animation: hero-breathe 14s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .animate-ambient-light {
+    animation: ambient-light-drift 22s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20%,
+    60% {
+      transform: translateX(-4px);
+    }
+    40%,
+    80% {
+      transform: translateX(4px);
+    }
+  }
+
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-fade-out {
+    animation: fade-out 0.5s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.6s ease-out;
+  }
+
+  .animate-fade-out-up {
+    animation: fade-out-up 0.6s ease-out;
+  }
+
+  .animate-fade-out-down {
+    animation: fade-out-down 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.6s ease-out;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-spotlight {
+    animation: spotlight 2s ease forwards;
+  }
+
+  .animate-tail-wag {
+    animation: tail-wag 0.9s ease-in-out;
+    transform-origin: bottom center;
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 2s infinite;
+  }
+
+  .animate-shake {
+    animation: shake 0.4s ease-in-out;
+  }
+
+  /* Efeito aveludado de ambient glow para vitrine de temas */
+  .theme-glow {
+    box-shadow:
+      0 12px 32px -8px rgba(0, 0, 0, 0.08),
+      0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* Translucent wash: the pet photo remains visible through the sidebar. */
+.bichu-sidebar {
+  background: linear-gradient(90deg, rgba(247,250,244,.46) 0%, rgba(247,250,244,.34) 65%, rgba(247,250,244,.16) 88%, rgba(247,250,244,0) 100%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  animation: bichu-sidebar-enter 180ms ease-out;
+}
+@keyframes bichu-sidebar-enter {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bichu-sidebar { animation: none; }
+}
+
+.bichu-sidebar nav { text-shadow: 0 1px 3px rgba(255,255,255,.95), 0 0 6px rgba(255,255,255,.85); }

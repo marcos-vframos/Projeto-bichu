@@ -1,0 +1,97 @@
+/* Adaptação visual do protótipo Fase 14 à navegação do Meu Bichu.
+   Cores explícitas também são lidas pelo renderizador Three.js. */
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0c151d;
+  --foreground: #f4f1e9;
+  --card: #172630;
+  --card-foreground: #f4f1e9;
+  --popover: #1c2d37;
+  --popover-foreground: #f4f1e9;
+  --secondary: #22343f;
+  --secondary-foreground: #f4f1e9;
+  --muted: #455966;
+  --muted-foreground: #c0cbd1;
+  --accent: #304554;
+  --accent-foreground: #f2c77a;
+  --primary: #f1bd65;
+  --primary-foreground: #101923;
+  --destructive: #ffad87;
+  --border: #52636c;
+  --input: #72818a;
+  --ring: #f1bd65;
+  --blue: #7bc7ed;
+  --orange: #f3a35a;
+  --green: #76d4a6;
+  --red: #ed817d;
+  --purple: #b9a3eb;
+  --yellow: #f3cb75;
+  --font-size-base: 16px;
+}
+html { background: #0c151d !important; }
+html > body {
+  background: #0c151d !important;
+  color: #f4f1e9;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+#bcs-dog-3d-f14 {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(14px, 2.2vw, 32px);
+  display: grid;
+  gap: 18px;
+  color: #f4f1e9;
+}
+#bcs-dog-3d-f14 :is(h2,h3) { color: #fff5e5; line-height: 1.3; }
+#bcs-dog-3d-f14 h2 { font-size: clamp(1.25rem, 2vw, 1.8rem); }
+#bcs-dog-3d-f14 h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); }
+#bcs-dog-3d-f14 .text-muted { color: #c0cbd1 !important; }
+#bcs-dog-3d-f14 .card,
+#bcs-dog-3d-f14 .viz-stat {
+  background: #172630;
+  border: 1px solid #405663;
+}
+html #bcs-dog-3d-f14 .viewer {
+  height: clamp(480px, 68vh, 760px);
+  min-height: 480px;
+  background: radial-gradient(ellipse at 50% 42%, #203644 0%, #101d28 56%, #0b151e 100%);
+  border: 1px solid #567080;
+  border-radius: 22px;
+  box-shadow: inset 0 0 70px rgba(0,0,0,.18);
+}
+#bcs-dog-3d-f14 .viewer canvas { background: transparent; }
+#bcs-dog-3d-f14 .overlay { gap: 12px; }
+#bcs-dog-3d-f14 .form-label { color: #eaf0ee; font-weight: 600; }
+#bcs-dog-3d-f14 :is(.form-control,.form-select,.btn) {
+  min-height: 44px;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+#bcs-dog-3d-f14 :is(.form-control,.form-select) {
+  border: 1px solid #81929b;
+  background-color: #22343f;
+  color: #f4f1e9;
+}
+#bcs-dog-3d-f14 :is(.form-control,.form-select):focus-visible,
+#bcs-dog-3d-f14 .btn:focus-visible { outline: 3px solid #f1bd65; outline-offset: 2px; }
+#bcs-dog-3d-f14 .btn-primary { background: #f1bd65; color: #101923; border-color: #f1bd65; font-weight: 700; }
+#bcs-dog-3d-f14 .btn:not(.btn-primary) { border-color: #7c8d96; color: #f4f1e9; }
+#bcs-dog-3d-f14 .btn:disabled { opacity: .55; }
+#bcs-dog-3d-f14 .viz-badge,
+#bcs-dog-3d-f14 .status,
+#bcs-dog-3d-f14 .clinical-detail { font-size: .95rem; line-height: 1.5; color: #dce6e8; }
+#bcs-dog-3d-f14 .viz-badge { border: 1px solid #657a85; background: #233844; }
+#bcs-dog-3d-f14 .table-responsive { overflow-x: auto; max-width: 100%; }
+#bcs-dog-3d-f14 .table { min-width: 620px; }
+#bcs-dog-3d-f14 .form-range { accent-color: #f1bd65; min-height: 36px; }
+@media (max-width: 640px) {
+  #bcs-dog-3d-f14 { padding: 12px; gap: 16px; }
+  html #bcs-dog-3d-f14 .viewer { height: min(60vh, 540px); min-height: 390px; border-radius: 16px; }
+  #bcs-dog-3d-f14 .overlay { inset: 10px 10px auto; }
+  #bcs-dog-3d-f14 .viz-controls > .form-label { flex-basis: 100%; }
+  #bcs-dog-3d-f14 .btn { padding-inline: 12px; }
+}
