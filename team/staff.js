@@ -53,6 +53,7 @@ async function load(more = false) {
     show('')
     render()
   } catch (error) {
+    if(error.status===401){$('#workspace').hidden=true;$('#login-panel').hidden=false;$('#refresh').hidden=true;$('#logout').hidden=true;cases=[];tasks=[];$('#responsibilities').replaceChildren();$('#detail').replaceChildren()}
     show(error.message)
   } finally {
     busy = false
@@ -142,6 +143,73 @@ function openQuestion(item) {
     )
     area.append(block)
   }
+  if (item.review)
+    area.append(
+      el(
+        'p',
+        'Avaliação interna · Prioridade ' +
+          item.review.priority +
+          ' · ' +
+          (item.review.note || 'Sem observações'),
+        'content',
+      ),
+    )
+  if (can('questions.review')) {
+    const form = el('form'),
+      statusLabel = el('label', 'Status do feedback'),
+      status = el('select'),
+      priorityLabel = el('label', 'Prioridade'),
+      priority = el('select'),
+      noteLabel = el('label', 'Observação interna (visível apenas para a equipe)'),
+      note = el('textarea')
+    for (const [value, title] of [
+      ['recebido', 'Recebido'],
+      ['em_avaliacao', 'Em avaliação'],
+      ['respondido', 'Respondido'],
+      ['resolvido', 'Resolvido'],
+    ]) {
+      const option = el('option', title)
+      option.value = value
+      status.append(option)
+    }
+    status.value = item.status || 'recebido'
+    for (const [value, title] of [
+      ['baixa', 'Baixa'],
+      ['normal', 'Normal'],
+      ['alta', 'Alta'],
+    ]) {
+      const option = el('option', title)
+      option.value = value
+      priority.append(option)
+    }
+    priority.value = item.review?.priority || 'normal'
+    note.value = note.defaultValue = item.review?.note || ''
+    note.maxLength = 2000
+    statusLabel.append(status)
+    priorityLabel.append(priority)
+    noteLabel.append(note)
+    const send = el('button', 'Salvar avaliação e status')
+    form.append(statusLabel, priorityLabel, noteLabel, send)
+    form.onsubmit = async (e) => {
+      e.preventDefault()
+      send.disabled = true
+      try {
+        await api('cases/' + item.id + '/review', {
+          status: status.value,
+          priority: priority.value,
+          note: note.value,
+        })
+        note.defaultValue = note.value
+        await load()
+        show('Avaliação e status salvos.')
+      } catch (error) {
+        show(error.message)
+      } finally {
+        send.disabled = false
+      }
+    }
+    area.append(form)
+  }
   if (!can('questions.reply')) return
   const form = el('form'),
     label = el('label', 'Sua resposta'),
@@ -230,18 +298,46 @@ for (const [id, value] of [
   }
 $('#refresh').onclick = () => load()
 $('#more').onclick = () => load(true)
-try {
-  const me = await privateAccess()
+async function enter(me) {
+  $('#login-panel').hidden = true
   $('#identity').textContent =
     me.name +
     (me.role === 'owner'
       ? ' · Visão do proprietário' + (assignee ? ' · Funcionário selecionado' : '')
       : '')
+  $('#logout').hidden = me.role !== 'staff'
   $('#workspace').hidden = false
   $('#refresh').hidden = false
   await load()
+}
+$('#staff-login').onsubmit = async (event) => {
+  event.preventDefault()
+  const send = event.target.querySelector('button')
+  send.disabled = true
+  try {
+    await api('login', Object.fromEntries(new FormData(event.target)))
+    event.target.reset()
+    await enter(await api('me'))
+  } catch (error) {
+    show(error.message)
+  } finally {
+    send.disabled = false
+  }
+}
+$('#logout').onclick = async () => {
+  if (dirty() && !confirm('Sair e descartar o texto não salvo?')) return
+  try {
+    await api('logout', {})
+    location.replace('/equipe')
+  } catch (error) {
+    show(error.message)
+  }
+}
+try {
+  await enter(await privateAccess())
 } catch (error) {
-  show('Este endereço exige seu acesso privado. ' + error.message)
+  $('#login-panel').hidden = false
+  show('Informe seu e-mail e senha individuais.')
 }
 setInterval(() => {
   if (!document.hidden && !$('#workspace').hidden && $('#detail').hidden) void load()

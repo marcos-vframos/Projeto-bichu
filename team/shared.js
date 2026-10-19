@@ -32,7 +32,7 @@ export async function api(path, body, method) {
     body: body ? JSON.stringify(body) : undefined,
   })
   const data = await response.json()
-  if (!response.ok) throw Error(data.error || 'Não foi possível concluir')
+  if (!response.ok) {const error=Error(data.error || 'Não foi possível concluir');error.status=response.status;throw error}
   return data
 }
 export async function privateAccess() {

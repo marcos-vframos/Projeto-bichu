@@ -238,3 +238,5 @@ fieldset input[type='checkbox'] {
   width: 20px;
   height: 20px;
 }
+
+.employee-access{display:block;background:white;border:1px solid #b7cbb7;border-radius:14px;padding:18px;text-decoration:none;margin:12px 0}.employee-access:hover{background:#edf5e9}#login-panel{max-width:520px;margin:30px auto}

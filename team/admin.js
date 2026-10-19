@@ -17,7 +17,8 @@ async function people() {
       el('p', user.email + (user.active ? '' : ' · Acesso revogado'), 'muted'),
     )
     if (user.active) {
-      const link = el('a', 'Visualizar responsabilidades deste funcionário')
+      const link = el('a', 'Abrir atribuições · ' + user.email)
+      link.className = 'employee-access'
       link.href = '/equipe?funcionario=' + encodeURIComponent(user.id)
       if (window.parent !== window)
         link.onclick = (event) => {
@@ -183,6 +184,8 @@ $('#refresh-audit').onclick = async () => {
         assign: 'Atribuição de pergunta',
         unassign: 'Remoção de atribuição',
         reply: 'Resposta ao tutor',
+        review_feedback: 'Avaliação de feedback',
+        update_permissions: 'Alteração de permissões',
         create_task: 'Criação de responsabilidade',
         update_task: 'Atualização de responsabilidade',
         open_tutor: 'Abertura de conta do tutor pelo proprietário',

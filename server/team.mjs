@@ -1,6 +1,7 @@
 import { initTasks, tasksApi } from './tasks.mjs'
 export const permissionCatalog = {
   'questions.read': 'Consultar perguntas e feedbacks atribuídos',
+  'questions.review': 'Avaliar feedbacks e atualizar status',
   'questions.reply': 'Responder perguntas e feedbacks atribuídos',
   'tasks.read': 'Consultar tarefas atribuídas',
   'tasks.update': 'Registrar andamento e concluir tarefas',
@@ -66,6 +67,9 @@ export async function ownerSession(req, key) {
 export function initTeam(db) {
   initTeamTables(db)
   initTasks(db)
+  db.exec(
+    'CREATE TABLE IF NOT EXISTS team_reviews(record_id TEXT PRIMARY KEY REFERENCES pilot_records(id) ON DELETE CASCADE,priority TEXT NOT NULL,note TEXT NOT NULL,actor_id TEXT NOT NULL,updated_at INTEGER NOT NULL)',
+  )
   db.exec(
     'CREATE TABLE IF NOT EXISTS team_permissions(user_id TEXT PRIMARY KEY REFERENCES team_users(id),permissions TEXT NOT NULL)',
   )
@@ -172,7 +176,9 @@ export async function teamApi(req, store, env) {
       : p.startsWith('/api/team/cases')
         ? req.method === 'GET'
           ? 'questions.read'
-          : 'questions.reply'
+          : p.endsWith('/review')
+            ? 'questions.review'
+            : 'questions.reply'
         : null
     if (required && !permissions.includes(required))
       return json({ error: 'Atribuição não autorizada' }, 403)
@@ -185,7 +191,8 @@ export async function teamApi(req, store, env) {
       !Array.isArray(next) ||
       next.some((x) => !Object.hasOwn(permissionCatalog, x)) ||
       new Set(next).size !== next.length ||
-      (next.includes('questions.reply') && !next.includes('questions.read')) ||
+      ((next.includes('questions.reply') || next.includes('questions.review')) &&
+        !next.includes('questions.read')) ||
       (next.includes('tasks.update') && !next.includes('tasks.read'))
     )
       return json(
@@ -309,6 +316,12 @@ export async function teamApi(req, store, env) {
           category: d.category,
           status: d.status,
           replies: d.replies || [],
+          review:
+            db
+              .prepare(
+                'SELECT priority,note,actor_id,updated_at FROM team_reviews WHERE record_id=?',
+              )
+              .get(r.id) || null,
           created: r.created_at,
           assignedTo: owner ? r.user_id : undefined,
         }
@@ -316,7 +329,7 @@ export async function teamApi(req, store, env) {
       nextOffset: rows.length > 100 ? offset + 100 : null,
     })
   }
-  const m = p.match(/^\/api\/team\/cases\/([a-f0-9-]{36})\/(assign|reply)$/)
+  const m = p.match(/^\/api\/team\/cases\/([a-f0-9-]{36})\/(assign|reply|review)$/)
   if (m && req.method === 'POST') {
     const row = db
       .prepare("SELECT * FROM pilot_records WHERE id=? AND collection='pilot_feedback'")
@@ -346,6 +359,55 @@ export async function teamApi(req, store, env) {
     )
       return json({ error: 'Caso não encontrado' }, 404)
     const body = await req.json()
+    if (m[2] === 'review') {
+      if (
+        !['recebido', 'em_avaliacao', 'respondido', 'resolvido'].includes(body.status) ||
+        !['baixa', 'normal', 'alta'].includes(body.priority) ||
+        typeof body.note !== 'string' ||
+        body.note.length > 2000
+      )
+        return json({ error: 'Avaliação inválida' }, 400)
+      db.exec('BEGIN IMMEDIATE')
+      try {
+        if (
+          !owner &&
+          (!grants(db, staff.id).includes('questions.review') ||
+            !db
+              .prepare(
+                'SELECT 1 FROM team_assignments a JOIN team_users u ON u.id=a.user_id WHERE a.record_id=? AND a.user_id=? AND u.active=1',
+              )
+              .get(row.id, staff.id))
+        ) {
+          db.exec('ROLLBACK')
+          return json({ error: 'Permissão revogada' }, 403)
+        }
+        const current = db.prepare('SELECT data FROM pilot_records WHERE id=?').get(row.id)
+        if (!current) {
+          db.exec('ROLLBACK')
+          return json({ error: 'Caso não encontrado' }, 404)
+        }
+        const data = JSON.parse(current.data)
+        if (body.status === 'respondido' && !data.replies?.length) {
+          db.exec('ROLLBACK')
+          return json({ error: 'Envie uma resposta antes de marcar como respondido' }, 400)
+        }
+        data.status = body.status
+        db.prepare('UPDATE pilot_records SET data=?,updated_at=? WHERE id=?').run(
+          JSON.stringify(data),
+          new Date().toISOString(),
+          row.id,
+        )
+        db.prepare(
+          'INSERT INTO team_reviews VALUES(?,?,?,?,?) ON CONFLICT(record_id) DO UPDATE SET priority=excluded.priority,note=excluded.note,actor_id=excluded.actor_id,updated_at=excluded.updated_at',
+        ).run(row.id, body.priority, body.note.trim(), owner ? 'owner' : staff.id, Date.now())
+        audit(owner ? 'owner' : staff.id, 'review_feedback', row.id)
+        db.exec('COMMIT')
+        return json({ ok: true })
+      } catch (error) {
+        db.exec('ROLLBACK')
+        throw error
+      }
+    }
     if (
       typeof body.message !== 'string' ||
       !body.message.trim() ||
