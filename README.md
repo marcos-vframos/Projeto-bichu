@@ -1,6 +1,6 @@
 # Meu Bichu — servidor independente e equipe
 
-Estado em 19/10/2026: implementação local testada. NÃO publicada, NÃO migrada com os dados reais. Os dois Sites anteriores continuam sendo a produção. Esta pasta é uma cópia independente; nenhuma modificação foi publicada neles.
+Estado em 19/10/2026: servidor independente publicado em https://meu-bichu-app-production.up.railway.app, com banco e fotos migrados e verificados. Código em https://github.com/marcos-vframos/Projeto-bichu. O endereço antigo dos tutores redireciona para o novo e sua API está sem gravações. A cópia antiga permanece preservada para recuperação, sem ser usada pelo novo runtime.
 
 ## O que mudou
 
@@ -26,7 +26,7 @@ Configure variáveis de ambiente com base em `env.example`. Gere `PILOT_PANEL_KE
 
 Em produção use HTTPS, `NODE_ENV=production`, `APP_ORIGIN=https://seu-dominio` e `DATA_DIR=/data`. Inicie com `npm start`. O proprietário abre `https://seu-dominio/painel#access=CHAVE_PRIVADA`; o fragmento é removido da barra após a troca por cookie HttpOnly. O funcionário abre `https://seu-dominio/equipe` e usa o acesso criado pelo proprietário.
 
-O Dockerfile inclui as duas interfaces compiladas e o servidor. O arquivo `railway.json` define build Docker e verificação `/healthz`. A imagem Docker não foi construída nesta sessão: o acesso externo necessário à instalação foi bloqueado. Os builds Vite e testes Node foram executados localmente.
+O Dockerfile inclui as duas interfaces compiladas e o servidor. O arquivo `railway.json` define build Docker e verificação `/healthz`. A imagem Docker foi construída e publicada com sucesso no Railway. Os builds Vite e testes Node também passaram localmente.
 
 ## Publicar no Railway ou em outro servidor
 
@@ -40,7 +40,9 @@ O GitHub guarda o código; não executa este backend. Continuará sendo necessá
 
 ## Migrar os dados do piloto
 
-A migração real ainda está pendente. Nesta sessão a conexão à origem foi bloqueada pela rede; nenhum backup de produção foi baixado ou importado. Qualquer base histórica externa do PocketBase precisa de exportação própria: não consta neste pacote.
+A migração do piloto atual foi concluída: 10 contas, 53 registros, 6 arquivos, 840 eventos, 850 alterações, 8 aparelhos, 12 sessões e 2 registros de tentativas de login. Tabelas foram comparadas integralmente, incluindo hashes de senha, e fotos foram conferidas por SHA-256. A origem foi pausada antes da exportação. Nenhum prazo foi reiniciado. Qualquer base histórica externa do PocketBase que nunca tenha sido enviada a este piloto continua dependendo de exportação própria; não foi encontrada nesta migração.
+
+O módulo `server/migrate.mjs` importa uma única vez a partir de `MIGRATION_SOURCE` e `MIGRATION_KEY`: exige origem em modo de leitura, compara duas exportações, valida arquivos e restaura em transação apenas num destino vazio. As variáveis temporárias foram esvaziadas depois da importação. Os passos abaixo documentam o procedimento e a recuperação, não uma operação pendente.
 
 1. Interrompa as gravações na origem durante a exportação final. Avise os participantes para não usar o app nessa janela e bloqueie as gravações no servidor de origem antes da troca. Não mantenha dois endereços gravando em bases diferentes.
 2. Em ambiente privado configure `MB_BACKUP_ORIGIN` com a URL antiga e `MB_BACKUP_KEY` com a chave administrativa antiga, como variáveis de ambiente, nunca no comando ou GitHub. Execute `node scripts/backup-pilot.mjs /caminho/privado/backup`. O exportador inclui as oito tabelas do piloto e fotos. Compare uma segunda exportação durante a pausa para confirmar estabilidade.
@@ -54,4 +56,4 @@ Depois da troca, backups devem incluir o volume completo, inclusive as tabelas `
 
 ## Validação executada
 
-17 testes Node passaram, incluindo restauração de foto e histórico, isolamento entre tutores, expiração, preferências, servidor independente, atribuição, resposta ao tutor, autoria, revogação e bloqueio de falsificação do cabeçalho administrativo. Builds das duas interfaces e verificações TypeScript passaram. Não houve validação em aparelhos, domínio novo ou infraestrutura externa nesta sessão.
+18 testes Node passaram, incluindo restauração de foto e histórico, isolamento entre tutores, expiração, preferências, servidor independente, atribuição, resposta ao tutor, autoria, revogação e bloqueio de falsificação do cabeçalho administrativo. Builds das duas interfaces e verificações TypeScript passaram. O domínio novo foi validado por HTTPS: três interfaces acessíveis, proprietário autenticado por link privado, bloqueio de consultas sem sessão e seis fotos verificadas por hash. Não houve teste visual nos aparelhos nesta sessão.
