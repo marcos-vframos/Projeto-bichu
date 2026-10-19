@@ -1,3 +1,5 @@
+import { duties } from './duties.js'
+import { contextFields, readContext, showContext } from './activity-form.js'
 import { $, show, el, button, api, privateAccess, statusName, date } from './shared.js'
 let mode = 'questions',
   cases = [],
@@ -10,13 +12,14 @@ const can = (key) => permissions.includes(key)
 const assignee = new URLSearchParams(location.search).get('funcionario')
 const query = (offset) => {
   const q = new URLSearchParams()
+  if (mode !== 'questions') q.set('category', mode === 'tasks' ? 'geral' : mode)
   if (assignee) q.set('assignee', assignee)
   if (offset !== null && offset !== undefined) q.set('offset', offset)
   const value = q.toString()
   return value ? '?' + value : ''
 }
 const dirty = () =>
-  [...document.querySelectorAll('#detail textarea')].some((x) => x.value !== x.defaultValue)
+  [...document.querySelectorAll('#detail textarea, #detail input')].some((x) => x.value !== x.defaultValue)
 async function load(more = false) {
   if (busy) return
   if (!more && dirty() && !confirm('Descartar o texto ainda não salvo e atualizar?')) return
@@ -38,11 +41,18 @@ async function load(more = false) {
       permissions = me.permissions
       $('#questions').hidden = !can('questions.read')
       $('#tasks').hidden = !can('tasks.read')
-      if (mode === 'questions' && !can('questions.read')) mode = 'tasks'
-      if (mode === 'tasks' && !can('tasks.read') && can('questions.read')) mode = 'questions'
+      for (const id of Object.keys(duties)) $('#duty-' + id).hidden = !can('duty.' + id)
+      const available = [
+        ...(can('questions.read') ? ['questions'] : []),
+        ...(can('tasks.read') ? ['tasks'] : []),
+        ...Object.keys(duties).filter((id) => can('duty.' + id)),
+      ]
+      if (!available.includes(mode)) mode = available[0] || 'tasks'
       const [c, t] = await Promise.all([
         can('questions.read') ? api('cases' + query()) : { items: [], nextOffset: null },
-        can('tasks.read') ? api('tasks' + query()) : { items: [], nextOffset: null },
+        (mode === 'tasks' && can('tasks.read')) || can('duty.' + mode)
+          ? api('tasks' + query())
+          : { items: [], nextOffset: null },
       ])
       cases = c.items
       tasks = t.items
@@ -53,7 +63,16 @@ async function load(more = false) {
     show('')
     render()
   } catch (error) {
-    if(error.status===401){$('#workspace').hidden=true;$('#login-panel').hidden=false;$('#refresh').hidden=true;$('#logout').hidden=true;cases=[];tasks=[];$('#responsibilities').replaceChildren();$('#detail').replaceChildren()}
+    if (error.status === 401) {
+      $('#workspace').hidden = true
+      $('#login-panel').hidden = false
+      $('#refresh').hidden = true
+      $('#logout').hidden = true
+      cases = []
+      tasks = []
+      $('#responsibilities').replaceChildren()
+      $('#detail').replaceChildren()
+    }
     show(error.message)
   } finally {
     busy = false
@@ -61,7 +80,12 @@ async function load(more = false) {
   }
 }
 function render() {
-  if (!can('questions.read') && !can('tasks.read')) {
+  $('#new-activity').hidden = !can('duty.' + mode)
+  if (
+    !can('questions.read') &&
+    !can('tasks.read') &&
+    !Object.keys(duties).some((id) => can('duty.' + id))
+  ) {
     $('#responsibilities').replaceChildren(
       el('p', 'Nenhuma atribuição autorizada. Solicite a definição ao proprietário.'),
     )
@@ -73,12 +97,16 @@ function render() {
     items = questions ? cases : tasks
   $('#questions').textContent =
     `Perguntas e feedbacks (${cases.length}${caseOffset !== null ? '+' : ''})`
-  $('#tasks').textContent = `Tarefas atribuídas (${tasks.length}${taskOffset !== null ? '+' : ''})`
+  $('#tasks').textContent = 'Tarefas gerais'
+  for (const id of Object.keys(duties))
+    $('#duty-' + id).setAttribute('aria-pressed', String(mode === id))
   $('#questions').setAttribute('aria-pressed', String(questions))
-  $('#tasks').setAttribute('aria-pressed', String(!questions))
+  $('#tasks').setAttribute('aria-pressed', String(mode === 'tasks'))
   $('#summary').textContent = questions
     ? 'Clique em uma pergunta para ler e responder.'
-    : 'Clique em uma responsabilidade para ver as instruções e registrar o andamento.'
+    : duties[mode]
+      ? duties[mode].name + ' · ' + duties[mode].description
+      : 'Clique em uma responsabilidade para ver as instruções e registrar o andamento.'
   const list = $('#responsibilities')
   list.replaceChildren()
   if (!items.length)
@@ -261,7 +289,8 @@ function openTask(item) {
     el('p', item.details || 'Sem instruções adicionais.', 'content'),
     el('p', 'Prazo: ' + date(item.due_date), 'muted'),
   )
-  if (!can('tasks.update')) {
+  showContext(item, area)
+  if (!(item.category === 'geral' ? can('tasks.update') : can('duty.' + item.category))) {
     if (item.note) area.append(el('p', item.note, 'content'))
     return
   }
@@ -280,7 +309,10 @@ function openTask(item) {
   }
   if (item.status !== 'em_andamento')
     actions.append(button('Iniciar / retomar tarefa', () => save('em_andamento')))
-  if (item.status !== 'concluida')
+  if (item.category === 'conteudo') {
+    if (!['aprovada', 'aguardando_aprovacao'].includes(item.status))
+      actions.append(button('Encaminhar para aprovação', () => save('aguardando_aprovacao')))
+  } else if (item.status !== 'concluida')
     actions.append(button('Marcar como concluída', () => save('concluida')))
   actions.append(button('Salvar observação', () => save(item.status)))
   area.append(actions)
@@ -294,8 +326,70 @@ for (const [id, value] of [
     closeMenu()
     mode = value
     $('#detail').hidden = true
-    render()
+    void load()
   }
+
+for (const [id, duty] of Object.entries(duties)) {
+  const item = button(duty.name, async () => {
+    if (dirty() && !confirm('Descartar o texto não salvo?')) return
+    closeMenu()
+    mode = id
+    $('#detail').hidden = true
+    await load()
+  })
+  item.id = 'duty-' + id
+  item.hidden = true
+  $('#staff-menu nav').append(item)
+}
+$('#new-activity').onclick = () => {
+  if (dirty() && !confirm('Descartar o texto não salvo?')) return
+  const category = mode,
+    area = detail('Registrar · ' + duties[category].name),
+    form = el('form'),
+    titleLabel = el('label', 'Título da atividade'),
+    title = el('input'),
+    descriptionLabel = el('label', 'Descrição e instruções'),
+    description = el('textarea'),
+    priorityLabel = el('label', 'Prioridade'),
+    priority = el('select'),
+    context = el('div'),
+    send = el('button', 'Salvar atividade')
+  title.required = true
+  title.maxLength = 160
+  description.maxLength = 4000
+  titleLabel.append(title)
+  descriptionLabel.append(description)
+  for (const value of ['normal', 'alta', 'baixa']) {
+    const option = el('option', value)
+    option.value = value
+    priority.append(option)
+  }
+  priorityLabel.append(priority)
+  contextFields(category, context)
+  form.append(titleLabel, descriptionLabel, priorityLabel, context, send)
+  area.append(form)
+  form.onsubmit = async (event) => {
+    event.preventDefault()
+    send.disabled = true
+    try {
+      await api('tasks', {
+        category,
+        title: title.value,
+        details: description.value,
+        priority: priority.value,
+        context: readContext(context),
+        ...(assignee ? { userId: assignee } : {}),
+      })
+      for (const field of form.querySelectorAll('textarea')) field.defaultValue = field.value
+      await load()
+      show('Atividade registrada.')
+    } catch (error) {
+      show(error.message)
+    } finally {
+      send.disabled = false
+    }
+  }
+}
 $('#refresh').onclick = () => load()
 $('#more').onclick = () => load(true)
 async function enter(me) {

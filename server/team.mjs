@@ -1,5 +1,7 @@
+import { duties } from '../team/duties.js'
 import { initTasks, tasksApi } from './tasks.mjs'
 export const permissionCatalog = {
+  ...Object.fromEntries(Object.entries(duties).map(([id, d]) => ['duty.' + id, d.name])),
   'questions.read': 'Consultar perguntas e feedbacks atribuídos',
   'questions.review': 'Avaliar feedbacks e atualizar status',
   'questions.reply': 'Responder perguntas e feedbacks atribuídos',
@@ -88,7 +90,9 @@ export async function teamApi(req, store, env) {
   const u = new URL(req.url),
     p = u.pathname,
     db = store.raw
-  const owner = req.headers.get('x-mb-team-mode') !== 'staff' && await ownerSession(req, env.PILOT_PANEL_KEY),
+  const owner =
+      req.headers.get('x-mb-team-mode') !== 'staff' &&
+      (await ownerSession(req, env.PILOT_PANEL_KEY)),
     audit = (actor, action, id = null) =>
       db
         .prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)')
@@ -163,23 +167,25 @@ export async function teamApi(req, store, env) {
       : grants(db, selectedPreview || staff?.id)
   if (p === '/api/team/me')
     return owner
-      ? json({ role: 'owner', name: 'Proprietário', permissions, catalog: permissionCatalog })
+      ? json({
+          role: 'owner',
+          name: 'Proprietário',
+          permissions,
+          catalog: permissionCatalog,
+          duties,
+        })
       : staff
-        ? json({ role: 'staff', name: staff.name, permissions, catalog: permissionCatalog })
+        ? json({ role: 'staff', name: staff.name, permissions, catalog: permissionCatalog, duties })
         : json({ error: 'Entre com o acesso da equipe' }, 401)
   if (!owner && !staff) return json({ error: 'Acesso não autorizado' }, 401)
   if (!owner) {
-    const required = p.startsWith('/api/team/tasks')
+    const required = p.startsWith('/api/team/cases')
       ? req.method === 'GET'
-        ? 'tasks.read'
-        : 'tasks.update'
-      : p.startsWith('/api/team/cases')
-        ? req.method === 'GET'
-          ? 'questions.read'
-          : p.endsWith('/review')
-            ? 'questions.review'
-            : 'questions.reply'
-        : null
+        ? 'questions.read'
+        : p.endsWith('/review')
+          ? 'questions.review'
+          : 'questions.reply'
+      : null
     if (required && !permissions.includes(required))
       return json({ error: 'Atribuição não autorizada' }, 403)
   }

@@ -55,6 +55,7 @@ export const statusName = (value) =>
     em_avaliacao: 'Em avaliação',
     respondido: 'Respondido',
     resolvido: 'Resolvido',
+    aguardando_aprovacao: 'Aguardando aprovação',aprovada:'Aprovada',ajustes_solicitados:'Ajustes solicitados',
     pendente: 'Pendente',
     em_andamento: 'Em andamento',
     concluida: 'Concluída',

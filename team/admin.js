@@ -1,3 +1,5 @@
+import { duties } from './duties.js'
+import { contextFields, readContext, showContext } from './activity-form.js'
 import { $, show, el, button, api, privateAccess, statusName, date, assignment } from './shared.js'
 let catalog = {},
   users = [],
@@ -110,9 +112,24 @@ async function loadTasks(more = false) {
     const row = el('div', undefined, 'list-row')
     row.append(
       el('h3', item.title),
+      el('small', duties[item.category]?.name || 'Tarefas gerais', 'badge'),
       el('p', statusName(item.status) + ' · ' + date(item.due_date), 'muted'),
       el('p', item.details, 'content'),
     )
+    showContext(item, row)
+    if (item.category === 'conteudo' && item.status === 'aguardando_aprovacao') {
+      row.append(
+        button('Aprovar revisão', async () => {
+          await api('tasks/' + item.id, { status: 'aprovada' }, 'PATCH')
+          await loadTasks()
+          show('Revisão aprovada. A alteração do conteúdo continua sendo uma etapa separada.')
+        }),
+        button('Solicitar ajustes', async () => {
+          await api('tasks/' + item.id, { status: 'ajustes_solicitados' }, 'PATCH')
+          await loadTasks()
+        }),
+      )
+    }
     if (item.note) row.append(el('p', 'Andamento: ' + item.note, 'content'))
     const who = assignment(users, item.user_id)
     row.append(
@@ -160,10 +177,12 @@ $('#create-task').onsubmit = async (event) => {
   send.disabled = true
   try {
     const body = Object.fromEntries(new FormData(event.target))
+    body.context = readContext($('#task-context'))
     body.userId = body.userId || null
     body.dueDate = body.dueDate || null
     await api('tasks', body)
     event.target.reset()
+    contextFields('geral', $('#task-context'))
     await loadTasks()
     show('Responsabilidade criada e disponível para o responsável.')
   } catch (error) {
@@ -226,3 +245,10 @@ if (window.parent !== window) {
       parent.postMessage({ type: 'bichu-workspace', path: '/equipe' }, location.origin)
     }
 }
+
+for (const [id, duty] of Object.entries(duties)) {
+  const option = el('option', duty.name)
+  option.value = id
+  $('#task-category').append(option)
+}
+$('#task-category').onchange = () => contextFields($('#task-category').value, $('#task-context'))
