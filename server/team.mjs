@@ -1,3 +1,4 @@
+import { initTasks, tasksApi } from './tasks.mjs'
 const enc = new TextEncoder(),
   WEEK = 7 * 86400000
 const json = (x, status = 200, headers = {}) =>
@@ -52,6 +53,10 @@ export async function ownerSession(req, key) {
   return (await sign(parts[0] + '.' + parts[1], key)) === parts[2]
 }
 export function initTeam(db) {
+  initTeamTables(db)
+  initTasks(db)
+}
+function initTeamTables(db) {
   db.exec(
     `CREATE TABLE IF NOT EXISTS team_users(id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT UNIQUE NOT NULL,salt TEXT NOT NULL,password_hash TEXT NOT NULL,active INTEGER NOT NULL DEFAULT 1,created_at INTEGER NOT NULL);CREATE TABLE IF NOT EXISTS team_sessions(token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES team_users(id) ON DELETE CASCADE,expires_at INTEGER NOT NULL);CREATE TABLE IF NOT EXISTS team_assignments(record_id TEXT PRIMARY KEY REFERENCES pilot_records(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES team_users(id),assigned_at INTEGER NOT NULL);CREATE TABLE IF NOT EXISTS team_audit(id TEXT PRIMARY KEY,actor_id TEXT NOT NULL,action TEXT NOT NULL,record_id TEXT,created_at INTEGER NOT NULL);CREATE TABLE IF NOT EXISTS team_attempts(email TEXT PRIMARY KEY,failures INTEGER NOT NULL,locked_until INTEGER NOT NULL);`,
   )
@@ -130,6 +135,7 @@ export async function teamApi(req, store, env) {
         ? json({ role: 'staff', name: staff.name })
         : json({ error: 'Entre com o acesso da equipe' }, 401)
   if (!owner && !staff) return json({ error: 'Acesso não autorizado' }, 401)
+  if (p.startsWith('/api/team/tasks')) return tasksApi(req, db, { owner, staff, audit })
   if (p === '/api/team/users' && req.method === 'GET') {
     if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
     return json(
@@ -179,6 +185,10 @@ export async function teamApi(req, store, env) {
       db.prepare('UPDATE team_users SET active=0 WHERE id=?').run(revoke[1])
       db.prepare('DELETE FROM team_sessions WHERE user_id=?').run(revoke[1])
       db.prepare('DELETE FROM team_assignments WHERE user_id=?').run(revoke[1])
+      db.prepare('UPDATE team_tasks SET user_id=NULL,updated_at=? WHERE user_id=?').run(
+        Date.now(),
+        revoke[1],
+      )
       audit('owner', 'revoke_staff', revoke[1])
       db.exec('COMMIT')
     } catch (e) {
@@ -200,17 +210,24 @@ export async function teamApi(req, store, env) {
   if (p === '/api/team/cases' && req.method === 'GET') {
     const offset = Number(u.searchParams.get('offset') || 0)
     if (!Number.isSafeInteger(offset) || offset < 0) return json({ error: 'Página inválida' }, 400)
-    const rows = owner
-      ? db
-          .prepare(
-            "SELECT r.*,a.user_id FROM pilot_records r LEFT JOIN team_assignments a ON a.record_id=r.id WHERE r.collection='pilot_feedback' ORDER BY r.updated_at DESC,r.id LIMIT 101 OFFSET ?",
-          )
-          .all(offset)
-      : db
-          .prepare(
-            "SELECT r.*,a.user_id FROM pilot_records r JOIN team_assignments a ON a.record_id=r.id WHERE r.collection='pilot_feedback' AND a.user_id=? ORDER BY r.updated_at DESC,r.id LIMIT 101 OFFSET ?",
-          )
-          .all(staff.id, offset)
+    const selected = u.searchParams.get('assignee')
+    if (
+      selected &&
+      (!owner || !db.prepare('SELECT 1 FROM team_users WHERE id=? AND active=1').get(selected))
+    )
+      return json({ error: 'Filtro não autorizado' }, 403)
+    const rows =
+      owner && !selected
+        ? db
+            .prepare(
+              "SELECT r.*,a.user_id FROM pilot_records r LEFT JOIN team_assignments a ON a.record_id=r.id WHERE r.collection='pilot_feedback' ORDER BY r.updated_at DESC,r.id LIMIT 101 OFFSET ?",
+            )
+            .all(offset)
+        : db
+            .prepare(
+              "SELECT r.*,a.user_id FROM pilot_records r JOIN team_assignments a ON a.record_id=r.id WHERE r.collection='pilot_feedback' AND a.user_id=? ORDER BY r.updated_at DESC,r.id LIMIT 101 OFFSET ?",
+            )
+            .all(owner ? selected : staff.id, offset)
     return json({
       items: rows.slice(0, 100).map((r) => {
         const d = JSON.parse(r.data)

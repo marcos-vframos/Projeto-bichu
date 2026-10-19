@@ -54,7 +54,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <>{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/equipe">Equipe</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <>{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/equipe">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Meu Bichu · piloto'}</h1>

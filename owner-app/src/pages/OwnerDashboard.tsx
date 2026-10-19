@@ -75,7 +75,7 @@ export default function OwnerDashboard() {
           <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
             <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <a href="/acesso-tutor" className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</a><a href="/equipe" className="rounded-xl border border-white/50 px-3 py-2">Abrir área da equipe</a><a href="/painel/equipe" className="rounded-xl border border-white/50 px-3 py-2">Equipe e atribuições</a><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
+          <a href="/acesso-tutor" className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</a><a href="/equipe" className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</a><a href="/painel/equipe" className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</a><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">

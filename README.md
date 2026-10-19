@@ -63,3 +63,9 @@ Depois da troca, backups devem incluir o volume completo, inclusive as tabelas `
 Abra uma vez o link privado de proprietário no navegador. No painel, use “Abrir app do tutor” para escolher uma das contas existentes, ou “Abrir área da equipe” para entrar sem usuário e senha. A sessão privada é compartilhada entre as três áreas. O app informa a conta escolhida e permite trocá-la. As mudanças feitas pelo proprietário são salvas na conta escolhida. A entrada é auditada. O tráfego de navegação do proprietário não alimenta as métricas de uso dos participantes. A validade original das contas convidadas não é modificada.
 
 Essa dispensa de formulário vale para o proprietário autenticado pelo link privado. Nenhum acesso público aos dados foi aberto, e a equipe mantém as permissões individuais quando voltar a usar suas próprias contas.
+
+## Funcionários e responsabilidades
+
+A gestão de funcionários fica exclusivamente em `/painel/equipe`, dentro da administração: cadastro, revogação, atribuição de perguntas, criação de tarefas com prazo e prioridade e histórico. `/equipe` mostra apenas “Minhas responsabilidades”, com botões individuais para perguntas e tarefas; ao clicar, o funcionário abre os detalhes e pode responder ou registrar andamento/conclusão. Não há formulário de entrar na conta nem controles administrativos nessa tela. O acesso continua privado e exige uma sessão autorizada.
+
+Funcionários acessam só suas atribuições. O proprietário pode visualizar todas, ou abrir a visão de um funcionário pelo botão na administração. Responsabilidades não são registros clínicos e não liberam acesso geral aos dados dos pets. Tarefas e andamento são persistidos na tabela `team_tasks`; os backups do novo servidor devem incluir todo o volume, conforme já documentado.
