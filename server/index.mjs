@@ -151,7 +151,8 @@ export function createApplication(options = {}) {
         res.setHeader('Cache-Control', 'no-store')
       res.setHeader('X-Content-Type-Options', 'nosniff')
       res.setHeader('Referrer-Policy', 'same-origin')
-      res.setHeader('X-Frame-Options', 'DENY')
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+      res.setHeader('Content-Security-Policy', "frame-ancestors 'self'")
       res.end(req.method === 'HEAD' ? undefined : Buffer.from(await response.arrayBuffer()))
     } catch (e) {
       console.error('Request failed:', e.name)

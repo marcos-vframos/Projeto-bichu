@@ -78,7 +78,11 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
       if (
         !row ||
         (!owner &&
-          (row.user_id !== staff.id ||
+          (!JSON.parse(
+            db.prepare('SELECT permissions FROM team_permissions WHERE user_id=?').get(staff.id)
+              ?.permissions || '[]',
+          ).includes('tasks.update') ||
+            row.user_id !== staff.id ||
             !db.prepare('SELECT 1 FROM team_users WHERE id=? AND active=1').get(staff.id)))
       ) {
         db.exec('ROLLBACK')

@@ -1,5 +1,6 @@
 import { $, show, el, button, api, privateAccess, statusName, date, assignment } from './shared.js'
-let users = [],
+let catalog = {},
+  users = [],
   questions = [],
   tasks = [],
   questionOffset = null,
@@ -18,6 +19,40 @@ async function people() {
     if (user.active) {
       const link = el('a', 'Visualizar responsabilidades deste funcionário')
       link.href = '/equipe?funcionario=' + encodeURIComponent(user.id)
+      if (window.parent !== window)
+        link.onclick = (event) => {
+          event.preventDefault()
+          window.parent.postMessage(
+            { type: 'bichu-workspace', path: link.getAttribute('href') },
+            location.origin,
+          )
+        }
+      const choices = el('fieldset'),
+        legend = el('legend', 'Acessos autorizados')
+      choices.append(legend)
+      const checks = []
+      for (const [key, title] of Object.entries(catalog)) {
+        const label = el('label', title),
+          check = el('input')
+        check.type = 'checkbox'
+        check.value = key
+        check.checked = user.permissions.includes(key)
+        label.prepend(check)
+        choices.append(label)
+        checks.push(check)
+      }
+      choices.append(
+        button('Salvar permissões', async () => {
+          await api(
+            'users/' + user.id + '/permissions',
+            { permissions: checks.filter((c) => c.checked).map((c) => c.value) },
+            'PUT',
+          )
+          show('Permissões salvas.')
+          await people()
+        }),
+      )
+      row.append(choices)
       row.append(
         link,
         button('Revogar acesso', async () => {
@@ -171,10 +206,20 @@ $('#refresh-audit').onclick = async () => {
 try {
   const me = await privateAccess()
   if (me.role !== 'owner') throw Error('Gestão disponível somente no painel do proprietário.')
+  catalog = me.catalog
   $('#admin').hidden = false
   await reload()
   show('')
 } catch (error) {
   $('#admin').hidden = true
   show(error.message)
+}
+
+if (window.parent !== window) {
+  for (const a of document.querySelectorAll('a[href="/painel"]')) a.hidden = true
+  for (const a of document.querySelectorAll('a[href="/equipe"]'))
+    a.onclick = (e) => {
+      e.preventDefault()
+      parent.postMessage({ type: 'bichu-workspace', path: '/equipe' }, location.origin)
+    }
 }

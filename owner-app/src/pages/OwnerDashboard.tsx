@@ -23,6 +23,8 @@ const date = (value: number | string | null) => value ? new Date(value).toLocale
 const number = (value: number | null, suffix = '') => value === null ? 'Sem medição' : `${value.toLocaleString('pt-BR')}${suffix}`
 
 export default function OwnerDashboard() {
+  const [workspace,setWorkspace]=useState<string|null>(null)
+  useEffect(()=>{const receive=(event:MessageEvent)=>{if(event.origin!==location.origin||event.source!==(document.getElementById('workspace-frame') as HTMLIFrameElement|null)?.contentWindow)return;const path=event.data?.path;if(event.data?.type==='bichu-workspace'&&typeof path==='string'&&/^\/equipe(?:\?funcionario=[a-f0-9-]{36})?$/.test(path))setWorkspace(path)};window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[])
   const [data, setData] = useState<Dashboard | null>(null)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [area, setArea] = useState<'accounts' | 'pets' | 'errors' | 'timings' | 'feedback' | null>(null)
@@ -75,7 +77,7 @@ export default function OwnerDashboard() {
           <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
             <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <a href="/acesso-tutor" className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</a><a href="/equipe" className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</a><a href="/painel/equipe" className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</a><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
+          <button onClick={()=>setWorkspace("/acesso-tutor")} className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</button><button onClick={()=>setWorkspace("/equipe")} className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</button><button onClick={()=>setWorkspace("/painel/equipe")} className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</button><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
@@ -85,9 +87,10 @@ export default function OwnerDashboard() {
         <p>Abra o link administrativo privado recebido para visualizar os dados sem login ou senha. Guarde esse link somente com você.</p>
       </section>}
       {state === 'error' && <div role="alert" className="rounded-xl border border-[#a85648] bg-[#fff2ef] p-5">Não foi possível consultar o banco agora. Atualize a página para tentar novamente.</div>}
-      {state === 'ready' && data && <>
+      {state === 'ready' && workspace && <section className="space-y-4"><button onClick={()=>setWorkspace(null)} className="rounded-xl border px-4 py-2">Voltar ao resumo do painel</button><iframe id="workspace-frame" title="Área integrada do Meu Bichu" src={workspace} className="w-full rounded-2xl border border-[#cedbd0] bg-[#f4f7f2]" style={{height:'80vh'}} /></section>}
+      {state === 'ready' && !workspace && data && <>
         <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="text-xl font-bold">Acompanhamento das dez contas</h2>
-          <p className="text-sm text-[#4c665d]">Atualizado em {date(data.generatedAt)}. Os dados anteriores do PocketBase ainda não foram importados.</p></div>
+          <p className="text-sm text-[#4c665d]">Atualizado em {date(data.generatedAt)}. Dados consultados no banco de produção.</p></div>
           <AccountPicker accounts={accounts} selectedIds={selectedIds} onChange={setSelectedIds} /></div>
         {data.truncated && <p role="alert" className="rounded-xl bg-[#fff2d9] p-4 text-sm">A consulta atingiu o limite de registros. Os totais de atividade e gráficos podem estar incompletos.</p>}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

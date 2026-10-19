@@ -5,12 +5,14 @@ let mode = 'questions',
   caseOffset = null,
   taskOffset = null,
   busy = false
+let permissions = []
+const can = (key) => permissions.includes(key)
 const assignee = new URLSearchParams(location.search).get('funcionario')
 const query = (offset) => {
   const q = new URLSearchParams()
   if (assignee) q.set('assignee', assignee)
   if (offset !== null && offset !== undefined) q.set('offset', offset)
-  const value=q.toString()
+  const value = q.toString()
   return value ? '?' + value : ''
 }
 const dirty = () =>
@@ -32,7 +34,16 @@ async function load(more = false) {
         taskOffset = data.nextOffset
       }
     } else {
-      const [c, t] = await Promise.all([api('cases' + query()), api('tasks' + query())])
+      const me = await api('me' + query())
+      permissions = me.permissions
+      $('#questions').hidden = !can('questions.read')
+      $('#tasks').hidden = !can('tasks.read')
+      if (mode === 'questions' && !can('questions.read')) mode = 'tasks'
+      if (mode === 'tasks' && !can('tasks.read') && can('questions.read')) mode = 'questions'
+      const [c, t] = await Promise.all([
+        can('questions.read') ? api('cases' + query()) : { items: [], nextOffset: null },
+        can('tasks.read') ? api('tasks' + query()) : { items: [], nextOffset: null },
+      ])
       cases = c.items
       tasks = t.items
       caseOffset = c.nextOffset
@@ -49,6 +60,14 @@ async function load(more = false) {
   }
 }
 function render() {
+  if (!can('questions.read') && !can('tasks.read')) {
+    $('#responsibilities').replaceChildren(
+      el('p', 'Nenhuma atribuição autorizada. Solicite a definição ao proprietário.'),
+    )
+    $('#summary').textContent = ''
+    $('#more').hidden = true
+    return
+  }
   const questions = mode === 'questions',
     items = questions ? cases : tasks
   $('#questions').textContent =
@@ -123,6 +142,7 @@ function openQuestion(item) {
     )
     area.append(block)
   }
+  if (!can('questions.reply')) return
   const form = el('form'),
     label = el('label', 'Sua resposta'),
     message = el('textarea')
@@ -173,6 +193,10 @@ function openTask(item) {
     el('p', item.details || 'Sem instruções adicionais.', 'content'),
     el('p', 'Prazo: ' + date(item.due_date), 'muted'),
   )
+  if (!can('tasks.update')) {
+    if (item.note) area.append(el('p', item.note, 'content'))
+    return
+  }
   const label = el('label', 'Registro do andamento'),
     note = el('textarea')
   note.maxLength = 2000
@@ -199,6 +223,7 @@ for (const [id, value] of [
 ])
   $('#' + id).onclick = () => {
     if (dirty() && !confirm('Descartar o texto não salvo?')) return
+    closeMenu()
     mode = value
     $('#detail').hidden = true
     render()
@@ -221,3 +246,21 @@ try {
 setInterval(() => {
   if (!document.hidden && !$('#workspace').hidden && $('#detail').hidden) void load()
 }, 30000)
+
+const toggle = $('#menu-toggle'),
+  menu = $('#staff-menu')
+function closeMenu() {
+  menu.hidden = true
+  toggle.setAttribute('aria-expanded', 'false')
+}
+toggle.onclick = () => {
+  menu.hidden = !menu.hidden
+  toggle.setAttribute('aria-expanded', String(!menu.hidden))
+}
+$('#menu-close').onclick = closeMenu
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeMenu()
+    toggle.focus()
+  }
+})

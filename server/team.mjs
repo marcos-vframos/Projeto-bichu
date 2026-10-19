@@ -1,4 +1,15 @@
 import { initTasks, tasksApi } from './tasks.mjs'
+export const permissionCatalog = {
+  'questions.read': 'Consultar perguntas e feedbacks atribuídos',
+  'questions.reply': 'Responder perguntas e feedbacks atribuídos',
+  'tasks.read': 'Consultar tarefas atribuídas',
+  'tasks.update': 'Registrar andamento e concluir tarefas',
+}
+const grants = (db, id) =>
+  JSON.parse(
+    db.prepare('SELECT permissions FROM team_permissions WHERE user_id=?').get(id || '')
+      ?.permissions || '[]',
+  )
 const enc = new TextEncoder(),
   WEEK = 7 * 86400000
 const json = (x, status = 200, headers = {}) =>
@@ -55,6 +66,14 @@ export async function ownerSession(req, key) {
 export function initTeam(db) {
   initTeamTables(db)
   initTasks(db)
+  db.exec(
+    'CREATE TABLE IF NOT EXISTS team_permissions(user_id TEXT PRIMARY KEY REFERENCES team_users(id),permissions TEXT NOT NULL)',
+  )
+  for (const u of db.prepare('SELECT id FROM team_users').all())
+    db.prepare('INSERT OR IGNORE INTO team_permissions VALUES(?,?)').run(
+      u.id,
+      JSON.stringify(Object.keys(permissionCatalog)),
+    )
 }
 function initTeamTables(db) {
   db.exec(
@@ -128,18 +147,67 @@ export async function teamApi(req, store, env) {
       'set-cookie': 'mb_team=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0',
     })
   }
+  const selectedPreview = owner ? u.searchParams.get('assignee') : null
+  if (
+    selectedPreview &&
+    !db.prepare('SELECT 1 FROM team_users WHERE id=? AND active=1').get(selectedPreview)
+  )
+    return json({ error: 'Funcionário inválido' }, 403)
+  const permissions =
+    owner && !selectedPreview
+      ? Object.keys(permissionCatalog)
+      : grants(db, selectedPreview || staff?.id)
   if (p === '/api/team/me')
     return owner
-      ? json({ role: 'owner', name: 'Proprietário' })
+      ? json({ role: 'owner', name: 'Proprietário', permissions, catalog: permissionCatalog })
       : staff
-        ? json({ role: 'staff', name: staff.name })
+        ? json({ role: 'staff', name: staff.name, permissions, catalog: permissionCatalog })
         : json({ error: 'Entre com o acesso da equipe' }, 401)
   if (!owner && !staff) return json({ error: 'Acesso não autorizado' }, 401)
+  if (!owner) {
+    const required = p.startsWith('/api/team/tasks')
+      ? req.method === 'GET'
+        ? 'tasks.read'
+        : 'tasks.update'
+      : p.startsWith('/api/team/cases')
+        ? req.method === 'GET'
+          ? 'questions.read'
+          : 'questions.reply'
+        : null
+    if (required && !permissions.includes(required))
+      return json({ error: 'Atribuição não autorizada' }, 403)
+  }
+  const permissionRoute = p.match(/^\/api\/team\/users\/([a-f0-9-]{36})\/permissions$/)
+  if (permissionRoute && req.method === 'PUT') {
+    if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
+    const { permissions: next } = await req.json()
+    if (
+      !Array.isArray(next) ||
+      next.some((x) => !Object.hasOwn(permissionCatalog, x)) ||
+      new Set(next).size !== next.length ||
+      (next.includes('questions.reply') && !next.includes('questions.read')) ||
+      (next.includes('tasks.update') && !next.includes('tasks.read'))
+    )
+      return json(
+        { error: 'Selecione também a consulta correspondente para permitir alterações' },
+        400,
+      )
+    if (!db.prepare('SELECT 1 FROM team_users WHERE id=? AND active=1').get(permissionRoute[1]))
+      return json({ error: 'Funcionário inválido' }, 404)
+    db.prepare(
+      'INSERT INTO team_permissions VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET permissions=excluded.permissions',
+    ).run(permissionRoute[1], JSON.stringify(next))
+    audit('owner', 'update_permissions', permissionRoute[1])
+    return json({ ok: true })
+  }
   if (p.startsWith('/api/team/tasks')) return tasksApi(req, db, { owner, staff, audit })
   if (p === '/api/team/users' && req.method === 'GET') {
     if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
     return json(
-      db.prepare('SELECT id,name,email,active,created_at FROM team_users ORDER BY name').all(),
+      db
+        .prepare('SELECT id,name,email,active,created_at FROM team_users ORDER BY name')
+        .all()
+        .map((u) => ({ ...u, permissions: grants(db, u.id) })),
     )
   }
   if (p === '/api/team/users' && req.method === 'POST') {
@@ -174,6 +242,10 @@ export async function teamApi(req, store, env) {
         return json({ error: 'E-mail já cadastrado' }, 409)
       throw e
     }
+    db.prepare('INSERT INTO team_permissions VALUES(?,?)').run(
+      id,
+      JSON.stringify(Object.keys(permissionCatalog)),
+    )
     audit('owner', 'create_staff', id)
     return json({ id }, 201)
   }
@@ -299,11 +371,12 @@ export async function teamApi(req, store, env) {
     try {
       const current =
         owner ||
-        db
-          .prepare(
-            'SELECT 1 FROM team_assignments a JOIN team_users u ON u.id=a.user_id WHERE a.record_id=? AND a.user_id=? AND u.active=1',
-          )
-          .get(row.id, staff.id)
+        (grants(db, staff.id).includes('questions.reply') &&
+          db
+            .prepare(
+              'SELECT 1 FROM team_assignments a JOIN team_users u ON u.id=a.user_id WHERE a.record_id=? AND a.user_id=? AND u.active=1',
+            )
+            .get(row.id, staff.id))
       if (!current) {
         db.exec('ROLLBACK')
         return json({ error: 'Permissão revogada' }, 403)
