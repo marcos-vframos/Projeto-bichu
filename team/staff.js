@@ -10,7 +10,8 @@ const query = (offset) => {
   const q = new URLSearchParams()
   if (assignee) q.set('assignee', assignee)
   if (offset !== null && offset !== undefined) q.set('offset', offset)
-  return q.size ? '?' + q : ''
+  const value=q.toString()
+  return value ? '?' + value : ''
 }
 const dirty = () =>
   [...document.querySelectorAll('#detail textarea')].some((x) => x.value !== x.defaultValue)
