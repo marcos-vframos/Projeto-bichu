@@ -25,6 +25,8 @@ const number = (value: number | null, suffix = '') => value === null ? 'Sem medi
 export default function OwnerDashboard() {
   const [workspace,setWorkspace]=useState<string|null>(null)
   useEffect(()=>{const receive=(event:MessageEvent)=>{if(event.origin!==location.origin||event.source!==(document.getElementById('workspace-frame') as HTMLIFrameElement|null)?.contentWindow)return;const path=event.data?.path;if(event.data?.type==='bichu-workspace'&&typeof path==='string'&&/^\/equipe(?:\?funcionario=[a-f0-9-]{36})?$/.test(path))setWorkspace(path)};window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[])
+  const [accessLink,setAccessLink]=useState('')
+  const [accessMessage,setAccessMessage]=useState('')
   const [data, setData] = useState<Dashboard | null>(null)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [area, setArea] = useState<'accounts' | 'pets' | 'errors' | 'timings' | 'feedback' | null>(null)
@@ -40,14 +42,16 @@ export default function OwnerDashboard() {
     try {
       const token = new URLSearchParams(window.location.hash.slice(1)).get('access')
       if (token) {
-        window.history.replaceState(null, '', '/painel')
         const unlocked = await fetch('/api/pilot/owner/unlock', { method: 'POST', credentials: 'same-origin',
           headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) })
-        if (unlocked.status === 403) { setState('denied'); return }
+        if (unlocked.status === 403) { setAccessMessage('Link privado inválido. Confira se você colou o acesso administrativo completo.');setState('denied'); return }
         if (!unlocked.ok) throw new Error('Erro ao abrir acesso')
+        window.history.replaceState(null, '', '/painel')
+        setAccessLink('')
+        setAccessMessage('')
       }
       const response = await fetchOwnerData('/api/pilot/owner/dashboard', { credentials: 'same-origin', cache: 'no-store' })
-      if (response.status === 403) { setState('denied'); return }
+      if (response.status === 403 || response.status === 401) { setState('denied'); return }
       if (!response.ok) throw new Error('Erro ao consultar dados')
       setData(await response.json())
       setState('ready')
@@ -59,6 +63,27 @@ export default function OwnerDashboard() {
     void reload()
     return () => window.removeEventListener('hashchange', onLink)
   }, [reload])
+
+  const openWorkspace=(path:string)=>{
+    if(state==='denied'){
+      setAccessMessage('Restaure seu acesso privado abaixo para abrir esta área.')
+      document.getElementById('owner-access-link')?.focus()
+      return
+    }
+    setWorkspace(path)
+    if(state!=='ready')void reload()
+  }
+  const restoreAccess=async(event:React.FormEvent)=>{
+    event.preventDefault()
+    try{
+      const url=new URL(accessLink.trim())
+      if(url.origin!==window.location.origin)throw Error('Use o link privado do painel do Railway.')
+      const token=new URLSearchParams(url.hash.slice(1)).get('access')
+      if(!token||!/^[a-f0-9]{64}$/.test(token))throw Error('O link precisa conter a autorização privada recebida.')
+      window.history.replaceState(null,'','/painel#access='+token)
+      await reload()
+    }catch(error){setAccessMessage(error instanceof Error?error.message:'Confira o link informado.')}
+  }
 
   const accounts = data?.accounts || []
   const visible = useMemo(() => accounts.filter(a => show(a.id)), [accounts, selectedIds])
@@ -77,16 +102,22 @@ export default function OwnerDashboard() {
           <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
             <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <button onClick={()=>setWorkspace("/acesso-tutor")} className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</button><button onClick={()=>setWorkspace("/painel/pendencias")} className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</button><button onClick={()=>setWorkspace("/painel/equipe")} className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</button><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
+          <button onClick={()=>openWorkspace("/acesso-tutor")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</button><button onClick={()=>openWorkspace("/painel/pendencias")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</button><button onClick={()=>openWorkspace("/painel/equipe")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</button><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
       {state === 'loading' && <p role="status">Carregando dados do piloto…</p>}
       {state === 'denied' && <section className="max-w-xl rounded-2xl bg-white border border-[#cedbd0] p-6 space-y-4 shadow-sm">
-        <h2 className="text-xl font-bold">Acesso exclusivo do proprietário</h2>
-        <p>Abra o link administrativo privado recebido para visualizar os dados sem login ou senha. Guarde esse link somente com você.</p>
+        <h2 className="text-xl font-bold">Restaurar acesso do proprietário</h2>
+        <p>Este navegador não está autorizado a consultar o painel. Abra seu link administrativo privado ou cole-o abaixo para recuperar o acesso às áreas e aos dados.</p>
+        <form onSubmit={event=>void restoreAccess(event)} className="space-y-3">
+          <label htmlFor="owner-access-link" className="block font-semibold">Link administrativo privado</label>
+          <input id="owner-access-link" type="password" autoComplete="off" spellCheck={false} value={accessLink} onChange={event=>setAccessLink(event.target.value)} required className="w-full rounded-xl border border-[#8ba99b] bg-white px-3 py-3" placeholder="Cole o link privado completo" />
+          <button type="submit" className="rounded-xl bg-[#14372f] px-5 py-3 font-semibold text-white">Restaurar acesso ao painel</button>
+        </form>
+        {accessMessage&&<p role="status" className="text-sm font-medium">{accessMessage}</p>}
       </section>}
-      {state === 'error' && <div role="alert" className="rounded-xl border border-[#a85648] bg-[#fff2ef] p-5">Não foi possível consultar o banco agora. Atualize a página para tentar novamente.</div>}
+      {state === 'error' && <div role="alert" className="rounded-xl border border-[#a85648] bg-[#fff2ef] p-5">Não foi possível consultar o banco agora. <button onClick={()=>void reload()} className="underline font-semibold">Tentar novamente</button></div>}
       {state === 'ready' && workspace && <section className="space-y-4"><button onClick={()=>setWorkspace(null)} className="rounded-xl border px-4 py-2">Voltar ao resumo do painel</button><iframe id="workspace-frame" title="Área integrada do Meu Bichu" src={workspace} className="w-full rounded-2xl border border-[#cedbd0] bg-[#f4f7f2]" style={{height:'80vh'}} /></section>}
       {state === 'ready' && !workspace && data && <>
         <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="text-xl font-bold">Acompanhamento das dez contas</h2>
