@@ -45,6 +45,27 @@ test('independent runtime: employee isolation, owner assignment, tutor receives 
  const restored=await (await request(app,'/api/pilot/records/pilot_feedback','GET',null,tutor)).json();assert.equal(restored[0].replies[0].message,body.message)
  assert.equal((await request(app,'/equipe')).status,200)
  assert.equal((await request(app,'/painel','GET',null,null,{accept:'text/html'})).status,200)
+ const accounts=await(await request(app,'/api/pilot/owner/tutor-accounts','GET',null,owner)).json()
+ const selectedId=accounts.find(a=>a.email===auth[0].email).id
+ assert.equal((await request(app,'/api/pilot/owner/tutor-accounts')).status,403)
+ assert.equal((await request(app,'/api/pilot/owner/tutor-access','POST',{accountId:selectedId})).status,403)
+ assert.equal((await request(app,'/api/pilot/owner/tutor-access','POST',{accountId:'missing'},owner)).status,400)
+ app.store.raw.prepare('UPDATE pilot_accounts SET expires_at=? WHERE id=?').run(1,selectedId)
+ const selectedResponse=await request(app,'/api/pilot/owner/tutor-access','POST',{accountId:selectedId},owner)
+ assert.equal(selectedResponse.status,200)
+ const selection=cookie(selectedResponse),privateCookies=owner+'; '+selection
+ assert.equal((await request(app,'/api/pilot/me','GET',null,selection)).status,401)
+ assert.equal((await request(app,'/api/pilot/me','GET',null,tutor)).status,401)
+ const ownerMe=await(await request(app,'/api/pilot/me','GET',null,privateCookies)).json()
+ assert.equal(ownerMe.ownerAccess,true);assert.equal(ownerMe.id,selectedId)
+ assert.equal(app.store.raw.prepare('SELECT expires_at FROM pilot_accounts WHERE id=?').get(selectedId).expires_at,1)
+ assert.equal((await request(app,'/api/team/me','GET',null,owner)).status,200)
+ assert.equal((await request(app,'/api/team/me','GET',null,selection)).status,401)
+ const eventCount=app.store.raw.prepare('SELECT COUNT(*) AS n FROM pilot_events').get().n
+ assert.equal((await request(app,'/api/pilot/events','POST',{event:'page_load'},privateCookies)).status,200)
+ assert.equal(app.store.raw.prepare('SELECT COUNT(*) AS n FROM pilot_events').get().n,eventCount)
+ assert.equal((await request(app,'/api/pilot/preferences','PUT',{bichu_test:'owner-only'},privateCookies)).status,200)
+ assert.equal((await request(app,'/acesso-tutor')).status,200)
  assert.equal((await request(app,'/api/pilot/owner/logout','POST',{},owner)).headers.get('set-cookie').includes('Path=/api;'),true)
  }finally{app?.store.close();await rm(dir,{recursive:true,force:true})}
 })

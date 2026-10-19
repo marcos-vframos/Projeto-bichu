@@ -35,6 +35,17 @@ export function createApplication(options = {}) {
     if (p.startsWith('/api/')) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
+      if (p === '/api/pilot/owner/tutor-accounts' || p === '/api/pilot/owner/tutor-access') {
+        if (!await ownerSession(request,env.PILOT_PANEL_KEY)) return Response.json({error:'Abra seu link privado de proprietário'},{status:403,headers:{'cache-control':'no-store'}})
+        if(p.endsWith('tutor-accounts') && request.method==='GET')return Response.json(store.raw.prepare('SELECT id,email FROM pilot_accounts ORDER BY email').all(),{headers:{'cache-control':'no-store'}})
+        if(p.endsWith('tutor-access') && request.method==='POST'){
+          const {accountId}=await request.json()
+          if(typeof accountId!=='string'||!store.raw.prepare('SELECT 1 FROM pilot_accounts WHERE id=?').get(accountId))return Response.json({error:'Conta inválida'},{status:400})
+          store.raw.prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)').run(crypto.randomUUID(),'owner','open_tutor',accountId,Date.now())
+          return Response.json({ok:true},{headers:{'cache-control':'no-store','set-cookie':`mb_owner_account=${encodeURIComponent(accountId)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE===false?'':'; Secure'}`}})
+        }
+        return new Response(null,{status:405})
+      }
       if (
         p.startsWith('/api/team/') ||
         ['/api/pilot/owner/unlock', '/api/pilot/owner/session'].includes(p)
@@ -59,8 +70,21 @@ export function createApplication(options = {}) {
         headers.set('oai-authenticated-user-id', 'd410baf1-83e0-4641-9a41-f44fc8c5025a')
       }
       if (!p.startsWith('/api/pilot/')) return new Response(null, { status: 404 })
-      return handlePilot(new Request(request, { headers }), env)
+      let requestEnv=env
+      if(await ownerSession(request,env.PILOT_PANEL_KEY)){
+        const selected=request.headers.get('cookie')?.split(';').map(x=>x.trim()).find(x=>x.startsWith('mb_owner_account='))?.slice('mb_owner_account='.length)
+        if(selected){
+          const account=store.raw.prepare('SELECT id,email,expires_at FROM pilot_accounts WHERE id=?').get(selected)
+          if(account){
+            requestEnv={...env,OWNER_ACCESS_ACCOUNT:{...account,ownerAccess:true}}
+            if(['/api/pilot/events','/api/pilot/device'].includes(p))return Response.json({ok:true,ownerAccess:true},{headers:{'cache-control':'no-store'}})
+            if(p==='/api/pilot/logout' && request.method==='POST')return Response.json({ok:true},{headers:{'set-cookie':'mb_owner_account=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0; Secure','cache-control':'no-store'}})
+          }
+        }
+      }
+      return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))
     if (p === '/equipe' || p === '/painel/equipe') return asset(resolve(root, 'team/index.html'))
     if (p.startsWith('/models/') || p === '/bcs-fase14.html')
       return new Response('BCS inativo', { status: 404 })

@@ -557,9 +557,9 @@ export async function handlePilot(request, env) {
     return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: updated.expires_at }, 200,
       { 'set-cookie': `${COOKIE}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/api/pilot; Max-Age=${Math.ceil((updated.expires_at - now) / 1000)}` })
   }
-  const account = await currentAccount(request, env.DB)
+  const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)
-  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.expires_at })
+  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true })
   if (path[0] === 'logout' && request.method === 'POST') {
     const token = getCookie(request)
     await env.DB.prepare('DELETE FROM pilot_sessions WHERE token_hash = ?').bind(await digest(token)).run()

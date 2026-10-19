@@ -4,7 +4,7 @@ import { loadPreferences, loadOfflinePreferences, flushPreferences } from '@/lib
 import DeviceActivity from '@/components/DeviceActivity'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 
-type Account = { id: string; email: string; expiresAt: number }
+type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean }
 
 export function PilotGate({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null)
@@ -20,9 +20,12 @@ export function PilotGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAccess() {
       try {
+        const access=new URLSearchParams(window.location.hash.slice(1)).get('access')
+        if(access){history.replaceState(null,'',location.pathname+location.search);await fetch('/api/pilot/owner/unlock',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token:access})})}
         const response = await fetch('/api/pilot/me', { credentials: 'same-origin' })
         if (response.ok) { const data = await response.json(); await loadPreferences(data.id)
       sessionStorage.setItem('mb_offline_session',JSON.stringify(data));setAccount(data) }
+        else {const owner=await fetch('/api/pilot/owner/session',{credentials:'same-origin',cache:'no-store'});if(owner.ok){location.replace('/acesso-tutor');return}}
       } catch {try{const cached=JSON.parse(sessionStorage.getItem('mb_offline_session')||'null');if(cached?.expiresAt>Date.now()){loadOfflinePreferences(cached.id);if(preferenceStorage.getItem('bichu_privacy_offline')==='false')throw Error('Cache desativado');setAccount(cached);setError('Modo offline: consultando os últimos dados sincronizados. Alterações exigem conexão.')}else setError('Sem conexão. Entre novamente quando estiver online.')}catch{setError('Sem conexão.')}}
       finally { setLoading(false) }
     }
@@ -51,7 +54,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <><DeviceActivity key={account.id} /><OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <>{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/equipe">Equipe</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Meu Bichu · piloto'}</h1>

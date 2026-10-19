@@ -57,3 +57,9 @@ Depois da troca, backups devem incluir o volume completo, inclusive as tabelas `
 ## Validação executada
 
 18 testes Node passaram, incluindo restauração de foto e histórico, isolamento entre tutores, expiração, preferências, servidor independente, atribuição, resposta ao tutor, autoria, revogação e bloqueio de falsificação do cabeçalho administrativo. Builds das duas interfaces e verificações TypeScript passaram. O domínio novo foi validado por HTTPS: três interfaces acessíveis, proprietário autenticado por link privado, bloqueio de consultas sem sessão e seis fotos verificadas por hash. Não houve teste visual nos aparelhos nesta sessão.
+
+## Acesso temporário do proprietário às duas áreas
+
+Abra uma vez o link privado de proprietário no navegador. No painel, use “Abrir app do tutor” para escolher uma das contas existentes, ou “Abrir área da equipe” para entrar sem usuário e senha. A sessão privada é compartilhada entre as três áreas. O app informa a conta escolhida e permite trocá-la. As mudanças feitas pelo proprietário são salvas na conta escolhida. A entrada é auditada. O tráfego de navegação do proprietário não alimenta as métricas de uso dos participantes. A validade original das contas convidadas não é modificada.
+
+Essa dispensa de formulário vale para o proprietário autenticado pelo link privado. Nenhum acesso público aos dados foi aberto, e a equipe mantém as permissões individuais quando voltar a usar suas próprias contas.
