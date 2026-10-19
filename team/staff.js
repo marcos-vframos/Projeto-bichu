@@ -1,3 +1,4 @@
+import { signalControl, issueHistory, urgency, issueState } from './issue-client.js'
 import { duties } from './duties.js'
 import { contextFields, readContext, showContext } from './activity-form.js'
 import { $, show, el, button, api, privateAccess, statusName, date } from './shared.js'
@@ -7,7 +8,9 @@ let mode = 'questions',
   caseOffset = null,
   taskOffset = null,
   busy = false
-let permissions = []
+let permissions = [],
+  isStaff = false,
+  signals = []
 const can = (key) => permissions.includes(key)
 const assignee = new URLSearchParams(location.search).get('funcionario')
 const query = (offset) => {
@@ -19,13 +22,22 @@ const query = (offset) => {
   return value ? '?' + value : ''
 }
 const dirty = () =>
-  [...document.querySelectorAll('#detail textarea, #detail input')].some((x) => x.value !== x.defaultValue)
+  [...document.querySelectorAll('#detail textarea, #detail input')].some(
+    (x) => x.value !== x.defaultValue,
+  )
 async function load(more = false) {
   if (busy) return
   if (!more && dirty() && !confirm('Descartar o texto ainda não salvo e atualizar?')) return
   busy = true
   $('#refresh').disabled = true
   try {
+    if (more && mode === 'signals') {
+      const data = await api('issues?history=1&offset=' + taskOffset)
+      signals.push(...data.items)
+      taskOffset = data.nextOffset
+      renderSignals()
+      return
+    }
     if (more) {
       if (mode === 'questions') {
         const data = await api('cases' + query(caseOffset))
@@ -39,15 +51,26 @@ async function load(more = false) {
     } else {
       const me = await api('me' + query())
       permissions = me.permissions
+      $('#signals').hidden = !isStaff
       $('#questions').hidden = !can('questions.read')
       $('#tasks').hidden = !can('tasks.read')
       for (const id of Object.keys(duties)) $('#duty-' + id).hidden = !can('duty.' + id)
       const available = [
+        ...(isStaff ? ['signals'] : []),
         ...(can('questions.read') ? ['questions'] : []),
         ...(can('tasks.read') ? ['tasks'] : []),
         ...Object.keys(duties).filter((id) => can('duty.' + id)),
       ]
       if (!available.includes(mode)) mode = available[0] || 'tasks'
+      if (mode === 'signals') {
+        const data = await api('issues?history=1')
+        signals = data.items
+        taskOffset = data.nextOffset
+        $('#detail').hidden = true
+        renderSignals()
+        show('')
+        return
+      }
       const [c, t] = await Promise.all([
         can('questions.read') ? api('cases' + query()) : { items: [], nextOffset: null },
         (mode === 'tasks' && can('tasks.read')) || can('duty.' + mode)
@@ -80,6 +103,7 @@ async function load(more = false) {
   }
 }
 function render() {
+  $('#signals').setAttribute('aria-pressed', 'false')
   $('#new-activity').hidden = !can('duty.' + mode)
   if (
     !can('questions.read') &&
@@ -162,6 +186,7 @@ function detail(title) {
 function openQuestion(item) {
   if (dirty() && !confirm('Descartar o texto não salvo?')) return
   const area = detail('Pergunta recebida')
+  if (isStaff) signalControl('feedback', item.id, area)
   area.append(el('p', statusName(item.status), 'badge'), el('p', item.message, 'content'))
   for (const reply of item.replies || []) {
     const block = el('blockquote')
@@ -284,6 +309,7 @@ function openQuestion(item) {
 function openTask(item) {
   if (dirty() && !confirm('Descartar o texto não salvo?')) return
   const area = detail(item.title)
+  if (isStaff) signalControl('task', item.id, area)
   area.append(
     el('p', statusName(item.status), 'badge'),
     el('p', item.details || 'Sem instruções adicionais.', 'content'),
@@ -322,6 +348,7 @@ for (const [id, value] of [
   ['tasks', 'tasks'],
 ])
   $('#' + id).onclick = () => {
+    if (busy) return
     if (dirty() && !confirm('Descartar o texto não salvo?')) return
     closeMenu()
     mode = value
@@ -332,6 +359,7 @@ for (const [id, value] of [
 
 for (const [id, duty] of Object.entries(duties)) {
   const item = button(duty.name, async () => {
+    if (busy) return
     if (dirty() && !confirm('Descartar o texto não salvo?')) return
     closeMenu()
     mode = id
@@ -392,9 +420,67 @@ $('#new-activity').onclick = () => {
     }
   }
 }
+
+function renderSignals() {
+  $('#new-activity').hidden = true
+  $('#summary').textContent =
+    'Minhas sinalizações · Acompanhe as orientações e soluções do proprietário.'
+  $('#signals').setAttribute('aria-pressed', 'true')
+  for (const node of document.querySelectorAll('#staff-menu button:not(#signals)'))
+    node.setAttribute('aria-pressed', 'false')
+  $('#responsibilities').replaceChildren(
+    ...signals.map((item) => {
+      const card = button('', () => openSignal(item.id), 'responsibility')
+      card.append(
+        el('span', urgency[item.priority] + ' · ' + issueState[item.status], 'badge'),
+        el('strong', item.summary),
+        el('small', date(item.created_at)),
+      )
+      return card
+    }),
+  )
+  if (!signals.length)
+    $('#responsibilities').append(el('p', 'Você ainda não sinalizou pendências ao proprietário.'))
+  $('#more').hidden = taskOffset === null
+}
+async function openSignal(id) {
+  if (dirty() && !confirm('Descartar o texto não salvo?')) return
+  const item = await api('issues/' + id),
+    area = detail('Minha sinalização')
+  area.append(el('p', item.summary, 'content'), el('p', issueState[item.status], 'badge'))
+  issueHistory(item, area)
+  const label = el('label', 'Informação adicional para o proprietário'),
+    message = el('textarea')
+  message.maxLength = 4000
+  label.append(message)
+  area.append(label)
+  const send = async (action) => {
+    if (!message.value.trim()) {
+      show('Escreva a informação que deseja enviar.')
+      return
+    }
+    await api('issues/' + id, { action, message: message.value }, 'PATCH')
+    message.defaultValue = message.value
+    await openSignal(id)
+    show('Informação enviada ao proprietário.')
+  }
+  area.append(button('Enviar informação', () => send('mensagem')))
+  if (item.status === 'resolvida')
+    area.append(button('Reabrir com justificativa', () => send('reabrir')))
+}
+$('#signals').onclick = async () => {
+  if (dirty() && !confirm('Descartar o texto não salvo?')) return
+  closeMenu()
+  mode = 'signals'
+  $('#detail').replaceChildren()
+  $('#detail').hidden = true
+  await load()
+}
+
 $('#refresh').onclick = () => load()
 $('#more').onclick = () => load(true)
 async function enter(me) {
+  isStaff = me.role === 'staff'
   $('#login-panel').hidden = true
   $('#identity').textContent =
     me.name +

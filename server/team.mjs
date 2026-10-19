@@ -1,3 +1,4 @@
+import { initIssues, issuesApi } from './issues.mjs'
 import { duties } from '../team/duties.js'
 import { initTasks, tasksApi } from './tasks.mjs'
 export const permissionCatalog = {
@@ -69,6 +70,7 @@ export async function ownerSession(req, key) {
 export function initTeam(db) {
   initTeamTables(db)
   initTasks(db)
+  initIssues(db)
   db.exec(
     'CREATE TABLE IF NOT EXISTS team_reviews(record_id TEXT PRIMARY KEY REFERENCES pilot_records(id) ON DELETE CASCADE,priority TEXT NOT NULL,note TEXT NOT NULL,actor_id TEXT NOT NULL,updated_at INTEGER NOT NULL)',
   )
@@ -178,6 +180,7 @@ export async function teamApi(req, store, env) {
         ? json({ role: 'staff', name: staff.name, permissions, catalog: permissionCatalog, duties })
         : json({ error: 'Entre com o acesso da equipe' }, 401)
   if (!owner && !staff) return json({ error: 'Acesso não autorizado' }, 401)
+  if (p.startsWith('/api/team/issues')) return issuesApi(req, db, { owner, staff, audit })
   if (!owner) {
     const required = p.startsWith('/api/team/cases')
       ? req.method === 'GET'
