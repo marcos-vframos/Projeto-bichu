@@ -328,7 +328,7 @@ $('#logout').onclick = async () => {
   if (dirty() && !confirm('Sair e descartar o texto não salvo?')) return
   try {
     await api('logout', {})
-    location.replace('/equipe')
+    location.replace('/equipe?acesso=funcionario')
   } catch (error) {
     show(error.message)
   }

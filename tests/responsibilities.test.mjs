@@ -14,6 +14,8 @@ test('responsibilities: employee buttons separate from administration, assigned 
  const owner=cookie(await call('/api/pilot/owner/unlock','POST',{token:key}))
  const employee=async(number)=>{const credentials={name:'Pessoa '+number,email:`pessoa${number}@test.local`,password:'somente-para-o-teste-123'};const response=await call('/api/team/users','POST',credentials,owner);assert.equal(response.status,201);const{id}=await response.json();return{id,auth:cookie(await call('/api/team/login','POST',credentials))}}
  const first=await employee(1),second=await employee(2)
+ const staffMode=await app.dispatch(new Request('https://test.local/api/team/me',{headers:{cookie:owner+'; '+first.auth,'x-mb-team-mode':'staff'}}));assert.equal((await staffMode.json()).name,'Pessoa 1')
+ assert.equal((await app.dispatch(new Request('https://test.local/api/team/me',{headers:{cookie:owner,'x-mb-team-mode':'staff'}}))).status,401)
  const create=await call('/api/team/tasks','POST',{title:'Conferir solicitação',details:'Entrar em contato e registrar o resultado.',userId:first.id,priority:'alta',dueDate:'2026-10-22'},owner);assert.equal(create.status,201);const task=(await create.json()).id
  assert.equal((await call('/api/team/tasks','POST',{title:'Não pode',details:''},first.auth)).status,403)
  assert.equal((await call('/api/team/tasks')).status,401)

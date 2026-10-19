@@ -88,7 +88,7 @@ export async function teamApi(req, store, env) {
   const u = new URL(req.url),
     p = u.pathname,
     db = store.raw
-  const owner = await ownerSession(req, env.PILOT_PANEL_KEY),
+  const owner = req.headers.get('x-mb-team-mode') !== 'staff' && await ownerSession(req, env.PILOT_PANEL_KEY),
     audit = (actor, action, id = null) =>
       db
         .prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)')

@@ -28,7 +28,7 @@ export async function api(path, body, method) {
     method: method || (body ? 'POST' : 'GET'),
     credentials: 'same-origin',
     cache: 'no-store',
-    headers: body ? { 'content-type': 'application/json' } : {},
+    headers: { ...(body ? { 'content-type': 'application/json' } : {}), ...(new URLSearchParams(location.search).get('acesso')==='funcionario' ? {'x-mb-team-mode':'staff'} : {}) },
     body: body ? JSON.stringify(body) : undefined,
   })
   const data = await response.json()
