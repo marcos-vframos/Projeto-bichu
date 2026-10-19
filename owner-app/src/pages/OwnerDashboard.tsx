@@ -74,7 +74,7 @@ export default function OwnerDashboard() {
         <div className="flex items-center gap-3"><ShieldCheck className="h-7 w-7 text-[#cfebaa]" aria-hidden="true" />
           <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
             <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
           <a href="/acesso-tutor" className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</a><a href="/equipe" className="rounded-xl border border-white/50 px-3 py-2">Abrir área da equipe</a><a href="/painel/equipe" className="rounded-xl border border-white/50 px-3 py-2">Equipe e atribuições</a><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
       </div>
     </header>
