@@ -173,11 +173,35 @@ export async function teamApi(req, store, env) {
           role: 'owner',
           name: 'Proprietário',
           permissions,
+          assignedCategories:
+            owner && !selectedPreview
+              ? []
+              : db
+                  .prepare(
+                    'SELECT DISTINCT category FROM team_tasks WHERE user_id=? AND scoped_access=1',
+                  )
+                  .all(selectedPreview || staff?.id || '')
+                  .map((r) => r.category),
           catalog: permissionCatalog,
           duties,
         })
       : staff
-        ? json({ role: 'staff', name: staff.name, permissions, catalog: permissionCatalog, duties })
+        ? json({
+            role: 'staff',
+            name: staff.name,
+            permissions,
+            assignedCategories:
+              owner && !selectedPreview
+                ? []
+                : db
+                    .prepare(
+                      'SELECT DISTINCT category FROM team_tasks WHERE user_id=? AND scoped_access=1',
+                    )
+                    .all(selectedPreview || staff?.id || '')
+                    .map((r) => r.category),
+            catalog: permissionCatalog,
+            duties,
+          })
         : json({ error: 'Entre com o acesso da equipe' }, 401)
   if (!owner && !staff) return json({ error: 'Acesso não autorizado' }, 401)
   if (p.startsWith('/api/team/issues')) return issuesApi(req, db, { owner, staff, audit })
@@ -213,6 +237,12 @@ export async function teamApi(req, store, env) {
     db.prepare(
       'INSERT INTO team_permissions VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET permissions=excluded.permissions',
     ).run(permissionRoute[1], JSON.stringify(next))
+    for (const category of ['geral', ...Object.keys(duties)])
+      if (!next.includes(category === 'geral' ? 'tasks.update' : 'duty.' + category))
+        db.prepare('UPDATE team_tasks SET scoped_access=0 WHERE user_id=? AND category=?').run(
+          permissionRoute[1],
+          category,
+        )
     audit('owner', 'update_permissions', permissionRoute[1])
     return json({ ok: true })
   }

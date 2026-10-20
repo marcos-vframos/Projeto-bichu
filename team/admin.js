@@ -131,12 +131,30 @@ async function loadTasks(more = false) {
       )
     }
     if (item.note) row.append(el('p', 'Andamento: ' + item.note, 'content'))
-    const who = assignment(users, item.user_id)
+    const who = assignment(users, item.user_id),
+      colorLabel = el('label', 'Cor da tarja do responsável'),
+      color = el('input'),
+      summaryLabel = el('label', 'Resumo comunitário'),
+      summary = el('input')
+    color.type = 'color'
+    color.value = item.badge_color || '#34745d'
+    colorLabel.append(color)
+    summary.value = item.board_title || item.title
+    summary.maxLength = 160
+    summaryLabel.append(summary)
     row.append(
+      colorLabel,
+      summaryLabel,
       who,
       button('Atualizar responsável', async () => {
-        await api('tasks/' + item.id, { userId: who.value || null }, 'PATCH')
-        show('Responsável atualizado.')
+        await api(
+          'tasks/' + item.id,
+          { userId: who.value || null, badgeColor: color.value, boardTitle: summary.value },
+          'PATCH',
+        )
+        show(
+          'Tarefa encaminhada ao responsável com acesso para executá-la e tarja atualizada no quadro da equipe.',
+        )
         await loadTasks()
       }),
     )
@@ -177,6 +195,7 @@ $('#create-task').onsubmit = async (event) => {
   send.disabled = true
   try {
     const body = Object.fromEntries(new FormData(event.target))
+    body.boardTitle = body.boardTitle || body.title
     body.context = readContext($('#task-context'))
     body.userId = body.userId || null
     body.dueDate = body.dueDate || null

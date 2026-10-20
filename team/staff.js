@@ -1,8 +1,9 @@
+import { createTaskBoard } from './task-board.js'
 import { signalControl, issueHistory, urgency, issueState } from './issue-client.js'
 import { duties } from './duties.js'
 import { contextFields, readContext, showContext } from './activity-form.js'
 import { $, show, el, button, api, privateAccess, statusName, date } from './shared.js'
-let mode = 'questions',
+let mode = 'board',
   cases = [],
   tasks = [],
   caseOffset = null,
@@ -10,7 +11,8 @@ let mode = 'questions',
   busy = false
 let permissions = [],
   isStaff = false,
-  signals = []
+  signals = [],
+  assignedCategories = []
 const can = (key) => permissions.includes(key)
 const assignee = new URLSearchParams(location.search).get('funcionario')
 const query = (offset) => {
@@ -25,12 +27,32 @@ const dirty = () =>
   [...document.querySelectorAll('#detail textarea, #detail input')].some(
     (x) => x.value !== x.defaultValue,
   )
+const board = createTaskBoard(openTask, dirty, () => mode === 'board')
 async function load(more = false) {
   if (busy) return
   if (!more && dirty() && !confirm('Descartar o texto ainda não salvo e atualizar?')) return
   busy = true
   $('#refresh').disabled = true
   try {
+    if (mode === 'board') {
+      const me = await api('me' + query())
+      permissions = me.permissions
+      assignedCategories = me.assignedCategories || []
+      $('#signals').hidden = !isStaff
+      $('#questions').hidden = !can('questions.read')
+      $('#tasks').hidden = !can('tasks.read') && !assignedCategories.includes('geral')
+      for (const id of Object.keys(duties))
+        $('#duty-' + id).hidden = !can('duty.' + id) && !assignedCategories.includes(id)
+      if (!more) {
+        $('#detail').replaceChildren()
+        $('#detail').hidden = true
+      }
+      await board.load(more)
+      return
+    }
+    $('#board-tools').hidden = true
+    $('#responsibilities').classList.remove('task-board')
+    $('#board').setAttribute('aria-pressed', 'false')
     if (more && mode === 'signals') {
       const data = await api('issues?history=1&offset=' + taskOffset)
       signals.push(...data.items)
@@ -51,17 +73,24 @@ async function load(more = false) {
     } else {
       const me = await api('me' + query())
       permissions = me.permissions
+      assignedCategories = me.assignedCategories || []
       $('#signals').hidden = !isStaff
       $('#questions').hidden = !can('questions.read')
-      $('#tasks').hidden = !can('tasks.read')
-      for (const id of Object.keys(duties)) $('#duty-' + id).hidden = !can('duty.' + id)
+      $('#tasks').hidden = !can('tasks.read') && !assignedCategories.includes('geral')
+      for (const id of Object.keys(duties))
+        $('#duty-' + id).hidden = !can('duty.' + id) && !assignedCategories.includes(id)
       const available = [
+        'board',
         ...(isStaff ? ['signals'] : []),
         ...(can('questions.read') ? ['questions'] : []),
-        ...(can('tasks.read') ? ['tasks'] : []),
-        ...Object.keys(duties).filter((id) => can('duty.' + id)),
+        ...(can('tasks.read') || assignedCategories.includes('geral') ? ['tasks'] : []),
+        ...Object.keys(duties).filter((id) => can('duty.' + id) || assignedCategories.includes(id)),
       ]
-      if (!available.includes(mode)) mode = available[0] || 'tasks'
+      if (!available.includes(mode)) {
+        mode = 'board'
+        await board.load()
+        return
+      }
       if (mode === 'signals') {
         const data = await api('issues?history=1')
         signals = data.items
@@ -73,7 +102,9 @@ async function load(more = false) {
       }
       const [c, t] = await Promise.all([
         can('questions.read') ? api('cases' + query()) : { items: [], nextOffset: null },
-        (mode === 'tasks' && can('tasks.read')) || can('duty.' + mode)
+        (mode === 'tasks' && (can('tasks.read') || assignedCategories.includes('geral'))) ||
+        can('duty.' + mode) ||
+        assignedCategories.includes(mode)
           ? api('tasks' + query())
           : { items: [], nextOffset: null },
       ])
@@ -316,7 +347,12 @@ function openTask(item) {
     el('p', 'Prazo: ' + date(item.due_date), 'muted'),
   )
   showContext(item, area)
-  if (!(item.category === 'geral' ? can('tasks.update') : can('duty.' + item.category))) {
+  if (
+    !(
+      item.scoped_access === 1 ||
+      (item.category === 'geral' ? can('tasks.update') : can('duty.' + item.category))
+    )
+  ) {
     if (item.note) area.append(el('p', item.note, 'content'))
     return
   }
@@ -328,7 +364,11 @@ function openTask(item) {
   area.append(label)
   const actions = el('div', undefined, 'actions')
   const save = async (status) => {
-    await api('tasks/' + item.id, { status, note: note.value }, 'PATCH')
+    await api(
+      'tasks/' + item.id,
+      { ...(status === item.status ? {} : { status }), note: note.value },
+      'PATCH',
+    )
     note.defaultValue = note.value
     await load()
     show('Andamento da responsabilidade salvo.')
@@ -344,6 +384,7 @@ function openTask(item) {
   area.append(actions)
 }
 for (const [id, value] of [
+  ['board', 'board'],
   ['questions', 'questions'],
   ['tasks', 'tasks'],
 ])

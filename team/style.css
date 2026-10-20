@@ -239,4 +239,65 @@ fieldset input[type='checkbox'] {
   height: 20px;
 }
 
-.employee-access{display:block;background:white;border:1px solid #b7cbb7;border-radius:14px;padding:18px;text-decoration:none;margin:12px 0}.employee-access:hover{background:#edf5e9}#login-panel{max-width:520px;margin:30px auto}
+.employee-access {
+  display: block;
+  background: white;
+  border: 1px solid #b7cbb7;
+  border-radius: 14px;
+  padding: 18px;
+  text-decoration: none;
+  margin: 12px 0;
+}
+.employee-access:hover {
+  background: #edf5e9;
+}
+#login-panel {
+  max-width: 520px;
+  margin: 30px auto;
+}
+
+.task-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.board-card {
+  padding: 0;
+  overflow: hidden;
+  min-height: 205px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.board-card > strong,
+.board-card > small,
+.board-card > .badge {
+  margin: 0 16px;
+}
+.board-card > small:last-child {
+  margin-bottom: 16px;
+}
+.responsible-stripe {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-weight: 700;
+  border-radius: 0;
+  overflow-wrap: anywhere;
+}
+#board-sentinel {
+  height: 2px;
+}
+#board-tools label {
+  max-width: 340px;
+}
+@media (max-width: 800px) {
+  .task-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .task-board {
+    grid-template-columns: 1fr;
+  }
+}

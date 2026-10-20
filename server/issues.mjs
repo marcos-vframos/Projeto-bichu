@@ -77,14 +77,15 @@ export async function issuesApi(req, db, { owner, staff, audit }) {
     if (body.sourceType === 'task') {
       source = db
         .prepare(
-          'SELECT id,title,details,category,context,note,status FROM team_tasks WHERE id=? AND user_id=?',
+          'SELECT id,title,details,category,context,note,status,scoped_access FROM team_tasks WHERE id=? AND user_id=?',
         )
         .get(body.sourceId, staff.id)
       if (
         !source ||
-        !permissions.includes(
+        (!permissions.includes(
           source.category === 'geral' ? 'tasks.read' : 'duty.' + source.category,
-        )
+        ) &&
+          source.scoped_access !== 1)
       )
         return json({ error: 'Atividade não encontrada' }, 404)
     } else {
