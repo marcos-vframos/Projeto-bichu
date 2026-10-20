@@ -59,7 +59,7 @@ export function createTaskBoard(openTask, isDirty, isActive) {
       const data = {
         today: results[0].today,
         items: results.flatMap((result) => result.items),
-        nextPage: results.at(-1).nextPage,
+        nextPage: results[results.length-1].nextPage,
       }
       if (!isActive() || serial !== generation) return
       items = [
@@ -134,7 +134,7 @@ export function createTaskBoard(openTask, isDirty, isActive) {
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting) && isActive() && !isDirty() && next !== null)
+        if (entries.some((e) => e.isIntersecting) && isActive() && $('#detail').hidden && !isDirty() && next !== null)
           void load(true)
       },
       { rootMargin: '120px' },
