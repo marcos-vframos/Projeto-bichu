@@ -86,9 +86,10 @@ export function createApplication(options = {}) {
     }
     if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))
     if (p === '/equipe')return asset(resolve(root,'team/index.html'))
+    if (p === '/painel/registros')return asset(resolve(root,'team/audit.html'))
     if (p === '/painel/pendencias')return asset(resolve(root,'team/issues.html'))
     if (p === '/painel/equipe')return asset(resolve(root,'team/admin.html'))
-    if (['/team-ui/task-board.js','/team-ui/issues.js','/team-ui/issue-client.js','/team-ui/activity-form.js','/team-ui/duties.js','/team-ui/shared.js','/team-ui/admin.js','/team-ui/staff.js','/team-ui/style.css'].includes(p))return asset(resolve(root,'team',p.split('/').pop()))
+    if (['/team-ui/audit-view.js','/team-ui/audit-page.js','/team-ui/task-board.js','/team-ui/issues.js','/team-ui/issue-client.js','/team-ui/activity-form.js','/team-ui/duties.js','/team-ui/shared.js','/team-ui/admin.js','/team-ui/staff.js','/team-ui/style.css'].includes(p))return asset(resolve(root,'team',p.split('/').pop()))
     if (p.startsWith('/models/') || p === '/bcs-fase14.html')
       return new Response('BCS inativo', { status: 404 })
     const owner = p === '/painel' || p.startsWith('/painel/') || p.startsWith('/owner-assets/'),

@@ -1,6 +1,8 @@
+import { createAuditView } from './audit-view.js'
 import { duties } from './duties.js'
 import { contextFields, readContext, showContext } from './activity-form.js'
 import { $, show, el, button, api, privateAccess, statusName, date, assignment } from './shared.js'
+const auditView = createAuditView($('#audit-list'), () => !$('#audit').hidden)
 let catalog = {},
   users = [],
   questions = [],
@@ -173,6 +175,7 @@ for (const tab of document.querySelectorAll('[data-section]'))
       other.setAttribute('aria-pressed', String(selected))
       $('#' + other.dataset.section).hidden = !selected
     }
+    if (tab.dataset.section === 'audit') void auditView.load()
   }
 $('#create-person').onsubmit = async (event) => {
   event.preventDefault()
@@ -212,44 +215,14 @@ $('#create-task').onsubmit = async (event) => {
 }
 $('#more-questions').onclick = () => loadQuestions(true).catch((error) => show(error.message))
 $('#more-tasks').onclick = () => loadTasks(true).catch((error) => show(error.message))
-$('#refresh-audit').onclick = async () => {
-  try {
-    const rows = await api('audit'),
-      names = {
-        login: 'Entrada do funcionário',
-        create_staff: 'Cadastro de funcionário',
-        revoke_staff: 'Revogação de acesso',
-        assign: 'Atribuição de pergunta',
-        unassign: 'Remoção de atribuição',
-        reply: 'Resposta ao tutor',
-        review_feedback: 'Avaliação de feedback',
-        update_permissions: 'Alteração de permissões',
-        create_task: 'Criação de responsabilidade',
-        update_task: 'Atualização de responsabilidade',
-        open_tutor: 'Abertura de conta do tutor pelo proprietário',
-      }
-    $('#audit-list').replaceChildren(
-      ...rows.map((row) =>
-        el(
-          'p',
-          date(row.created_at) +
-            ' · ' +
-            (row.actor_name || 'Proprietário') +
-            ' · ' +
-            (names[row.action] || row.action),
-        ),
-      ),
-    )
-  } catch (error) {
-    show(error.message)
-  }
-}
+$('#refresh-audit').onclick = () => auditView.load()
 try {
   const me = await privateAccess()
   if (me.role !== 'owner') throw Error('Gestão disponível somente no painel do proprietário.')
   catalog = me.catalog
   $('#admin').hidden = false
   await reload()
+  await auditView.start()
   show('')
 } catch (error) {
   $('#admin').hidden = true

@@ -211,7 +211,13 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
       badgeColor,
       workDate,
     )
-    audit(owner ? 'owner' : staff.id, 'create_task', id)
+    audit(owner ? 'owner' : staff.id, 'create_task', id, {
+      title: body.title.trim(),
+      category,
+      toStatus: 'pendente',
+      note: body.details.trim(),
+      assignedTo: userId,
+    })
     return json({ id }, 201)
   }
   const match = p.match(/^\/api\/team\/tasks\/([a-f0-9-]{36})$/)
@@ -299,7 +305,16 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
         body.workDate === undefined ? row.work_date : body.workDate,
         row.id,
       )
-      audit(owner ? 'owner' : staff.id, 'update_task', row.id)
+      audit(owner ? 'owner' : staff.id, 'update_task', row.id, {
+        title: row.title,
+        category: row.category,
+        fromStatus: row.status,
+        toStatus: body.status || row.status,
+        note: body.note === undefined ? row.note : body.note.trim(),
+        previousNote: row.note,
+        assignedFrom: row.user_id,
+        assignedTo: userId,
+      })
       db.exec('COMMIT')
       return json({ ok: true })
     } catch (e) {

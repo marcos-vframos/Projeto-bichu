@@ -18,7 +18,13 @@ export async function issuesApi(req, db, { owner, staff, audit }) {
       message,
       Date.now(),
     )
-    audit(owner ? 'owner' : staff.id, 'issue_' + action, issueId)
+    audit(owner ? 'owner' : staff.id, 'issue_' + action, issueId, {
+      title:
+        db.prepare('SELECT summary FROM team_issues WHERE id=?').get(issueId)?.summary ||
+        'Pendência',
+      category: 'pendencia',
+      note: message,
+    })
   }
   if (path === '/api/team/issues/reporters' && req.method === 'GET') {
     if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
@@ -202,7 +208,13 @@ export async function issuesApi(req, db, { owner, staff, audit }) {
         Date.now(),
         current.source_id,
       )
-      audit('owner', 'update_task', current.source_id)
+      audit('owner', 'update_task', current.source_id, {
+        title: db.prepare('SELECT title FROM team_tasks WHERE id=?').get(current.source_id).title,
+        category: 'conteudo',
+        fromStatus: task.status,
+        toStatus: 'aprovada',
+        note: body.message.trim(),
+      })
     }
     db.prepare(
       'UPDATE team_issues SET status=?,priority=?,resolution=?,updated_at=? WHERE id=?',

@@ -69,6 +69,9 @@ export async function ownerSession(req, key) {
 }
 export function initTeam(db) {
   initTeamTables(db)
+  db.exec(
+    'CREATE TABLE IF NOT EXISTS team_audit_details(audit_id TEXT PRIMARY KEY REFERENCES team_audit(id) ON DELETE CASCADE,data TEXT NOT NULL);CREATE INDEX IF NOT EXISTS team_audit_created ON team_audit(created_at)',
+  )
   initTasks(db)
   initIssues(db)
   db.exec(
@@ -95,10 +98,24 @@ export async function teamApi(req, store, env) {
   const owner =
       req.headers.get('x-mb-team-mode') !== 'staff' &&
       (await ownerSession(req, env.PILOT_PANEL_KEY)),
-    audit = (actor, action, id = null) =>
-      db
-        .prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)')
-        .run(crypto.randomUUID(), actor, action, id, Date.now())
+    audit = (actor, action, id = null, details = {}) => {
+      const eventId = crypto.randomUUID(),
+        actorName =
+          actor === 'owner'
+            ? 'Proprietário'
+            : db.prepare('SELECT name FROM team_users WHERE id=?').get(actor)?.name || 'Funcionário'
+      db.prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)').run(
+        eventId,
+        actor,
+        action,
+        id,
+        Date.now(),
+      )
+      db.prepare('INSERT INTO team_audit_details VALUES(?,?)').run(
+        eventId,
+        JSON.stringify({ ...details, actorName }),
+      )
+    }
   if (p === '/api/pilot/owner/unlock' && req.method === 'POST') {
     const { token } = await req.json()
     if (typeof token !== 'string' || token !== env.PILOT_PANEL_KEY)
@@ -317,12 +334,30 @@ export async function teamApi(req, store, env) {
   }
   if (p === '/api/team/audit' && req.method === 'GET') {
     if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
+    const offset = Number(u.searchParams.get('offset') || 0),
+      actor = u.searchParams.get('actor'),
+      completed = u.searchParams.get('completed') === '1'
+    if (!Number.isSafeInteger(offset) || offset < 0) return json({ error: 'Página inválida' }, 400)
+    const conditions = [],
+      args = []
+    if (actor) {
+      conditions.push('a.actor_id=?')
+      args.push(actor)
+    }
+    if (completed)
+      conditions.push(
+        "json_extract(d.data,'$.toStatus') IN ('concluida','aprovada') AND COALESCE(json_extract(d.data,'$.fromStatus'),'')!=json_extract(d.data,'$.toStatus')",
+      )
     return json(
       db
         .prepare(
-          'SELECT a.*,u.name AS actor_name FROM team_audit a LEFT JOIN team_users u ON a.actor_id=u.id ORDER BY a.created_at DESC LIMIT 200',
+          `SELECT a.*,u.name AS actor_name,d.data AS detail_data FROM team_audit a LEFT JOIN team_users u ON a.actor_id=u.id LEFT JOIN team_audit_details d ON d.audit_id=a.id ${conditions.length ? 'WHERE ' + conditions.join(' AND ') : ''} ORDER BY a.created_at DESC,a.rowid DESC LIMIT 200 OFFSET ?`,
         )
-        .all(),
+        .all(...args, offset)
+        .map(({ detail_data, ...row }) => ({
+          ...row,
+          details: detail_data ? JSON.parse(detail_data) : null,
+        })),
     )
   }
   if (p === '/api/team/cases' && req.method === 'GET') {
@@ -439,7 +474,14 @@ export async function teamApi(req, store, env) {
         db.prepare(
           'INSERT INTO team_reviews VALUES(?,?,?,?,?) ON CONFLICT(record_id) DO UPDATE SET priority=excluded.priority,note=excluded.note,actor_id=excluded.actor_id,updated_at=excluded.updated_at',
         ).run(row.id, body.priority, body.note.trim(), owner ? 'owner' : staff.id, Date.now())
-        audit(owner ? 'owner' : staff.id, 'review_feedback', row.id)
+        audit(owner ? 'owner' : staff.id, 'review_feedback', row.id, {
+          title: JSON.parse(current.data).message || 'Feedback',
+          category: 'feedback',
+          fromStatus: JSON.parse(current.data).status || 'recebido',
+          toStatus: body.status,
+          note: body.note.trim(),
+          priority: body.priority,
+        })
         db.exec('COMMIT')
         return json({ ok: true })
       } catch (error) {
@@ -489,7 +531,13 @@ export async function teamApi(req, store, env) {
         db.exec('ROLLBACK')
         return json({ error: 'O caso mudou; atualize' }, 409)
       }
-      audit(owner ? 'owner' : staff.id, 'reply', row.id)
+      audit(owner ? 'owner' : staff.id, 'reply', row.id, {
+        title: data.message || 'Feedback',
+        category: 'feedback',
+        fromStatus: JSON.parse(row.data).status || 'recebido',
+        toStatus: body.status,
+        note: body.message.trim(),
+      })
       db.exec('COMMIT')
     } catch (e) {
       db.exec('ROLLBACK')
