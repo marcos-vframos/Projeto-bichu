@@ -2,7 +2,7 @@ import {s3} from './s3.mjs'
 import {statSync,createReadStream,createWriteStream} from 'node:fs'
 import {pipeline} from 'node:stream/promises'
 import {randomBytes,createHash,createHmac,timingSafeEqual} from 'node:crypto'
-import {mkdir,readFile,writeFile,rm,mkdtemp,rename} from 'node:fs/promises'
+import {mkdir,readFile,writeFile,rm,mkdtemp,rename,copyFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import {tmpdir} from 'node:os'
 import {DatabaseSync} from 'node:sqlite'
@@ -33,7 +33,7 @@ export function labManager(store,env){
  async function archive(name='Versão de referência',note=''){
  if(env.LAB_KIND!=='matrix')throw Error('Somente a matriz possui arquivo de versões')
  if(archiving)throw Error('Arquivo de versão em andamento');archiving=true;let folder,sealed
- try{folder=snapshot(store,env.DATA_DIR);const id=crypto.randomUUID();await writeFile(join(folder,'version.json'),JSON.stringify({id,release:releaseId(env),name:name.slice(0,120),note:note.slice(0,1000),createdAt:Date.now()}));sealed=await pack(folder,env.LAB_CONTROL_KEY);const directory=join(env.DATA_DIR,'lab-archives'),path=join(directory,id+'.enc');await mkdir(directory,{recursive:true});await rename(sealed,path);if(env.BACKUP_BUCKET){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);await s3(env,'PUT','matrix-archives/'+id+'.enc',createReadStream(path),{hash:hash.digest('hex'),length:statSync(path).size})}store.raw.prepare('INSERT INTO lab_versions VALUES(?,?,?,?,?,?)').run(id,releaseId(env),name.slice(0,120),Date.now(),path,note.slice(0,1000));archiveError=null;return {id}}
+ try{folder=snapshot(store,env.DATA_DIR);const id=crypto.randomUUID();await writeFile(join(folder,'version.json'),JSON.stringify({id,release:releaseId(env),name:name.slice(0,120),note:note.slice(0,1000),createdAt:Date.now()}));sealed=await pack(folder,env.LAB_CONTROL_KEY);const directory=join(env.DATA_DIR,'lab-archives'),path=join(directory,id+'.enc');await mkdir(directory,{recursive:true});await copyFile(sealed,path+'.tmp');await rename(path+'.tmp',path);if(env.BACKUP_BUCKET){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);await s3(env,'PUT','matrix-archives/'+id+'.enc',createReadStream(path),{hash:hash.digest('hex'),length:statSync(path).size})}store.raw.prepare('INSERT INTO lab_versions VALUES(?,?,?,?,?,?)').run(id,releaseId(env),name.slice(0,120),Date.now(),path,note.slice(0,1000));archiveError=null;return {id}}
  catch(error){archiveError=error.message;throw error}
  finally{archiving=false;for(const p of [folder,sealed])if(p)await rm(p,{recursive:true,force:true})}
  }
