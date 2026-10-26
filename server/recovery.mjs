@@ -62,7 +62,7 @@ export function recoveryManager(store,env){
  try{
  folder=snapshot(store,env.DATA_DIR);await verifyRestored(folder);sealed=await pack(folder,env.BACKUP_ENCRYPTION_KEY)
  const name='snapshots/'+new Date().toISOString().replaceAll(':','-')+'-'+randomBytes(4).toString('hex')+'.enc'
- await s3(env,'PUT',name,createReadStream(sealed),{hash:await fileHash(sealed)})
+ await s3(env,'PUT',name,createReadStream(sealed),{hash:await fileHash(sealed),length:statSync(sealed).size})
  // Download the uploaded object and restore it, rather than only checking the source.
  const response=await s3(env,'GET',name),download=sealed+'.download';await pipeline(response.body,createWriteStream(download,{mode:0o600}));restore=await mkdtemp(join(tmpdir(),'bichu-drill-'))
  const result=await unpack(download,env.BACKUP_ENCRYPTION_KEY,restore);await rm(download,{force:true})
