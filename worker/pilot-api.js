@@ -1,3 +1,4 @@
+import { preferencesApi } from './preferences.js'
 import { backupPage } from './backup.js'
 import { summarizeAdoption, ADOPTION_RULE } from './adoption.js'
 const COLLECTIONS = new Set(['dogs', 'weight_logs', 'feeding_plans', 'bcs_evaluations', 'health_events', 'pet_routine_events', 'user_foods', 'account_preferences', 'natural_diets', 'pilot_feedback'])
@@ -123,6 +124,7 @@ async function recordApi(request, env, account, path) {
     return page?answer({items,nextPage:result.results.length>size?page+1:null}):answer(items)
 
   }
+  if(collection==='account_preferences')return fail('Use a sincronização de personalizações.',403)
   if (collection === 'bcs_evaluations') return fail('Novas avaliações BCS estão inativas nesta versão', 409)
   if (!['POST', 'PATCH', 'DELETE'].includes(request.method)) return fail('Método não permitido', 405)
   if (collection === 'pilot_feedback' && request.method === 'PATCH') return fail('Feedbacks enviados não podem ser alterados pelo tutor', 403)
@@ -169,26 +171,26 @@ async function recordApi(request, env, account, path) {
     for (const file of files) await env.BUCKET.delete(file.objectKey)
     return fail('Pet não encontrado nesta conta', 403)
   }
+  if(prior && CHILD_COLLECTIONS.has(collection) && prior.dog_id!==dogId)return fail('Registro não pode ser transferido para outro pet.',409)
   const now = new Date().toISOString()
   if (collection === 'weight_logs' && Number.isFinite(Date.parse(data.logged_at))) data.logged_at = new Date(data.logged_at).toISOString()
   if (['dogs', 'weight_logs'].includes(collection) && (!Number.isFinite(Number(data.weight_kg)) || Number(data.weight_kg) <= 0 || Number(data.weight_kg) > 200)) return fail('Peso inválido')
   if (collection === 'weight_logs' && (!data.logged_at || !Number.isFinite(Date.parse(data.logged_at)))) return fail('Data inválida')
   try {
-    if (prior) await db.prepare('UPDATE pilot_records SET data = ?, dog_id = ?, updated_at = ? WHERE id = ? AND account_id = ?')
-      .bind(JSON.stringify(data), dogId, now, recordId, account.id).run()
-    else await db.prepare('INSERT INTO pilot_records (id, account_id, collection, dog_id, data, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .bind(recordId, account.id, collection, dogId, JSON.stringify(data), now, now).run()
+    const statements=[]
+    if(collection==='feeding_plans' && data.is_active)statements.push(db.prepare("UPDATE pilot_records SET data=json_set(data,'$.is_active',json('false')),updated_at=? WHERE account_id=? AND dog_id=? AND collection='feeding_plans' AND id!=? AND json_extract(data,'$.is_active')=1").bind(now,account.id,dogId,recordId))
+    if (prior) statements.push(db.prepare('UPDATE pilot_records SET data = ?, dog_id = ?, updated_at = ? WHERE id = ? AND account_id = ?')
+      .bind(JSON.stringify(data), dogId, now, recordId, account.id))
+    else statements.push(db.prepare('INSERT INTO pilot_records (id, account_id, collection, dog_id, data, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .bind(recordId, account.id, collection, dogId, JSON.stringify(data), now, now))
     if (collection === 'dogs' && (!prior || Number(previous.weight_kg) !== Number(data.weight_kg))) {
       const log = { dog: recordId, weight_kg: Number(data.weight_kg), logged_at: now, source: prior ? 'cadastro_alterado' : 'cadastro_inicial' }
-      await db.prepare('INSERT INTO pilot_records (id, account_id, collection, dog_id, data, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), account.id, 'weight_logs', recordId, JSON.stringify(log), now, now).run()
+      statements.push(db.prepare('INSERT INTO pilot_records (id, account_id, collection, dog_id, data, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), account.id, 'weight_logs', recordId, JSON.stringify(log), now, now))
     }
-    if (collection === 'weight_logs') {
-      const latest = await db.prepare("SELECT data FROM pilot_records WHERE account_id = ? AND dog_id = ? AND collection = 'weight_logs' ORDER BY json_extract(data, '$.logged_at') DESC, created_at DESC LIMIT 1").bind(account.id, dogId).first()
-      const pet = await db.prepare("SELECT data FROM pilot_records WHERE account_id = ? AND id = ? AND collection = 'dogs'").bind(account.id, dogId).first()
-      if (pet && latest) await db.prepare('UPDATE pilot_records SET data = ?, updated_at = ? WHERE account_id = ? AND id = ?').bind(JSON.stringify({ ...JSON.parse(pet.data), weight_kg: Number(JSON.parse(latest.data).weight_kg) }), now, account.id, dogId).run()
-    }
-    for (const file of files) await db.prepare('INSERT INTO pilot_files (id, account_id, record_id, collection, filename, object_key, content_type, size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .bind(file.id, account.id, recordId, collection, file.filename, file.objectKey, file.contentType, file.size).run()
+    if(collection==='weight_logs')statements.push(db.prepare("UPDATE pilot_records SET data=json_set(data,'$.weight_kg',(SELECT CAST(json_extract(data,'$.weight_kg') AS REAL) FROM pilot_records WHERE account_id=? AND dog_id=? AND collection='weight_logs' ORDER BY json_extract(data,'$.logged_at') DESC,created_at DESC,id DESC LIMIT 1)),updated_at=? WHERE account_id=? AND id=? AND collection='dogs'").bind(account.id,dogId,now,account.id,dogId))
+    for (const file of files) statements.push(db.prepare('INSERT INTO pilot_files (id, account_id, record_id, collection, filename, object_key, content_type, size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(file.id, account.id, recordId, collection, file.filename, file.objectKey, file.contentType, file.size))
+    await db.batch(statements)
     if (prior && collection === 'dogs') {
       const retained = new Set([data.avatar, ...(data.gallery || [])])
       const oldFiles = await db.prepare('SELECT id, filename, object_key FROM pilot_files WHERE account_id = ? AND record_id = ?')
@@ -229,7 +231,7 @@ async function ownerDashboard(db) {
     db.prepare('SELECT account_id, COUNT(*) AS total FROM pilot_records GROUP BY account_id').all(),
     db.prepare('SELECT * FROM pilot_devices ORDER BY last_seen DESC LIMIT 101').all(),
   ])
-  const truncated = recordRows.results.length > 5000 || eventRows.results.length > 10000
+  const truncated = recordRows.results.length > 5000 || eventRows.results.length > 10000 || deviceRows.results.length > 100
   const records = recordRows.results.slice(0, 5000)
   const events = eventRows.results.slice(0, 10000)
   const totalByAccount = new Map(counts.results.map(row => [row.account_id, row.total]))
@@ -247,26 +249,27 @@ async function ownerDashboard(db) {
     const data = JSON.parse(row.data)
     return { accountId: row.account_id, dogId: row.dog_id, score: Number(data.score), evaluatedAt: data.evaluated_at || row.created_at }
   }).filter(row => Number.isInteger(row.score) && row.score >= 1 && row.score <= 9)
-  const accounts = accountRows.results.map(row => {
+  const accounts = await Promise.all(accountRows.results.map(async row => {
     const ownEvents = events.filter(event => event.account_id === row.id)
-    const ownPets = pets.filter(pet => pet.accountId === row.id)
+    const totals=await db.prepare("SELECT COUNT(CASE WHEN event='page_load' THEN 1 END) AS pages,COUNT(CASE WHEN event IN ('save_error','network_error','client_error') THEN 1 END) AS errors,COUNT(CASE WHEN event='api_slow' THEN 1 END) AS slow,MAX(created_at) AS last FROM pilot_events WHERE account_id=?").bind(row.id).first()
+    const petCount=await db.prepare("SELECT COUNT(*) AS n FROM pilot_records WHERE account_id=? AND collection='dogs'").bind(row.id).first()
     const timings = ownEvents.filter(event => event.event === 'api_response').map(event => event.duration_ms).sort((a, b) => a - b)
     const activity = [row.first_access_at, ...ownEvents.map(event => event.created_at),
       ...records.filter(record => record.account_id === row.id).map(record => Date.parse(record.updated_at))]
       .filter(Number.isFinite)
     return { id: row.id, email: row.email, firstAccessAt: row.first_access_at, expiresAt: row.expires_at,
-      lastActivityAt: activity.length ? Math.max(...activity) : null, petCount: ownPets.length,
-      recordCount: totalByAccount.get(row.id) || 0, pageLoads: ownEvents.filter(event => event.event === 'page_load').length,
-      errors: ownEvents.filter(event => ['save_error','network_error','client_error'].includes(event.event)).length,
-      slowRequests: ownEvents.filter(event => event.event === 'api_slow').length,
+      lastActivityAt: activity.length ? Math.max(...activity) : null, petCount: petCount.n,
+      recordCount: totalByAccount.get(row.id) || 0, pageLoads: totals.pages,
+      errors: totals.errors,
+      slowRequests: totals.slow,
       measuredRequests: timings.length,
       avgMs: timings.length ? Math.round(timings.reduce((sum, ms) => sum + ms, 0) / timings.length) : null,
       p95Ms: timings.length ? timings[Math.ceil(timings.length * .95) - 1] : null }
-  })
+  }))
   return answer({ generatedAt: Date.now(), accounts, pets, weights, bcs, truncated,
-    devices: deviceRows.results.map(d => ({ id: d.device_id, accountId: d.account_id, activeMs: d.active_ms, lastSeen: d.last_seen, ...JSON.parse(d.data) })),
+    devices: deviceRows.results.slice(0,100).map(d => ({ id: d.device_id, accountId: d.account_id, activeMs: d.active_ms, lastSeen: d.last_seen, ...JSON.parse(d.data) })),
     events: events.map(e => ({ accountId: e.account_id, deviceId: e.device_id, event: e.event, durationMs: e.duration_ms, createdAt: e.created_at, details: e.details ? JSON.parse(e.details) : {} })),
-    coverage: 'Tempos medidos apenas desde a publicação desta versão; não incluem requisições anteriores.' })
+    coverage: 'Tempos calculados sobre até 10 mil eventos recentes; métricas dependem da autorização do participante. Ausência de uso não informa o motivo da interrupção.' })
 }
 
 // O servidor define o dia; relógio e fuso do aparelho não mudam a confirmação.
@@ -309,7 +312,7 @@ function participantDays(db, account) {
   ) GROUP BY day ORDER BY day DESC`).bind(account, account)
 }
 // Stored changes, excluding preferences, setup, telemetry and unchanged writes.
-const USEFUL_CHANGE = `action IN ('create','update') AND after_data IS NOT NULL
+const USEFUL_CHANGE = `actor_type != 'owner' AND action IN ('create','update') AND after_data IS NOT NULL
   AND (before_data IS NULL OR before_data != after_data) AND (
     collection IN ('health_events','pet_routine_events','bcs_evaluations','natural_diets')
     OR (collection = 'feeding_plans' AND json_extract(after_data, '$.is_active') = 1)
@@ -559,6 +562,7 @@ export async function handlePilot(request, env) {
   }
   const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)
+  if(request.headers.get('x-mb-account-id') && request.headers.get('x-mb-account-id')!==account.id)return fail('A conta mudou. Recarregue o aplicativo.',409)
   if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true })
   if (path[0] === 'logout' && request.method === 'POST') {
     const token = getCookie(request)
@@ -570,16 +574,7 @@ export async function handlePilot(request, env) {
     if(body.confirmation!=='EXCLUIR')return fail('Confirmação obrigatória')
     return eraseAccount(env,account)
   }
-  if (path[0] === 'preferences' && path.length === 1) {
-    const id = `preferences_${account.id}`
-    if (request.method === 'GET') { const row = await env.DB.prepare('SELECT data FROM pilot_records WHERE id = ? AND account_id = ?').bind(id, account.id).first(); return answer(row ? JSON.parse(row.data) : {}) }
-    if (request.method !== 'PUT') return fail('Método não permitido', 405)
-    const data = legalPayload(await request.json())
-    if (Object.entries(data).some(([k,v]) => !k.startsWith('bichu_') || typeof v !== 'string' || v.length > 20000)) return fail('Preferência inválida')
-    const now = new Date().toISOString()
-    await env.DB.prepare("INSERT INTO pilot_records (id, account_id, collection, dog_id, data, created_at, updated_at) VALUES (?, ?, 'account_preferences', NULL, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at").bind(id, account.id, JSON.stringify(data), now, now).run()
-    return answer({ ok: true })
-  }
+  if(path[0]==='preferences'&&path.length===1)return preferencesApi(request,env.DB,account)
   if(['device','events'].includes(path[0])&&request.method==='POST'){
     const pref=await env.DB.prepare("SELECT data FROM pilot_records WHERE account_id = ? AND collection = 'account_preferences'").bind(account.id).first()
     if(pref&&JSON.parse(pref.data).bichu_privacy_analytics==='false')return answer({ok:true,disabled:true})

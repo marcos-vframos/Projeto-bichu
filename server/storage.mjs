@@ -62,6 +62,21 @@ export function openStore(directory) {
       }
     },
   }
+  const withActor = actor => {
+    const transaction = action => {
+      db.exec('BEGIN IMMEDIATE')
+      try {
+        db.prepare('UPDATE pilot_change_context SET actor_type=? WHERE id=1').run(actor)
+        const result=action()
+        db.prepare("UPDATE pilot_change_context SET actor_type='unknown' WHERE id=1").run()
+        db.exec('COMMIT');return result
+      } catch(error){db.exec('ROLLBACK');throw error}
+    }
+    return {
+      prepare(sql){const s=prepare(sql);return {...s,bind(...v){s.bind(...v);return this},run:()=>transaction(()=>s.run()),runInTransaction:()=>s.run()}},
+      batch:statements=>transaction(()=>statements.map(s=>s.runInTransaction()))
+    }
+  }
   const objectRoot = resolve(directory, 'objects'),
     objectPath = (key) => {
       if (!/^[\w./-]+$/.test(key) || key.split('/').includes('..')) throw Error('Invalid object')
@@ -94,6 +109,7 @@ export function openStore(directory) {
   }
   return {
     DB,
+    withActor,
     BUCKET,
     raw: db,
     close() {

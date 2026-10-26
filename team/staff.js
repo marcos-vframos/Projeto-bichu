@@ -366,11 +366,12 @@ function openTask(item) {
   const save = async (status) => {
     await api(
       'tasks/' + item.id,
-      { ...(status === item.status ? {} : { status }), note: note.value },
+      { ...(status === item.status ? {} : { status }), note: note.value, expectedUpdatedAt:item.updated_at },
       'PATCH',
     )
     note.defaultValue = note.value
     await load()
+    openTask(await api('tasks/' + item.id))
     show('Andamento da responsabilidade salvo.')
   }
   if (item.status !== 'em_andamento')

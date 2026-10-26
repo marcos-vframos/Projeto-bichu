@@ -70,13 +70,13 @@ export function createApplication(options = {}) {
         headers.set('oai-authenticated-user-id', 'd410baf1-83e0-4641-9a41-f44fc8c5025a')
       }
       if (!p.startsWith('/api/pilot/')) return new Response(null, { status: 404 })
-      let requestEnv=env
+      let requestEnv={...env,DB:store.withActor('tutor')}
       if(await ownerSession(request,env.PILOT_PANEL_KEY)){
         const selected=request.headers.get('cookie')?.split(';').map(x=>x.trim()).find(x=>x.startsWith('mb_owner_account='))?.slice('mb_owner_account='.length)
         if(selected){
           const account=store.raw.prepare('SELECT id,email,expires_at FROM pilot_accounts WHERE id=?').get(selected)
           if(account){
-            requestEnv={...env,OWNER_ACCESS_ACCOUNT:{...account,ownerAccess:true}}
+            requestEnv={...env,DB:store.withActor('owner'),OWNER_ACCESS_ACCOUNT:{...account,ownerAccess:true}}
             if(['/api/pilot/events','/api/pilot/device'].includes(p))return Response.json({ok:true,ownerAccess:true},{headers:{'cache-control':'no-store'}})
             if(p==='/api/pilot/logout' && request.method==='POST')return Response.json({ok:true},{headers:{'set-cookie':'mb_owner_account=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0; Secure','cache-control':'no-store'}})
           }

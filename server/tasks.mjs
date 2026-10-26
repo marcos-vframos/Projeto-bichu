@@ -225,8 +225,8 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
     const body = await req.json(),
       keys = Object.keys(body),
       allowed = owner
-        ? ['status', 'note', 'userId', 'badgeColor', 'boardTitle', 'workDate']
-        : ['status', 'note']
+        ? ['status', 'note', 'userId', 'badgeColor', 'boardTitle', 'workDate', 'expectedUpdatedAt']
+        : ['status', 'note', 'expectedUpdatedAt']
     if (
       (body.badgeColor !== undefined && !/^#[a-f0-9]{6}$/i.test(body.badgeColor)) ||
       (body.boardTitle !== undefined &&
@@ -271,6 +271,7 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
         db.exec('ROLLBACK')
         return json({ error: 'Responsabilidade não encontrada' }, 404)
       }
+      if(body.expectedUpdatedAt!==undefined && body.expectedUpdatedAt!==row.updated_at){db.exec('ROLLBACK');return json({error:'A tarefa mudou. Atualize antes de salvar.'},409)}
       if (
         !owner &&
         (['aprovada', 'ajustes_solicitados'].includes(body.status) ||
@@ -298,7 +299,7 @@ export async function tasksApi(req, db, { owner, staff, audit }) {
         userId,
         body.status || row.status,
         body.note === undefined ? row.note : body.note.trim(),
-        Date.now(),
+        Math.max(Date.now(),row.updated_at+1),
         owner && body.userId !== undefined ? (userId ? 1 : 0) : row.scoped_access,
         body.badgeColor ?? row.badge_color,
         body.boardTitle?.trim() ?? row.board_title,

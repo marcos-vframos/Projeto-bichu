@@ -13,9 +13,9 @@ function client(fetch){
 test('personalizações: agrupa alterações, mantém pendências e reenviam ao recuperar conexão',async()=>{
  const writes=[];let failed=false
  const c=client(async(_,o)=>{if(!o.method)return Response.json({});writes.push(JSON.parse(o.body));assert.equal(o.keepalive,undefined);if(failed)throw Error('offline');return Response.json({ok:true})})
- try{await c.api.loadPreferences('one');c.api.preferenceStorage.setItem('bichu_tutor_name','Maze');c.api.preferenceStorage.setItem('bichu_selected_header_logo','cat-window');await c.api.syncPreferences();assert.equal(writes.length,1);assert.equal(writes[0].bichu_tutor_name,'Maze');assert.equal(c.data.has('mb_preferences_pending_one'),false)
+ try{await c.api.loadPreferences('one');c.api.preferenceStorage.setItem('bichu_tutor_name','Maze');c.api.preferenceStorage.setItem('bichu_selected_header_logo','cat-window');await c.api.syncPreferences();assert.equal(writes.length,1);assert.equal(writes[0].changes.bichu_tutor_name,'Maze');assert.equal(c.data.has('mb_preferences_pending_one'),false)
  failed=true;c.api.preferenceStorage.setItem('bichu_theme','blue');await c.api.syncPreferences();assert.equal(c.api.getPreferenceSyncStatus().state,'error');assert.equal(c.data.get('mb_preferences_pending_one'),'true')
- failed=false;await c.api.syncPreferences();assert.equal(c.data.has('mb_preferences_pending_one'),false);assert.equal(writes.at(-1).bichu_theme,'blue')
+ failed=false;await c.api.syncPreferences();assert.equal(c.data.has('mb_preferences_pending_one'),false);assert.equal(writes.at(-1).changes.bichu_theme,'blue')
  await c.api.loadPreferences('two');assert.equal(c.api.preferenceStorage.getItem('bichu_tutor_name'),null)
  }finally{c.close()}
 })

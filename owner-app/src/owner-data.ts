@@ -12,6 +12,6 @@ export async function openOwnerFile(path: string) {
 }
 
 export async function respondFeedback(id:string,body:{message:string;status:string;replyId:string}) {
- const response=await fetch(`/api/pilot/owner/feedback/${encodeURIComponent(id)}/reply`,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(body)})
+ const response=await fetch(`/api/team/cases/${encodeURIComponent(id)}/reply`,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(body)})
  if(!response.ok)throw Error((await response.json()).error||'Não foi possível salvar a resposta')
 }

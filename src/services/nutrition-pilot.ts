@@ -1,21 +1,22 @@
-import {cacheRead,cacheWrite} from '@/lib/offline-cache'
+import {accountKey,cacheRead,cacheWrite} from '@/lib/offline-cache'
 import { logActivity } from '@/lib/telemetry'
 import type { DogRecord, FeedingPlanRecord, WeightLogRecord, FoodRecord, UserFoodRecord, BcsEvaluationRecord, HealthEventRecord, RoutineEventRecord } from '@/types/nutrition'
 
 const ROOT = '/api/pilot/records'
 type Collection = 'dogs' | 'weight_logs' | 'feeding_plans' | 'bcs_evaluations' | 'health_events' | 'pet_routine_events' | 'user_foods' | 'natural_diets'
 async function request<T>(collection: Collection, method = 'GET', id?: string, data?: object | FormData, query?:string): Promise<T> {
+  const owner=accountKey()
   const started = performance.now(), route = `${ROOT}/${collection}${id ? `/${encodeURIComponent(id)}` : ''}${query?`?${query}`:''}`
   let response: Response
   try { response = await fetch(route, {
-    method, credentials: 'same-origin', headers: data instanceof FormData ? undefined : data ? { 'content-type': 'application/json' } : undefined,
+    method, credentials: 'same-origin', headers: {'x-mb-account-id':owner,...(data && !(data instanceof FormData)?{'content-type':'application/json'}:{})},
     body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
-  }) } catch (error) { if(method==='GET'){const cached=cacheRead<T>(route);if(cached){window.dispatchEvent(new CustomEvent('bichu:offline-read',{detail:cached.savedAt}));return cached.value}} void logActivity('network_error', performance.now()-started, { route, method }); throw error }
+  }) } catch (error) { if(method==='GET'&&accountKey()===owner){const cached=cacheRead<T>(route);if(cached){window.dispatchEvent(new CustomEvent('bichu:offline-read',{detail:cached.savedAt}));return cached.value}} void logActivity('network_error', performance.now()-started, { route, method }); throw error }
   const durationMs = Math.round(performance.now() - started)
   void logActivity('api_response', durationMs, { route, method, status: response.status })
   if (!response.ok || durationMs > 1500) void logActivity(response.ok ? 'api_slow' : 'save_error', durationMs, { route, method, status: response.status })
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Falha ao sincronizar com o banco')
-  const value=await response.json();if(method==='GET')cacheWrite(route,value);return value
+  if(accountKey()!==owner)throw Error('A conta mudou. Recarregue o aplicativo.');const value=await response.json();if(method==='GET')cacheWrite(route,value);return value
 }
 const list = async <T>(collection: Collection,dog?:string) => {const all:T[]=[];let page:number|null=1;do{const result=await request<{items:T[];nextPage:number|null}>(collection,'GET',undefined,undefined,new URLSearchParams({page:String(page),...(dog?{dog}:{})}).toString());all.push(...result.items);page=result.nextPage}while(page!==null);return all}
 const create = <T>(collection: Collection, data: object | FormData) => request<T>(collection, 'POST', undefined, data)
@@ -53,10 +54,8 @@ export const pilotNutritionService = {
   },
   async updateDog(id: string, data: Partial<DogRecord> | FormData) { const dog = await update<DogRecord>('dogs', id, data); window.dispatchEvent(new CustomEvent('bichu:weight-changed', { detail: id })); return dog },
   async deleteDog(id: string) { return remove('dogs', id) },
-  async getActivePlan(dogId: string) { return (await list<FeedingPlanRecord>('feeding_plans')).filter(p => p.dog === dogId).sort((a,b) => b.created.localeCompare(a.created))[0] || null },
+  async getActivePlan(dogId: string) { return (await list<FeedingPlanRecord>('feeding_plans')).filter(p => p.dog === dogId && p.is_active).sort((a,b) => b.created.localeCompare(a.created))[0] || null },
   async savePlan(dogId: string, data: Partial<FeedingPlanRecord>) {
-    const prior = (await list<FeedingPlanRecord>('feeding_plans')).filter(p => p.dog === dogId && p.is_active)
-    for (const p of prior) await update<FeedingPlanRecord>('feeding_plans', p.id, { is_active: false })
     return create<FeedingPlanRecord>('feeding_plans', { ...data, dog: dogId, is_active: true })
   },
   async getWeightLogs(dogId: string) { return (await list<WeightLogRecord>('weight_logs')).filter(x => x.dog === dogId).sort((a,b) => a.logged_at.localeCompare(b.logged_at)) },

@@ -491,7 +491,7 @@ export async function teamApi(req, store, env) {
     }
     if (
       typeof body.message !== 'string' ||
-      !body.message.trim() ||
+      (!body.message.trim() && (!owner || body.status === 'respondido')) ||
       body.message.length > 2000 ||
       !['em_avaliacao', 'respondido', 'resolvido'].includes(body.status) ||
       !/^[a-f0-9-]{36}$/.test(body.replyId || '')
@@ -501,7 +501,7 @@ export async function teamApi(req, store, env) {
       replies = Array.isArray(data.replies) ? data.replies : []
     if (replies.some((r) => r.id === body.replyId)) return json({ ok: true })
     if (replies.length >= 30) return json({ error: 'Limite de respostas atingido' }, 409)
-    replies.push({
+    if (body.message.trim()) replies.push({
       id: body.replyId,
       message: body.message.trim(),
       createdAt: new Date().toISOString(),

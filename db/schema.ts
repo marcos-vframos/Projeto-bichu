@@ -61,6 +61,7 @@ export const pilotChanges = sqliteTable('pilot_changes', {
   collection: text('collection').notNull(),
   dogId: text('dog_id'),
   action: text('action').notNull(),
+  actorType: text('actor_type').notNull().default('unknown'),
   beforeData: text('before_data'),
   afterData: text('after_data'),
   changedAt: integer('changed_at').notNull(),

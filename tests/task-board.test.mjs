@@ -28,6 +28,7 @@ test('community board: nine cards, scoped assignment, transfer, badges, date and
  assert.equal((await call('/api/team/tasks?category=suporte','GET',null,first.auth)).status,200)
  assert.equal((await call('/api/team/tasks','POST',{category:'suporte',title:'Escalar privilégio',details:''},first.auth)).status,403)
  assert.equal((await call('/api/team/tasks/'+ids[0],'PATCH',{status:'em_andamento',note:'Iniciada'},first.auth)).status,200)
+ assert.equal((await call('/api/team/tasks/'+ids[0],'PATCH',{note:'stale',expectedUpdatedAt:0},first.auth)).status,409)
  const signals=await call('/api/team/issues','POST',{sourceType:'task',sourceId:ids[0],summary:'Necessito de aprovação',priority:'normal'},first.auth);assert.equal(signals.status,201)
  assert.equal((await call('/api/team/tasks/'+ids[0],'PATCH',{userId:second.id,badgeColor:'#123456',boardTitle:'Responsabilidade transferida'},owner)).status,200)
  assert.equal((await call('/api/team/tasks/'+ids[0],'GET',null,first.auth)).status,404)

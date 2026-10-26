@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     flushPreferences()
       .then(() => fetch('/api/pilot/logout', { method: 'POST' }))
-      .finally(() => window.location.assign('/'))
+      .finally(() => {sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account');window.location.assign('/')})
     setUser(null)
     setProfile(null)
   }

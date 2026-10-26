@@ -30,7 +30,7 @@ const UserProfilePage = lazy(() => import('@/pages/UserProfile'))
 
 export function App() {
   if (window.location.pathname.replace(/\/$/, '') === '/painel' || new URLSearchParams(window.location.hash.slice(1)).has('access')) {
-    window.location.replace('https://meu-bichu-proprietario.marcos-vframos.chatgpt.site/painel' + window.location.hash)
+    window.location.replace('/painel' + window.location.hash)
     return <main className="p-8">Abrindo site do proprietário…</main>
   }
   const content = (
