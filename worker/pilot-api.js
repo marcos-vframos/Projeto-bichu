@@ -99,6 +99,7 @@ async function eraseAccount(env,account){
       env.DB.prepare('DELETE FROM pilot_devices WHERE account_id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM pilot_sessions WHERE account_id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM access_tokens WHERE subject = ?').bind(account.email),
+      ...(env.LAB_KIND ? [env.DB.prepare('DELETE FROM lab_tickets WHERE slot IN (SELECT slot FROM lab_accounts WHERE account_id=?)').bind(account.id),env.DB.prepare('DELETE FROM lab_accounts WHERE account_id=?').bind(account.id)] : []),
       env.DB.prepare('DELETE FROM pilot_accounts WHERE id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM pilot_login_attempts WHERE email = ?').bind(account.email)
     ])

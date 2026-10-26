@@ -20,6 +20,7 @@ test('beta reserves 20 clean disabled accounts; activation, one-time access, per
  assert.equal((await(await f.call('/api/pilot/records/pilot_feedback',undefined,b.cookie)).json()).length,0)
  assert.equal((await f.call('/api/pilot/owner/dashboard',undefined,a.cookie,null)).status,403)
  await f.call('/api/lab/manage/activate',{slot:'beta-02',active:false});assert.equal((await f.call('/api/pilot/me',undefined,a.cookie)).status,401)
+ const reopened=await enter(f,'beta-01');const deleted=await f.app.dispatch(new Request('https://lab.local/api/pilot/account',{method:'DELETE',headers:{origin:'https://lab.local','content-type':'application/json',cookie:reopened.cookie},body:JSON.stringify({confirmation:'EXCLUIR'})}));assert.equal(deleted.status,200);const fresh=await(await f.call('/api/lab/manage')).json();assert.equal(fresh.accounts.length,21);assert.equal(fresh.accounts.find(a=>a.slot==='beta-01').records,0);assert.equal((await f.call('/api/pilot/me',undefined,reopened.cookie)).status,401)
  }finally{await f.close()}
 })
 test('dirty lab is a different database; changes and cookies cannot cross environments',async()=>{

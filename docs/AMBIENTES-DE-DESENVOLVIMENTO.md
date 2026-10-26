@@ -10,7 +10,7 @@ No proprietário: Configurações gerais → Ambientes de desenvolvimento. A aut
 
 As contas internas usam identificadores em .invalid, não caixas de e-mail reais. Não há senha de usuário para compartilhar; o proprietário gera o acesso individual no painel. Não confundir essas reservas com contas públicas verificadas por e-mail. Cada conta beta ativada tem todas as funções atualmente disponíveis ao tutor; não recebe privilégios do proprietário ou do funcionário. O BCS continua inativo enquanto não for liberado como funcionalidade do produto.
 
-Desativar uma beta revoga suas sessões e tickets. Reativar preserva seus dados anteriores; não limpa a conta automaticamente. As vinte contas adicionais desta entrega começam apenas com preferências mínimas de identificação, sem pets, saúde, peso ou feedback.
+Desativar uma beta revoga suas sessões e tickets. Reativar preserva seus dados anteriores; não limpa a conta automaticamente. Excluir a conta interna no app remove seu identificador e seus dados; na próxima consulta administrativa, o slot é recriado limpo, com novo identificador e sem reaproveitar sessões ou tickets. Não equivale a excluir uma conta pública real. As vinte contas adicionais desta entrega começam apenas com preferências mínimas de identificação, sem pets, saúde, peso ou feedback.
 
 ## Arquivo da matriz e comparação
 
