@@ -54,9 +54,9 @@ O aplicativo exige e-mail e senha. Criar uma conta pública confirmada exclusiva
 
 Projeto em /android. Pacote proposto: br.com.meubichu.app (confirmar antes da primeira publicação; o ID não representa registro de marca ou domínio). Target SDK 36, min SDK 26, versão 1.0.0/1. Java 17, Gradle 8.13, Android Gradle Plugin 8.13.2. Interface web própria com origem HTTPS fixa, seleção de fotos pelo seletor do sistema, localização aproximada opcional em primeiro plano, navegação externa no navegador e bloqueio de HTTP/conteúdo misto. Não inclui SDK de anúncio nem JavaScript bridge nativa.
 
-Abrir /android no Android Studio, instalar SDK 36 e Gradle correspondente. Para teste: `gradle assembleDebug lint`. Para publicação, configurar as variáveis MB_UPLOAD_KEYSTORE, MB_UPLOAD_STORE_PASSWORD, MB_UPLOAD_KEY_ALIAS e MB_UPLOAD_KEY_PASSWORD e executar `gradle bundleRelease lint`. Sem essas variáveis, bundleRelease gera artefato sem assinatura de publicação. Guardar a chave privada de upload fora do repositório e ativar Play App Signing no Console. O workflow manual Android no GitHub também prepara APK de teste e AAB sem assinatura; ele não publica automaticamente.
+Abrir /android no Android Studio, instalar SDK 36 e Gradle correspondente. Para teste: `gradle assembleDebug lint`. Para publicação, configurar as variáveis MB_UPLOAD_KEYSTORE, MB_UPLOAD_STORE_PASSWORD, MB_UPLOAD_KEY_ALIAS e MB_UPLOAD_KEY_PASSWORD e executar `gradle bundleRelease lint`. Sem essas variáveis, bundleRelease gera artefato sem assinatura de publicação. Guardar a chave privada de upload fora do repositório e ativar Play App Signing no Console. O workflow Android no GitHub, manual ou acionado por alterações Android, também prepara APK de teste e AAB sem assinatura; ele não publica automaticamente.
 
-O código Android está preparado, mas a compilação Android e a instalação em aparelho precisam de SDK Android e assinatura disponíveis. Build web aprovado não equivale a build Android aprovado. Validar upload de imagens, navegação Voltar, teclado, localização permitida/negada, sessão e recuperação de senha no APK antes de enviá-lo.
+A compilação Android e o lint foram aprovados no GitHub Actions em 26/10/2026. O artefato contém APK de teste e AAB sem assinatura de publicação. A instalação e os fluxos no aparelho ainda precisam ser validados. Build aprovado não equivale à aprovação da Google Play. Validar upload de imagens, navegação Voltar, teclado, localização permitida/negada, sessão e recuperação de senha no APK antes de enviá-lo.
 
 ## Imagens
 
@@ -80,3 +80,8 @@ https://support.google.com/googleplay/android-developer/answer/10787469?hl=pt-BR
 https://support.google.com/googleplay/android-developer/answer/9866151?hl=pt-BR
 https://developer.android.com/develop/ui/views/layout/webapps/webview
 https://developer.android.com/build/releases/agp-8-13-0-release-notes
+
+## Evidência de compilação
+
+Execução aprovada: https://github.com/marcos-vframos/Projeto-bichu/actions/runs/40386267048
+Artefato: meu-bichu-android-nao-publicado (APK debug e AAB sem assinatura de publicação). Sem envio ao Console ou ao público. As capturas reais do aplicativo Android continuam pendentes da instalação.

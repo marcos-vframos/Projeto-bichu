@@ -34,3 +34,9 @@ Depois de configurar, redeploy e confirmar a entrega real de e-mail para um ende
 ## Documentos
 
 Páginas públicas: /termos.html, /privacidade.html, /suporte.html e /excluir-conta.html. Contato confirmado pelo titular: suportemeubichu@gmail.com. Completar/conferir nome legal do controlador antes de divulgação pública final; os textos não constituem certificação jurídica ou aprovação da loja. Não há coleta de CPF do tutor.
+
+## Verificação em produção — 26/10/2026
+
+Primeiro envio, download e restauração isolada aprovados às 16h24 (Brasília). Foram verificados 10 registros de contas, 56 registros do app e os 6 objetos de fotos, além das demais tabelas de métricas, autenticação, equipe e auditoria. O volume ativo não foi substituído pelo ensaio. O painel /painel/seguranca mostra o resultado atual de cada rodada; esta nota é uma evidência pontual, não substitui acompanhamento de falhas futuras.
+
+Configuração consultada em produção: backup habilitado; cadastro público e recuperação de senha ainda indisponíveis porque SMTP_PASSWORD não foi fornecida. Não foram enviados e-mails reais de teste.
