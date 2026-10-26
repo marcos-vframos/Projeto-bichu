@@ -11,3 +11,5 @@ android {
  }
  buildTypes { release { minifyEnabled false; if (System.getenv('MB_UPLOAD_KEYSTORE')) signingConfig signingConfigs.release } }
 }
+
+dependencies { implementation 'androidx.activity:activity:1.11.0' }
