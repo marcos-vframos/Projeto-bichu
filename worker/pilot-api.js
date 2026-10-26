@@ -552,7 +552,7 @@ export async function handlePilot(request, env) {
     if(path[0]==='erase-account'){if(confirmation!=='EXCLUIR')return fail('Confirmação obrigatória');return eraseAccount(env,account)}
     const now = Date.now()
     if (!account.first_access_at) await env.DB.prepare('UPDATE pilot_accounts SET first_access_at = ?, expires_at = ? WHERE id = ? AND first_access_at IS NULL')
-      .bind(now, account.account_kind==='public'?253402300799000:now + WEEK, account.id).run()
+      .bind(now, ['public','internal'].includes(account.account_kind)?253402300799000:now + WEEK, account.id).run()
     const updated = await env.DB.prepare('SELECT expires_at FROM pilot_accounts WHERE id = ?').bind(account.id).first()
     if (updated.expires_at <= now) return fail('Acesso de teste expirado', 403)
     const token = randomSecret()
@@ -564,7 +564,7 @@ export async function handlePilot(request, env) {
   const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)
   if(request.headers.get('x-mb-account-id') && request.headers.get('x-mb-account-id')!==account.id)return fail('A conta mudou. Recarregue o aplicativo.',409)
-  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true })
+  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true, labKind:env.LAB_KIND||null, release:env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||null })
   if (path[0] === 'logout' && request.method === 'POST') {
     const token = getCookie(request)
     await env.DB.prepare('DELETE FROM pilot_sessions WHERE token_hash = ?').bind(await digest(token)).run()

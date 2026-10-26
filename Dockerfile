@@ -17,5 +17,7 @@ COPY --from=build /app/team ./team
 COPY --from=build /app/scripts ./scripts
 COPY --from=build /runtime/node_modules ./node_modules
 COPY package.json ./
+ARG RAILWAY_GIT_COMMIT_SHA
+ENV APP_RELEASE=${RAILWAY_GIT_COMMIT_SHA}
 EXPOSE 8080
 CMD ["node","server/index.mjs"]

@@ -1,3 +1,4 @@
+import BetaEvaluation from './BetaEvaluation'
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Home, Dog, HeartPulse, Scale, TrendingUp, Settings, Stethoscope, X, PawPrint } from 'lucide-react'
@@ -42,6 +43,7 @@ export function Layout() {
    </nav>}
   </div>
   <main className="w-full"><div className={location.pathname.startsWith('/bcs')?'mx-auto w-full max-w-[1800px] px-3 pt-16 pb-6 sm:px-6':'mx-auto w-full max-w-7xl px-4 pt-16 pb-6 sm:px-6 lg:px-8'}><Outlet/></div></main>
+  <BetaEvaluation/>
   <LogoSelectorModal open={logoModalOpen} onClose={()=>setLogoModalOpen(false)} currentLogoId={logoId} onSelectLogo={id=>{setLogoId(id);setLogoSrc(getCroppedLogoImage(id))}} primaryColor={theme.brownPrimary} bgColor={theme.bgColor} textColor={theme.brownTitle}/>
  </div>
 }

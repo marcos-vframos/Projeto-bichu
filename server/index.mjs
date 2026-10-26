@@ -1,3 +1,4 @@
+import {initLab,labManager,labsProxy} from './labs.mjs'
 import {accessApi} from './access.mjs'
 import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
@@ -27,10 +28,12 @@ export function createApplication(options = {}) {
     throw Error('Production requires DATA_DIR and an HTTPS APP_ORIGIN')
   const store = options.store || openStore(settings.DATA_DIR || resolve(root, 'data'))
   initTeam(store.raw)
+  initLab(store,settings)
   const env = { ...process.env, ...options.env, DB: store.DB, BUCKET: store.BUCKET }
   if (!/^[a-f0-9]{64}$/.test(env.PILOT_PANEL_KEY || ''))
     throw Error('PILOT_PANEL_KEY must contain 64 hex characters')
   const recovery=recoveryManager(store,settings)
+  const labs=labManager(store,settings)
   async function dispatch(request) {
     const u = new URL(request.url),
       p = u.pathname
@@ -38,6 +41,12 @@ export function createApplication(options = {}) {
     if (p.startsWith('/api/')) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
+      if(p.startsWith('/api/lab/'))return labs.api(request)
+      if(p==='/api/pilot/lab-evaluation'){const u=new URL(request.url);u.pathname='/api/lab/evaluation';return labs.api(new Request(u,request))}
+      if(p.startsWith('/api/pilot/owner/labs')){
+        if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
+        return labsProxy(request,env)
+      }
       if(p.startsWith('/api/access/'))return accessApi(request,store,env)
       if(p.startsWith('/api/pilot/owner/recovery')){
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
@@ -95,6 +104,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
     if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
     if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))
     if (p === '/equipe')return asset(resolve(root,'team/index.html'))
@@ -174,13 +184,14 @@ export function createApplication(options = {}) {
       res.end('{"error":"Serviço temporariamente indisponível"}')
     }
   })
-  return { store, dispatch, server, recovery }
+  return { store, dispatch, server, recovery, labs }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   await migrateFromSource(process.env)
   const app = createApplication()
   app.server.listen(Number(process.env.PORT || 8080), '0.0.0.0')
   app.recovery.start()
+  app.labs.start()
   const shutdown = () =>
     app.server.close(() => {
       app.recovery.stop()

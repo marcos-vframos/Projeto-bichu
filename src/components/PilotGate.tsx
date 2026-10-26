@@ -4,7 +4,7 @@ import { loadPreferences, loadOfflinePreferences } from '@/lib/preferences'
 import DeviceActivity from '@/components/DeviceActivity'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 
-type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean }
+type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean; labKind?: string }
 
 export function PilotGate({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null)
@@ -22,8 +22,10 @@ export function PilotGate({ children }: { children: ReactNode }) {
       try {
         const access=new URLSearchParams(window.location.hash.slice(1)).get('access')
         if(access){const r=await fetch('/api/pilot/owner/unlock',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token:access})});if(!r.ok)throw Error('Acesso privado não validado');history.replaceState(null,'',location.pathname+location.search)}
+        const labTicket=new URLSearchParams(location.hash.slice(1)).get('lab')
+        if(labTicket){const r=await fetch('/api/lab/enter',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({ticket:labTicket})});if(!r.ok)throw Error('Link de laboratório inválido ou expirado');history.replaceState(null,'',location.pathname+location.search);sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account')}
         const response = await fetch('/api/pilot/me', { credentials: 'same-origin' })
-        if (response.ok) { const data = await response.json(); await loadPreferences(data.id)
+        if (response.ok) { const data = await response.json(); await loadPreferences(data.id);sessionStorage.setItem('mb_lab_kind',data.labKind||'')
       sessionStorage.setItem('mb_offline_session',JSON.stringify(data));setAccount(data) }
         else {const owner=await fetch('/api/pilot/owner/session',{credentials:'same-origin',cache:'no-store'});if(owner.ok){location.replace('/acesso-tutor');return}}
       } catch {try{const cached=JSON.parse(sessionStorage.getItem('mb_offline_session')||'null');if(cached?.expiresAt>Date.now()){loadOfflinePreferences(cached.id);if(preferenceStorage.getItem('bichu_privacy_offline')==='false')throw Error('Cache desativado');setAccount(cached);setError('Modo offline: consultando os últimos dados sincronizados. Alterações exigem conexão.')}else setError('Sem conexão. Entre novamente quando estiver online.')}catch{setError('Sem conexão.')}}
@@ -46,7 +48,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
       if (!response.ok) throw new Error(data.error || 'Não foi possível entrar')
       setPassword('')
       if(eraseMode){localStorage.removeItem(`mb_preferences_${data.id}`);localStorage.removeItem(`mb_preferences_pending_${data.id}`);localStorage.removeItem(`mb_offline_${data.id}`);sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account');setEraseMode(false);setError('Conta e dados excluídos do servidor.');return}
-      await loadPreferences(data.id)
+      await loadPreferences(data.id);sessionStorage.setItem('mb_lab_kind',data.labKind||'')
       sessionStorage.setItem('mb_offline_session',JSON.stringify(data));setAccount(data)
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Falha de conexão')
@@ -54,7 +56,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <>{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/painel/pendencias">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <>{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais.</aside>}{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/painel/pendencias">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Entre no Meu Bichu'}</h1>
