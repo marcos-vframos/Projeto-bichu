@@ -8,7 +8,7 @@ import {backupPage,BACKUP_TABLES} from '../worker/backup.js'
 function db(){const raw=new DatabaseSync(':memory:');for(const n of readdirSync('drizzle').filter(n=>n.endsWith('.sql')).sort())raw.exec(readFileSync(`drizzle/${n}`,'utf8').replaceAll('--> statement-breakpoint','\n'));return {raw,api:{prepare(sql){let v=[];return {bind(...a){v=a;return this},first(){return raw.prepare(sql).get(...v)},all(){return {results:raw.prepare(sql).all(...v)}},run(){return raw.prepare(sql).run(...v)}}}}}}
 test('backup e restauração local preservam banco, foto e histórico, sem misturar destinos',async()=>{
  const {raw,api}=db(),now=Date.now(),iso=new Date().toISOString()
- raw.prepare('INSERT INTO pilot_accounts VALUES (?,?,?,?,?,?,?)').run('account','test@test','salt','hash',now,now,now+86400000)
+ raw.prepare('INSERT INTO pilot_accounts(id,email,password_salt,password_hash,first_access_at,expires_at,created_at) VALUES (?,?,?,?,?,?,?)').run('account','test@test','salt','hash',now,now,now+86400000)
  raw.prepare("INSERT INTO pilot_records VALUES (?,?,'dogs',NULL,?,?,?)").run('pet','account',JSON.stringify({name:'Luna',weight_kg:12}),iso,iso)
  raw.prepare('INSERT INTO pilot_files VALUES (?,?,?,?,?,?,?,?)').run('file','account','pet','dogs','photo.png','account/pet/photo.png','image/png',4)
  const tables={};for(const table of BACKUP_TABLES)tables[table]=(await backupPage(api,new URL(`https://test/?table=${table}`))).items

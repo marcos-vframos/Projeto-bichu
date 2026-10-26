@@ -1,3 +1,5 @@
+import {accessApi} from './access.mjs'
+import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
 import {migrateFromSource} from './migrate.mjs'
 import { readFile } from 'node:fs/promises'
@@ -28,6 +30,7 @@ export function createApplication(options = {}) {
   const env = { ...process.env, ...options.env, DB: store.DB, BUCKET: store.BUCKET }
   if (!/^[a-f0-9]{64}$/.test(env.PILOT_PANEL_KEY || ''))
     throw Error('PILOT_PANEL_KEY must contain 64 hex characters')
+  const recovery=recoveryManager(store,settings)
   async function dispatch(request) {
     const u = new URL(request.url),
       p = u.pathname
@@ -35,6 +38,14 @@ export function createApplication(options = {}) {
     if (p.startsWith('/api/')) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
+      if(p.startsWith('/api/access/'))return accessApi(request,store,env)
+      if(p.startsWith('/api/pilot/owner/recovery')){
+        if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
+        if(p==='/api/pilot/owner/recovery'&&request.method==='GET')return Response.json(recovery.state(),{headers:{'cache-control':'no-store'}})
+        if(p==='/api/pilot/owner/recovery/run'&&request.method==='POST'){if(recovery.state().running)return Response.json({error:'Backup em andamento'},{status:409});void recovery.run().catch(()=>{});return Response.json({started:true},{status:202})}
+        if(p==='/api/pilot/owner/recovery/key'&&request.method==='GET'&&settings.BACKUP_ENCRYPTION_KEY)return new Response(settings.BACKUP_ENCRYPTION_KEY,{headers:{'content-type':'text/plain','cache-control':'no-store','content-disposition':'attachment; filename="meu-bichu-chave-recuperacao.txt"'}})
+        return new Response(null,{status:405})
+      }
       if (p === '/api/pilot/owner/tutor-accounts' || p === '/api/pilot/owner/tutor-access') {
         if (!await ownerSession(request,env.PILOT_PANEL_KEY)) return Response.json({error:'Abra seu link privado de proprietário'},{status:403,headers:{'cache-control':'no-store'}})
         if(p.endsWith('tutor-accounts') && request.method==='GET')return Response.json(store.raw.prepare('SELECT id,email FROM pilot_accounts ORDER BY email').all(),{headers:{'cache-control':'no-store'}})
@@ -84,6 +95,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
     if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))
     if (p === '/equipe')return asset(resolve(root,'team/index.html'))
     if (p === '/painel/registros')return asset(resolve(root,'team/audit.html'))
@@ -162,14 +174,16 @@ export function createApplication(options = {}) {
       res.end('{"error":"Serviço temporariamente indisponível"}')
     }
   })
-  return { store, dispatch, server }
+  return { store, dispatch, server, recovery }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   await migrateFromSource(process.env)
   const app = createApplication()
   app.server.listen(Number(process.env.PORT || 8080), '0.0.0.0')
+  app.recovery.start()
   const shutdown = () =>
     app.server.close(() => {
+      app.recovery.stop()
       app.store.close()
       process.exit(0)
     })

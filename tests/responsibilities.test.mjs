@@ -28,7 +28,7 @@ test('responsibilities: employee buttons separate from administration, assigned 
  assert.equal((await call('/api/team/tasks/'+task,'PATCH',{status:'concluida',note:'Resultado registrado'},first.auth)).status,200)
  let rows=await(await call('/api/team/tasks','GET',null,owner)).json();assert.equal(rows.items[0].status,'concluida');assert.equal(rows.items[0].note,'Resultado registrado')
  assert.equal((await call('/api/team/tasks','POST',{title:'Prazo inválido',details:'',dueDate:'2026-02-31'},owner)).status,400)
- const now=Date.now(),iso=new Date().toISOString(),recordId=crypto.randomUUID();app.store.raw.prepare('INSERT INTO pilot_accounts VALUES(?,?,?,?,?,?,?)').run('account','conta@test.local','salt','hash',now,now,now)
+ const now=Date.now(),iso=new Date().toISOString(),recordId=crypto.randomUUID();app.store.raw.prepare('INSERT INTO pilot_accounts(id,email,password_salt,password_hash,first_access_at,expires_at,created_at) VALUES(?,?,?,?,?,?,?)').run('account','conta@test.local','salt','hash',now,now,now)
  app.store.raw.prepare("INSERT INTO pilot_records VALUES(?,?,'pilot_feedback',NULL,?,?,?)").run(recordId,'account',JSON.stringify({message:'Minha pergunta',category:'sugestao'}),iso,iso)
  assert.equal((await call(`/api/team/cases/${recordId}/assign`,'POST',{userId:first.id},owner)).status,200)
  assert.equal((await(await call('/api/team/cases?assignee='+second.id,'GET',null,owner)).json()).items.length,0)

@@ -1,0 +1,13 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'br.com.meubichu.app'
+ compileSdk 36
+ defaultConfig { applicationId 'br.com.meubichu.app'; minSdk 26; targetSdk 36; versionCode 1; versionName '1.0.0' }
+ compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+ signingConfigs {
+   if (System.getenv('MB_UPLOAD_KEYSTORE')) {
+     release { storeFile file(System.getenv('MB_UPLOAD_KEYSTORE')); storePassword System.getenv('MB_UPLOAD_STORE_PASSWORD'); keyAlias System.getenv('MB_UPLOAD_KEY_ALIAS'); keyPassword System.getenv('MB_UPLOAD_KEY_PASSWORD') }
+   }
+ }
+ buildTypes { release { minifyEnabled false; if (System.getenv('MB_UPLOAD_KEYSTORE')) signingConfig signingConfigs.release } }
+}

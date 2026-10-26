@@ -64,3 +64,10 @@ backups/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+# Android local tools and private signing keys
+android/.gradle/
+android/**/build/
+android/local.properties
+*.jks
+*.keystore

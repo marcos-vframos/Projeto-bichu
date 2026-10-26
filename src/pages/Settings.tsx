@@ -386,7 +386,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {import.meta.env.VITE_PILOT_MODE === 'true' && <><PreferenceSyncStatus /><div id="pilot-metrics-settings" /><section className="rounded-2xl border border-current/20 p-4"><h2 className="text-lg font-bold mb-3">Feedback</h2><PilotFeedback /></section></>}
+      {import.meta.env.VITE_PILOT_MODE === 'true' && <><PreferenceSyncStatus /><nav className="flex flex-wrap gap-4 text-sm underline"><a href="/termos.html">Termos</a><a href="/privacidade.html">Privacidade</a><a href="/suporte.html">Suporte</a><a href="/excluir-conta.html">Excluir conta</a></nav><div id="pilot-metrics-settings" /><section className="rounded-2xl border border-current/20 p-4"><h2 className="text-lg font-bold mb-3">Feedback</h2><PilotFeedback /></section></>}
       {/* 1. SEÇÃO DO TUTOR */}
       <section
         className="p-5 sm:p-6 rounded-3xl border backdrop-blur-xl transition-all shadow-md"

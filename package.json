@@ -1,6 +1,6 @@
 {
   "name": "bichu",
-  "description": "Meu Bichu \u2014 Plataforma Web de Nutri\u00e7\u00e3o Cient\u00edfica e Cuidado para C\u00e3es e Gatos",
+  "description": "Meu Bichu — Plataforma Web de Nutrição Científica e Cuidado para Cães e Gatos",
   "private": true,
   "version": "0.0.45",
   "type": "module",
@@ -58,6 +58,7 @@
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "next-themes": "^0.4.6",
+    "nodemailer": "^10.2.1",
     "react": "^19.2.7",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.7",

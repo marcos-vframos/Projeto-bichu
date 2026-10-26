@@ -7,6 +7,9 @@ export const pilotAccounts = sqliteTable('pilot_accounts', {
   passwordHash: text('password_hash').notNull(),
   firstAccessAt: integer('first_access_at'),
   expiresAt: integer('expires_at'),
+  accountKind: text('account_kind').notNull().default('pilot'),
+  legalVersion: text('legal_version'),
+  legalAcceptedAt: integer('legal_accepted_at'),
   createdAt: integer('created_at').notNull(),
 }, table => [uniqueIndex('idx_pilot_accounts_email').on(table.email)])
 

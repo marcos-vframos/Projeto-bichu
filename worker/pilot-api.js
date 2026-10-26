@@ -46,7 +46,7 @@ function getCookie(request) {
 async function currentAccount(request, db) {
   const token = getCookie(request)
   if (!token) return null
-  const row = await db.prepare(`SELECT a.id, a.email, a.expires_at
+  const row = await db.prepare(`SELECT a.id, a.email, MIN(a.expires_at,s.expires_at) AS expires_at
     FROM pilot_sessions s JOIN pilot_accounts a ON a.id = s.account_id
     WHERE s.token_hash = ? AND s.expires_at > ? AND a.expires_at > ?`).bind(await digest(token), Date.now(), Date.now()).first()
   return row || null
@@ -98,6 +98,7 @@ async function eraseAccount(env,account){
       env.DB.prepare('DELETE FROM pilot_events WHERE account_id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM pilot_devices WHERE account_id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM pilot_sessions WHERE account_id = ?').bind(account.id),
+      env.DB.prepare('DELETE FROM access_tokens WHERE subject = ?').bind(account.email),
       env.DB.prepare('DELETE FROM pilot_accounts WHERE id = ?').bind(account.id),
       env.DB.prepare('DELETE FROM pilot_login_attempts WHERE email = ?').bind(account.email)
     ])
@@ -551,14 +552,14 @@ export async function handlePilot(request, env) {
     if(path[0]==='erase-account'){if(confirmation!=='EXCLUIR')return fail('Confirmação obrigatória');return eraseAccount(env,account)}
     const now = Date.now()
     if (!account.first_access_at) await env.DB.prepare('UPDATE pilot_accounts SET first_access_at = ?, expires_at = ? WHERE id = ? AND first_access_at IS NULL')
-      .bind(now, now + WEEK, account.id).run()
+      .bind(now, account.account_kind==='public'?253402300799000:now + WEEK, account.id).run()
     const updated = await env.DB.prepare('SELECT expires_at FROM pilot_accounts WHERE id = ?').bind(account.id).first()
     if (updated.expires_at <= now) return fail('Acesso de teste expirado', 403)
     const token = randomSecret()
     await env.DB.prepare('INSERT INTO pilot_sessions (token_hash, account_id, expires_at) VALUES (?, ?, ?)')
-      .bind(await digest(token), account.id, updated.expires_at).run()
-    return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: updated.expires_at }, 200,
-      { 'set-cookie': `${COOKIE}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/api/pilot; Max-Age=${Math.ceil((updated.expires_at - now) / 1000)}` })
+      .bind(await digest(token), account.id, Math.min(updated.expires_at,now+30*86400000)).run()
+    return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: Math.min(updated.expires_at,now+30*86400000) }, 200,
+      { 'set-cookie': `${COOKIE}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/api/pilot; Max-Age=${Math.ceil((Math.min(updated.expires_at,now+30*86400000) - now) / 1000)}` })
   }
   const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)

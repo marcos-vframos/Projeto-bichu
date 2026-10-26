@@ -10,7 +10,7 @@ import {handlePilot} from '../worker/pilot-api.js'
 test('migration requires frozen source, verifies data/photos, and never overwrites an imported destination',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'mb-import-')),source=openStore(join(dir,'source'));let frozen=false
  try{
- const now=Date.now(),iso=new Date().toISOString();source.raw.prepare('INSERT INTO pilot_accounts VALUES(?,?,?,?,?,?,?)').run('account','fake@test','salt','hash',now,now,now)
+ const now=Date.now(),iso=new Date().toISOString();source.raw.prepare('INSERT INTO pilot_accounts(id,email,password_salt,password_hash,first_access_at,expires_at,created_at) VALUES(?,?,?,?,?,?,?)').run('account','fake@test','salt','hash',now,now,now)
  source.raw.prepare("INSERT INTO pilot_records VALUES(?,?,'dogs',NULL,?,?,?)").run('pet','account','{"name":"Test pet"}',iso,iso)
  source.raw.prepare('INSERT INTO pilot_files VALUES(?,?,?,?,?,?,?,?)').run('photo','account','pet','dogs','photo.png','account/pet/photo.png','image/png',4)
  const env={MIGRATION_SOURCE:'https://source.test',MIGRATION_KEY:'test-key',DATA_DIR:join(dir,'destination')}
