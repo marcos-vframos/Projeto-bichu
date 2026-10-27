@@ -1,6 +1,15 @@
 import { preferencesApi } from './preferences.js'
 import { backupPage } from './backup.js'
 import { summarizeAdoption, ADOPTION_RULE } from './adoption.js'
+function telemetryData(value,env){
+  const source=value&&typeof value==='object'?value:{},data={}
+  for(const key of ['method','status','message','requestId'])if(['string','number'].includes(typeof source[key]))data[key]=typeof source[key]==='string'?source[key].slice(0,300):source[key]
+  data.route=typeof source.route==='string'&&source.route.startsWith('/')&&!source.route.startsWith('//')?source.route.split(/[?#]/)[0].replace(/\/[a-f0-9]{8}-[a-f0-9-]{27,36}(?=\/|$)/gi,'/:id').slice(0,160):'/não-informada'
+  data.serverRelease=String(env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||'local').slice(0,120)
+  data.clientRelease=typeof source.clientRelease==='string'&&/^[a-zA-Z0-9._-]{1,120}$/.test(source.clientRelease)?source.clientRelease:'unknown'
+  return data
+}
+
 const COLLECTIONS = new Set(['dogs', 'weight_logs', 'feeding_plans', 'bcs_evaluations', 'health_events', 'pet_routine_events', 'user_foods', 'account_preferences', 'natural_diets', 'pilot_feedback'])
 const OWNER_ID = 'd410baf1-83e0-4641-9a41-f44fc8c5025a'
 const CHILD_COLLECTIONS = new Set(['weight_logs', 'feeding_plans', 'bcs_evaluations', 'health_events', 'pet_routine_events', 'natural_diets'])
@@ -590,7 +599,10 @@ export async function handlePilot(request, env) {
     if (data.locationStatus === 'off') delete data.location
     if (data.locationStatus === 'granted' && body.location && Number.isFinite(body.location.latitude) && Math.abs(body.location.latitude)<=90 && Number.isFinite(body.location.longitude) && Math.abs(body.location.longitude)<=180 && Number.isFinite(body.location.accuracy) && body.location.accuracy>=0) data.location = { latitude: body.location.latitude, longitude: body.location.longitude, accuracy: body.location.accuracy, recordedAt: Number.isFinite(body.location.recordedAt) && body.location.recordedAt <= now ? body.location.recordedAt : now }
     const ms = prior && Number.isFinite(body.activeMs) ? Math.max(0, Math.min(30000, now-prior.last_seen, body.activeMs)) : 0
-    await env.DB.prepare('INSERT INTO pilot_devices (id, account_id, device_id, data, active_ms, last_seen) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, active_ms = pilot_devices.active_ms + excluded.active_ms, last_seen = excluded.last_seen').bind(id, account.id, deviceId, JSON.stringify(data), ms, now).run()
+    const diagnostics=telemetryData({route:body.route,clientRelease:body.clientRelease},env)
+    const statements=[env.DB.prepare('INSERT INTO pilot_devices (id, account_id, device_id, data, active_ms, last_seen) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, active_ms = pilot_devices.active_ms + excluded.active_ms, last_seen = excluded.last_seen').bind(id, account.id, deviceId, JSON.stringify(data), ms, now)]
+    if(ms>0)statements.push(env.DB.prepare('INSERT INTO pilot_events(id,account_id,event,duration_ms,created_at,device_id,details) VALUES(?,?,?,?,?,?,?)').bind(crypto.randomUUID(),account.id,'active_time',Math.round(ms),now,deviceId,JSON.stringify(diagnostics)))
+    await env.DB.batch(statements)
     return answer({ ok: true })
   }
   if (path[0] === 'daily-meals' && path.length === 1) return dailyMeals(request, env, account, url)
@@ -607,7 +619,7 @@ export async function handlePilot(request, env) {
     const { event, durationMs, deviceId, details } = await request.json()
     if (!['page_load', 'save_error', 'api_slow', 'api_response', 'navigation', 'client_error', 'network_error'].includes(event) || !Number.isInteger(durationMs) || durationMs < 0 || durationMs > 120000) return fail('Evento inválido')
     await env.DB.prepare('INSERT INTO pilot_events (id, account_id, event, duration_ms, created_at, device_id, details) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .bind(crypto.randomUUID(), account.id, event, durationMs, Date.now(), typeof deviceId === 'string' ? deviceId.slice(0,80) : null, details && typeof details === 'object' ? JSON.stringify(Object.fromEntries(Object.entries(details).filter(([k,v]) => ['route','method','status','message'].includes(k) && ['string','number'].includes(typeof v)).map(([k,v]) => [k,typeof v==='string'?v.slice(0,300):v]))) : null).run()
+      .bind(crypto.randomUUID(), account.id, event, durationMs, Date.now(), typeof deviceId === 'string' ? deviceId.slice(0,80) : null, JSON.stringify(telemetryData(details,env))).run()
     return answer({ ok: true }, 201)
   }
   return fail('Rota desconhecida', 404)

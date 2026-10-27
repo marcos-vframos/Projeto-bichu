@@ -8,6 +8,7 @@ import {tmpdir} from 'node:os'
 import {DatabaseSync} from 'node:sqlite'
 import {snapshot,pack,unpack} from './recovery.mjs'
 import {matrixAccount,MATRIX_EMAIL} from './pilot-matrix.mjs'
+import {readTestAnalytics,CHECKLIST_STEPS,appRelease} from './test-analytics.mjs'
 const json=(data,status=200,headers={})=>Response.json(data,{status,headers:{'cache-control':'no-store',...headers}}),sha=v=>createHash('sha256').update(v).digest('hex'),secret=()=>randomBytes(24).toString('hex')
 export const releaseId=env=>env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||env.RAILWAY_DEPLOYMENT_ID||'local'
 export function initLab(store,env){
@@ -57,7 +58,29 @@ export function labManager(store,env){
  const id=crypto.randomUUID(),now=new Date().toISOString(),data={category:b.worked==='sim'?'utilidade':'dificuldade',message:`Avaliação de ${b.screen}: funcionou ${b.worked}. Usabilidade ${ratings.usability}/5; visual ${ratings.visual}/5; velocidade ${ratings.speed}/5.\n${b.comment}`,screen:b.screen,ratings,worked:b.worked,comment:b.comment,release:releaseId(env),labSlot:a.slot,status:'recebido',replies:[]}
  db.prepare("INSERT INTO pilot_records(id,account_id,collection,data,created_at,updated_at) VALUES(?,?,'pilot_feedback',?,?,?)").run(id,a.account_id,JSON.stringify(data),now,now);return json({ok:true,id},201)
  }
+ if(p==='/api/lab/checklist'&&['GET','POST'].includes(req.method)){
+   if(env.LAB_KIND!=='beta')return json({error:'Checklist disponível somente na beta'},403)
+   const account=current(req,db);if(!account)return json({error:'Entre novamente'},401)
+   if(req.headers.get('x-mb-account-id')&&req.headers.get('x-mb-account-id')!==account.account_id)return json({error:'A conta mudou. Reabra o acesso.'},409)
+   const release=appRelease(env),id=sha(JSON.stringify(['beta_checklist',account.account_id,release]))
+   const previous=db.prepare("SELECT data,updated_at FROM pilot_records WHERE id=? AND account_id=? AND collection='beta_checklists'").get(id,account.account_id)
+   const prior=previous?JSON.parse(previous.data):null
+   if(req.method==='GET')return json({release,revision:prior?.revision||0,updatedAt:previous?.updated_at||null,steps:CHECKLIST_STEPS.map(step=>({...step,status:prior?.steps.find(s=>s.id===step.id)?.status||'not_tested',note:prior?.steps.find(s=>s.id===step.id)?.note||''}))})
+   const body=await req.json()
+   if(!body||typeof body!=='object')return json({error:'Checklist inválido'},400)
+   if(body.clientRelease&&body.clientRelease!==release)return json({error:'A versão do aplicativo mudou. Atualize a página antes de avaliar.'},409)
+   if(!Number.isSafeInteger(body.expectedRevision)||body.expectedRevision<0||!Array.isArray(body.steps)||body.steps.length!==CHECKLIST_STEPS.length||new Set(body.steps.map(s=>s?.id)).size!==CHECKLIST_STEPS.length||body.steps.some(s=>!CHECKLIST_STEPS.some(x=>x.id===s?.id)||!['not_tested','passed','failed','not_applicable'].includes(s.status)||typeof s.note!=='string'||s.note.length>1000))return json({error:'Checklist inválido'},400)
+   db.exec('BEGIN IMMEDIATE')
+   try{
+     const row=db.prepare('SELECT data FROM pilot_records WHERE id=? AND account_id=?').get(id,account.account_id),revision=row?JSON.parse(row.data).revision:0
+     if(revision!==body.expectedRevision){db.exec('ROLLBACK');return json({error:'O checklist mudou em outro aparelho. Reabra-o para conferir as respostas antes de salvar.'},409)}
+     const now=new Date().toISOString(),data={release,revision:revision+1,steps:CHECKLIST_STEPS.map(step=>({...step,status:body.steps.find(s=>s.id===step.id).status,note:body.steps.find(s=>s.id===step.id).note.trim()})),declaration:'manual'}
+     db.prepare("INSERT INTO pilot_records(id,account_id,collection,data,created_at,updated_at) VALUES(?,?,'beta_checklists',?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated_at=excluded.updated_at").run(id,account.account_id,JSON.stringify(data),now,now)
+     db.exec('COMMIT');return json({ok:true,release,revision:revision+1},201)
+   }catch(error){db.exec('ROLLBACK');throw error}
+ }
  if(req.headers.get('authorization')!=='Bearer '+env.LAB_CONTROL_KEY)return json({error:'Exclusivo do proprietário'},403)
+ if(p==='/api/lab/manage/analytics'&&req.method==='GET'){try{return json(readTestAnalytics(store,env,new URL(req.url).searchParams))}catch(error){if(error instanceof RangeError)return json({error:error.message},400);throw error}}
  if(p==='/api/lab/manage'&&req.method==='GET'){initLab(store,env);return json({kind:env.LAB_KIND,release:releaseId(env),archiving,archiveError,accounts:db.prepare('SELECT l.slot,l.active,l.account_id,COUNT(r.id) AS records FROM lab_accounts l LEFT JOIN pilot_records r ON r.account_id=l.account_id AND r.collection!=\'account_preferences\' GROUP BY l.slot ORDER BY l.slot').all(),versions:db.prepare('SELECT id,release,name,created_at,note,source_account_id,source_email FROM lab_versions ORDER BY created_at DESC').all()})}
  if(p==='/api/lab/manage/pilot01-archive'&&req.method==='POST'){
    if(env.LAB_KIND!=='matrix')return json({error:'Somente o arquivo da matriz recebe referências do piloto 01'},403)
@@ -106,6 +129,7 @@ export async function labsProxy(req,env,store,pilotMatrix){
    return json({url:env.APP_ORIGIN+'/',direct:true,accountId:account.id},200,{'set-cookie':`mb_owner_account=${encodeURIComponent(account.id)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE===false?'':'; Secure'}`})
  }
  if(kind==='matrix'&&pilotMatrix?.enabled&&req.method==='POST'&&route==='archive'){const b=await req.json();try{return json(await pilotMatrix.save(b.name,b.note),201)}catch(error){return json({error:error.message},409)}}
+ if(req.method==='GET'&&route==='analytics'){if(kind==='matrix'&&pilotMatrix?.enabled){const account=matrixAccount(store);try{return json({...readTestAnalytics(store,env,u.searchParams,account?[account.id]:[]),matrixOriginal:true})}catch(error){if(error instanceof RangeError)return json({error:error.message},400);throw error}}const data=await call(kind,'/analytics'+u.search);return json(data,data.unavailable?503:200)}
  if(req.method==='GET'&&route==='feedback')return json(await call(kind,'/feedback'+u.search))
  if(req.method==='GET'&&/^archive\/[a-f0-9-]{36}$/.test(route))return json(await call(kind,'/'+route))
  if(req.method==='POST'&&['open','activate','archive'].includes(route))return json(await call(kind,'/'+route,'POST',await req.json()))

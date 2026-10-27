@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react()],
   define: {
+    __APP_RELEASE__: JSON.stringify(process.env.RAILWAY_GIT_COMMIT_SHA || process.env.APP_RELEASE || 'local'),
     'process.env.NODE_ENV': JSON.stringify(mode ?? process.env.NODE_ENV ?? 'production'),
   },
   resolve: {

@@ -4,6 +4,8 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
+ARG RAILWAY_GIT_COMMIT_SHA
+ENV APP_RELEASE=${RAILWAY_GIT_COMMIT_SHA}
 RUN npm run build && mkdir -p /runtime/node_modules && cp -rL node_modules/nodemailer /runtime/node_modules/nodemailer
 FROM node:24-bookworm-slim
 WORKDIR /app

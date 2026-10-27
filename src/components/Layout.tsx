@@ -1,3 +1,4 @@
+import BetaChecklist from './BetaChecklist'
 import BetaEvaluation from './BetaEvaluation'
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -42,8 +43,9 @@ export function Layout() {
     {dogs.length>1&&<label className="px-3 py-2 text-xs">Pet ativo<select aria-label="Selecionar pet ativo" value={activeDog?.id||''} onChange={e=>{setActiveDogId(e.target.value);setOpen(false)}} className="mt-2 block w-full rounded-lg border border-[#69766c] bg-[#f7faf4] p-3 text-[#161d19]">{dogs.map(d=><option key={d.id} value={d.id} style={{backgroundColor:'#f7faf4',color:'#161d19'}}>{d.name}</option>)}</select></label>}
    </nav>}
   </div>
-  <main className="w-full"><div className={location.pathname.startsWith('/bcs')?'mx-auto w-full max-w-[1800px] px-3 pt-16 pb-6 sm:px-6':'mx-auto w-full max-w-7xl px-4 pt-16 pb-6 sm:px-6 lg:px-8'}><Outlet/></div></main>
+  <main className="w-full" style={sessionStorage.getItem('mb_lab_kind')==='beta'?{paddingBottom:160}:undefined}><div className={location.pathname.startsWith('/bcs')?'mx-auto w-full max-w-[1800px] px-3 pt-16 pb-6 sm:px-6':'mx-auto w-full max-w-7xl px-4 pt-16 pb-6 sm:px-6 lg:px-8'}><Outlet/></div></main>
   <BetaEvaluation/>
+  <BetaChecklist/>
   <LogoSelectorModal open={logoModalOpen} onClose={()=>setLogoModalOpen(false)} currentLogoId={logoId} onSelectLogo={id=>{setLogoId(id);setLogoSrc(getCroppedLogoImage(id))}} primaryColor={theme.brownPrimary} bgColor={theme.bgColor} textColor={theme.brownTitle}/>
  </div>
 }

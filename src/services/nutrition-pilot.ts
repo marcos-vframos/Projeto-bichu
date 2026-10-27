@@ -5,16 +5,16 @@ import type { DogRecord, FeedingPlanRecord, WeightLogRecord, FoodRecord, UserFoo
 const ROOT = '/api/pilot/records'
 type Collection = 'dogs' | 'weight_logs' | 'feeding_plans' | 'bcs_evaluations' | 'health_events' | 'pet_routine_events' | 'user_foods' | 'natural_diets'
 async function request<T>(collection: Collection, method = 'GET', id?: string, data?: object | FormData, query?:string): Promise<T> {
-  const owner=accountKey()
+  const owner=accountKey(),requestId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`
   const started = performance.now(), route = `${ROOT}/${collection}${id ? `/${encodeURIComponent(id)}` : ''}${query?`?${query}`:''}`
   let response: Response
   try { response = await fetch(route, {
     method, credentials: 'same-origin', headers: {'x-mb-account-id':owner,...(data && !(data instanceof FormData)?{'content-type':'application/json'}:{})},
     body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
-  }) } catch (error) { if(method==='GET'&&accountKey()===owner){const cached=cacheRead<T>(route);if(cached){window.dispatchEvent(new CustomEvent('bichu:offline-read',{detail:cached.savedAt}));return cached.value}} void logActivity('network_error', performance.now()-started, { route, method }); throw error }
+  }) } catch (error) { if(method==='GET'&&accountKey()===owner){const cached=cacheRead<T>(route);if(cached){window.dispatchEvent(new CustomEvent('bichu:offline-read',{detail:cached.savedAt}));return cached.value}} void logActivity('network_error', performance.now()-started, { route, method, requestId }); throw error }
   const durationMs = Math.round(performance.now() - started)
-  void logActivity('api_response', durationMs, { route, method, status: response.status })
-  if (!response.ok || durationMs > 1500) void logActivity(response.ok ? 'api_slow' : 'save_error', durationMs, { route, method, status: response.status })
+  void logActivity('api_response', durationMs, { route, method, requestId, status: response.status })
+  if (!response.ok || durationMs > 1500) void logActivity(response.ok ? 'api_slow' : 'save_error', durationMs, { route, method, requestId, status: response.status })
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Falha ao sincronizar com o banco')
   if(accountKey()!==owner)throw Error('A conta mudou. Recarregue o aplicativo.');const value=await response.json();if(method==='GET')cacheWrite(route,value);return value
 }

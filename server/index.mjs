@@ -43,6 +43,7 @@ export function createApplication(options = {}) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
       if(p.startsWith('/api/lab/'))return labs.api(request)
+      if(p==='/api/pilot/lab-checklist'){const u=new URL(request.url);u.pathname='/api/lab/checklist';return labs.api(new Request(u,request))}
       if(p==='/api/pilot/lab-evaluation'){const u=new URL(request.url);u.pathname='/api/lab/evaluation';return labs.api(new Request(u,request))}
       if(p.startsWith('/api/pilot/owner/labs')){
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
@@ -105,6 +106,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/painel/testes')return asset(resolve(root,'team/test-analytics.html'))
     if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
     if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
     if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))

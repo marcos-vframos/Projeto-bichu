@@ -1,4 +1,5 @@
 import { fetchOwnerData } from '@/owner-data'
+import OwnerMenu from '@/components/OwnerMenu'
 import AccountPicker from '@/components/AccountPicker'
 import DeviceDetails from '@/components/DeviceDetails'
 import ParticipantSummary from '@/components/ParticipantSummary'
@@ -6,7 +7,7 @@ import FeedbackInbox from '@/components/FeedbackInbox'
 import OwnerRecords from '@/components/OwnerRecords'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
-import { Activity, Clock3, Dog, RefreshCw, ShieldCheck, TriangleAlert, X } from 'lucide-react'
+import { Activity, Clock3, Dog, RefreshCw, ShieldCheck, TriangleAlert, X, Home, Users, ClipboardList, Settings, DatabaseBackup, ListChecks, FlaskConical, Smartphone } from 'lucide-react'
 
 type Account = { id: string; email: string; firstAccessAt: number | null; expiresAt: number | null;
   lastActivityAt: number | null; petCount: number; recordCount: number; pageLoads: number; errors: number;
@@ -96,13 +97,23 @@ export default function OwnerDashboard() {
     allTimings.reduce((sum, a) => sum + a.measuredRequests, 0)) : null
 
   return <main className="min-h-screen bg-[#f4f7f2] text-[#18372e]">
-    <header className="bg-[#14372f] text-white px-4 py-5">
+    <header className="sticky top-0 z-30 bg-[#14372f] text-white px-4 py-5">
       <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3"><ShieldCheck className="h-7 w-7 text-[#cfebaa]" aria-hidden="true" />
           <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
             <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <button onClick={()=>openWorkspace("/acesso-tutor")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Abrir app do tutor</button><button onClick={()=>openWorkspace("/painel/pendencias")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Minhas responsabilidades</button><button onClick={()=>openWorkspace("/painel/registros")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Registros dos funcionários</button><button onClick={()=>openWorkspace("/painel/configuracoes")} className="rounded-xl border border-white/50 px-3 py-2">Configurações gerais</button><button onClick={()=>openWorkspace("/painel/seguranca")} className="rounded-xl border border-white/50 px-3 py-2">Backup e recuperação</button><button onClick={()=>openWorkspace("/painel/equipe")} disabled={state==='loading'} className="rounded-xl border border-white/50 px-3 py-2">Funcionários e responsabilidades</button><button onClick={() => void reload()} className="flex items-center gap-2 rounded-xl border border-white/50 px-3 py-2 hover:bg-white/10"><RefreshCw className="h-4 w-4" />Atualizar</button></div>
+        <OwnerMenu items={[
+          {label:'Resumo do painel',icon:<Home/>,action:()=>setWorkspace(null),active:!workspace},
+          {label:'Abrir app do tutor',icon:<Smartphone/>,action:()=>openWorkspace('/acesso-tutor'),disabled:state==='loading',active:workspace==='/acesso-tutor'},
+          {label:'Minhas responsabilidades',icon:<ClipboardList/>,action:()=>openWorkspace('/painel/pendencias'),disabled:state==='loading',active:workspace==='/painel/pendencias'},
+          {label:'Registros dos funcionários',icon:<ListChecks/>,action:()=>openWorkspace('/painel/registros'),disabled:state==='loading',active:workspace==='/painel/registros'},
+          {label:'Análise dos testes',icon:<FlaskConical/>,action:()=>openWorkspace('/painel/testes'),disabled:state==='loading',active:workspace==='/painel/testes'},
+          {label:'Configurações gerais',icon:<Settings/>,action:()=>openWorkspace('/painel/configuracoes'),active:workspace==='/painel/configuracoes'},
+          {label:'Backup e recuperação',icon:<DatabaseBackup/>,action:()=>openWorkspace('/painel/seguranca'),active:workspace==='/painel/seguranca'},
+          {label:'Funcionários e responsabilidades',icon:<Users/>,action:()=>openWorkspace('/painel/equipe'),disabled:state==='loading',active:workspace==='/painel/equipe'},
+          {label:'Atualizar',icon:<RefreshCw/>,action:()=>void reload(),disabled:state==='loading'},
+        ]}/>
+
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
