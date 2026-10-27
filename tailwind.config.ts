@@ -11,6 +11,7 @@ export default {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './owner-app/src/**/*.{ts,tsx}',
   ],
   prefix: '',
   theme: {
