@@ -1,3 +1,15 @@
+# Atualização: matriz é o piloto 01 original
+
+Por determinação explícita do proprietário, a matriz de dados passou a ser a própria conta piloto01@meubichu.test no aplicativo principal. O botão Matriz em Configurações gerais seleciona seu identificador original pelo acesso privado do proprietário e abre o app principal. Não importa, duplica, limpa, reidentifica ou recria a conta. Alterações realizadas nesse acesso afetam os dados reais do piloto 01; a matriz deixa de ser uma conta operacional isolada.
+
+O histórico passa a receber referências criptografadas restritas a essa conta: cadastro, registros, imagens, eventos, dispositivos e alterações com datas originais. Senhas e sessões reais não são copiadas. Nenhuma referência é restaurada sobre a conta ativa. O código e os dados históricos são identificados separadamente: os arquivos anteriores do laboratório vazio continuam visíveis com identificação explícita, sem serem apresentados como histórico do piloto 01.
+
+O serviço bichu-matriz continua existindo para guardar os arquivos e homologar código. A conta original piloto 01 usa a versão que está publicada no aplicativo principal; publicar apenas na branch matriz não muda a interface dessa conta. A primeira referência do piloto 01 é guardada automaticamente após a publicação, e outras podem ser nomeadas manualmente. Referências acima de 6 MB são recusadas com erro explícito, preservando os dados originais.
+
+Beta e testes sujos permanecem separados; nenhuma cópia do piloto 01 é enviada a esses ambientes. As 20 reservas beta continuam desativadas. A sessão de proprietário seleciona uma conta por navegador, como no acesso anterior ao tutor; abrir a matriz muda essa seleção para o piloto 01 também nas outras abas desse navegador. Uma conta ausente não é recriada silenciosamente.
+
+Os detalhes abaixo descrevem a configuração inicial; prevalecem as regras desta atualização quando divergirem.
+
 # Ambientes de desenvolvimento do Meu Bichu
 
 ## Acessos e separação

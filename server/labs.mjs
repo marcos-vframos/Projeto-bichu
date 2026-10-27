@@ -7,12 +7,14 @@ import {join} from 'node:path'
 import {tmpdir} from 'node:os'
 import {DatabaseSync} from 'node:sqlite'
 import {snapshot,pack,unpack} from './recovery.mjs'
+import {matrixAccount,MATRIX_EMAIL} from './pilot-matrix.mjs'
 const json=(data,status=200,headers={})=>Response.json(data,{status,headers:{'cache-control':'no-store',...headers}}),sha=v=>createHash('sha256').update(v).digest('hex'),secret=()=>randomBytes(24).toString('hex')
 export const releaseId=env=>env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||env.RAILWAY_DEPLOYMENT_ID||'local'
 export function initLab(store,env){
  if(!['matrix','dirty','beta'].includes(env.LAB_KIND))return
  const db=store.raw
  db.exec(`CREATE TABLE IF NOT EXISTS lab_accounts(slot TEXT PRIMARY KEY,account_id TEXT UNIQUE NOT NULL REFERENCES pilot_accounts(id),active INTEGER NOT NULL,generation INTEGER NOT NULL DEFAULT 0);CREATE TABLE IF NOT EXISTS lab_tickets(hash TEXT PRIMARY KEY,slot TEXT NOT NULL,expires_at INTEGER NOT NULL);CREATE TABLE IF NOT EXISTS lab_versions(id TEXT PRIMARY KEY,release TEXT NOT NULL,name TEXT NOT NULL,created_at INTEGER NOT NULL,path TEXT NOT NULL,note TEXT NOT NULL);`)
+ for(const column of ['source_account_id','source_email'])if(!db.prepare('PRAGMA table_info(lab_versions)').all().some(c=>c.name===column))db.exec(`ALTER TABLE lab_versions ADD COLUMN ${column} TEXT`)
  const count=env.LAB_KIND==='beta'?21:1
  for(let n=1;n<=count;n++){
  const slot=env.LAB_KIND==='beta'?'beta-'+String(n).padStart(2,'0'):env.LAB_KIND
@@ -33,7 +35,7 @@ export function labManager(store,env){
  async function archive(name='Versão de referência',note=''){
  if(env.LAB_KIND!=='matrix')throw Error('Somente a matriz possui arquivo de versões')
  if(archiving)throw Error('Arquivo de versão em andamento');archiving=true;let folder,sealed
- try{folder=snapshot(store,env.DATA_DIR);const id=crypto.randomUUID();await writeFile(join(folder,'version.json'),JSON.stringify({id,release:releaseId(env),name:name.slice(0,120),note:note.slice(0,1000),createdAt:Date.now()}));sealed=await pack(folder,env.LAB_CONTROL_KEY);const directory=join(env.DATA_DIR,'lab-archives'),path=join(directory,id+'.enc');await mkdir(directory,{recursive:true});await copyFile(sealed,path+'.tmp');await rename(path+'.tmp',path);if(env.BACKUP_BUCKET){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);await s3(env,'PUT','matrix-archives/'+id+'.enc',createReadStream(path),{hash:hash.digest('hex'),length:statSync(path).size})}store.raw.prepare('INSERT INTO lab_versions VALUES(?,?,?,?,?,?)').run(id,releaseId(env),name.slice(0,120),Date.now(),path,note.slice(0,1000));archiveError=null;return {id}}
+ try{folder=snapshot(store,env.DATA_DIR);const id=crypto.randomUUID();await writeFile(join(folder,'version.json'),JSON.stringify({id,release:releaseId(env),name:name.slice(0,120),note:note.slice(0,1000),createdAt:Date.now()}));sealed=await pack(folder,env.LAB_CONTROL_KEY);const directory=join(env.DATA_DIR,'lab-archives'),path=join(directory,id+'.enc');await mkdir(directory,{recursive:true});await copyFile(sealed,path+'.tmp');await rename(path+'.tmp',path);if(env.BACKUP_BUCKET){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);await s3(env,'PUT','matrix-archives/'+id+'.enc',createReadStream(path),{hash:hash.digest('hex'),length:statSync(path).size})}store.raw.prepare('INSERT INTO lab_versions(id,release,name,created_at,path,note) VALUES(?,?,?,?,?,?)').run(id,releaseId(env),name.slice(0,120),Date.now(),path,note.slice(0,1000));archiveError=null;return {id}}
  catch(error){archiveError=error.message;throw error}
  finally{archiving=false;for(const p of [folder,sealed])if(p)await rm(p,{recursive:true,force:true})}
  }
@@ -56,7 +58,27 @@ export function labManager(store,env){
  db.prepare("INSERT INTO pilot_records(id,account_id,collection,data,created_at,updated_at) VALUES(?,?,'pilot_feedback',?,?,?)").run(id,a.account_id,JSON.stringify(data),now,now);return json({ok:true,id},201)
  }
  if(req.headers.get('authorization')!=='Bearer '+env.LAB_CONTROL_KEY)return json({error:'Exclusivo do proprietário'},403)
- if(p==='/api/lab/manage'&&req.method==='GET'){initLab(store,env);return json({kind:env.LAB_KIND,release:releaseId(env),archiving,archiveError,accounts:db.prepare('SELECT l.slot,l.active,l.account_id,COUNT(r.id) AS records FROM lab_accounts l LEFT JOIN pilot_records r ON r.account_id=l.account_id AND r.collection!=\'account_preferences\' GROUP BY l.slot ORDER BY l.slot').all(),versions:db.prepare('SELECT id,release,name,created_at,note FROM lab_versions ORDER BY created_at DESC').all()})}
+ if(p==='/api/lab/manage'&&req.method==='GET'){initLab(store,env);return json({kind:env.LAB_KIND,release:releaseId(env),archiving,archiveError,accounts:db.prepare('SELECT l.slot,l.active,l.account_id,COUNT(r.id) AS records FROM lab_accounts l LEFT JOIN pilot_records r ON r.account_id=l.account_id AND r.collection!=\'account_preferences\' GROUP BY l.slot ORDER BY l.slot').all(),versions:db.prepare('SELECT id,release,name,created_at,note,source_account_id,source_email FROM lab_versions ORDER BY created_at DESC').all()})}
+ if(p==='/api/lab/manage/pilot01-archive'&&req.method==='POST'){
+   if(env.LAB_KIND!=='matrix')return json({error:'Somente o arquivo da matriz recebe referências do piloto 01'},403)
+   if(archiving)return json({error:'Arquivo de versão em andamento'},409)
+   archiving=true;const temp=await mkdtemp(join(tmpdir(),'bichu-pilot-reference-'))
+   try{
+     const sealed=join(temp,'incoming.enc'),folder=join(temp,'verified');await writeFile(sealed,new Uint8Array(await req.arrayBuffer()),{mode:0o600});await unpack(sealed,env.LAB_CONTROL_KEY,folder)
+     const meta=JSON.parse(await readFile(join(folder,'version.json'),'utf8')),saved=new DatabaseSync(join(folder,'database.sqlite'),{readOnly:true})
+     try{
+       const accounts=saved.prepare('SELECT id,email FROM pilot_accounts').all()
+       if(accounts.length!==1||accounts[0].email!==MATRIX_EMAIL||accounts[0].id!==meta.sourceAccountId||meta.sourceEmail!==MATRIX_EMAIL||!/^[a-f0-9-]{36}$/.test(meta.id)||typeof meta.release!=='string'||meta.release.length>120||typeof meta.name!=='string'||meta.name.length>120||typeof meta.note!=='string'||meta.note.length>1000||!Number.isSafeInteger(meta.createdAt))throw Error('Referência não pertence exclusivamente ao piloto 01')
+       for(const table of ['pilot_records','pilot_files','pilot_events','pilot_changes','pilot_devices'])if(saved.prepare(`SELECT COUNT(*) n FROM ${table} WHERE account_id!=?`).get(meta.sourceAccountId).n)throw Error('Referência contém dados de outra conta')
+       if(saved.prepare('SELECT COUNT(*) n FROM pilot_sessions').get().n||saved.prepare('SELECT COUNT(*) n FROM access_tokens').get().n)throw Error('Referência contém credenciais de acesso')
+     }finally{saved.close()}
+     const directory=join(env.DATA_DIR,'lab-archives'),path=join(directory,meta.id+'.enc');await mkdir(directory,{recursive:true});await copyFile(sealed,path+'.tmp');await rename(path+'.tmp',path)
+     if(env.BACKUP_BUCKET){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);await s3(env,'PUT','matrix-archives/'+meta.id+'.enc',createReadStream(path),{hash:hash.digest('hex'),length:statSync(path).size})}
+     db.prepare('INSERT INTO lab_versions(id,release,name,created_at,path,note,source_account_id,source_email) VALUES(?,?,?,?,?,?,?,?)').run(meta.id,meta.release,meta.name,meta.createdAt,path,meta.note,meta.sourceAccountId,meta.sourceEmail)
+     archiveError=null;return json({id:meta.id,sourceEmail:meta.sourceEmail},201)
+   }catch(error){archiveError=error.message;return json({error:error.message},400)}
+   finally{archiving=false;await rm(temp,{recursive:true,force:true})}
+ }
  if(p==='/api/lab/manage/activate'&&req.method==='POST'){
  const b=await req.json();if(env.LAB_KIND!=='beta'||typeof b.active!=='boolean'||!db.prepare('SELECT 1 FROM lab_accounts WHERE slot=?').get(b.slot))return json({error:'Conta inválida'},400)
  db.exec('BEGIN IMMEDIATE');try{db.prepare('UPDATE lab_accounts SET active=?,generation=generation+1 WHERE slot=?').run(b.active?1:0,b.slot);db.prepare('UPDATE pilot_accounts SET expires_at=? WHERE id=(SELECT account_id FROM lab_accounts WHERE slot=?)').run(b.active?253402300799000:0,b.slot);db.prepare('DELETE FROM lab_tickets WHERE slot=?').run(b.slot);db.prepare('DELETE FROM pilot_sessions WHERE account_id=(SELECT account_id FROM lab_accounts WHERE slot=?)').run(b.slot);db.exec('COMMIT')}catch(e){db.exec('ROLLBACK');throw e}return json({ok:true})
@@ -73,11 +95,17 @@ export function labManager(store,env){
  function start(){if(env.LAB_KIND==='matrix'&&!store.raw.prepare('SELECT 1 FROM lab_versions WHERE release=?').get(releaseId(env)))setTimeout(()=>void archive('Publicação '+releaseId(env).slice(0,12),'Registro automático na entrada desta versão.').catch(e=>console.error('Matrix archive:',e.message)),10000).unref()}
  return {api,start,archive}
 }
-export async function labsProxy(req,env){
+export async function labsProxy(req,env,store,pilotMatrix){
  const u=new URL(req.url),parts=u.pathname.split('/').filter(Boolean),kind=parts[4],route=parts.slice(5).join('/'),names={matrix:'MATRIX',dirty:'DIRTY',beta:'BETA'}
  const call=async(k,path,method='GET',body)=>{const name=names[k],origin=env['LAB_'+name+'_ORIGIN'],key=env['LAB_'+name+'_KEY'];if(!origin||!key)return {error:'Ambiente ainda não configurado',unavailable:true};if(!origin.startsWith('https://'))throw Error('Origem inválida');const r=await fetch(origin+'/api/lab/manage'+path,{method,headers:{origin,authorization:'Bearer '+key,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,redirect:'error',signal:AbortSignal.timeout(path==='/archive'?120000:10000)});const d=await r.json();if(!r.ok)throw Error(d.error||'Falha no ambiente');return d}
- if(parts.length===4&&req.method==='GET'){const items=await Promise.all(Object.keys(names).map(async k=>{try{return {kind:k,...await call(k,'')}}catch(e){return {kind:k,error:e.message,unavailable:true}}}));return json({items})}
+ if(parts.length===4&&req.method==='GET'){const items=await Promise.all(Object.keys(names).map(async k=>{try{const remote=await call(k,'');if(k==='matrix'&&pilotMatrix?.enabled){const account=matrixAccount(store);return {kind:k,...remote,versions:remote.versions||[],unavailable:false,...pilotMatrix.state(),archiveError:pilotMatrix.state().archiveError||remote.error||null,liveOriginal:true,release:releaseId(env),accounts:account?[{slot:'matrix',label:'Piloto 01 · matriz original',account_id:account.id,active:1,records:store.raw.prepare("SELECT COUNT(*) n FROM pilot_records WHERE account_id=? AND collection!='account_preferences'").get(account.id).n}]:[],missingAccount:!account}}return {kind:k,...remote}}catch(e){return {kind:k,error:e.message,unavailable:true}}}));return json({items})}
  if(!names[kind])return json({error:'Ambiente inválido'},400)
+ if(kind==='matrix'&&pilotMatrix?.enabled&&req.method==='POST'&&route==='open'){
+   const account=matrixAccount(store);if(!account)return json({error:'Piloto 01 não encontrado. Nenhuma conta foi substituída.'},404)
+   store.raw.prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)').run(crypto.randomUUID(),'owner','open_matrix',account.id,Date.now())
+   return json({url:env.APP_ORIGIN+'/',direct:true,accountId:account.id},200,{'set-cookie':`mb_owner_account=${encodeURIComponent(account.id)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE===false?'':'; Secure'}`})
+ }
+ if(kind==='matrix'&&pilotMatrix?.enabled&&req.method==='POST'&&route==='archive'){const b=await req.json();try{return json(await pilotMatrix.save(b.name,b.note),201)}catch(error){return json({error:error.message},409)}}
  if(req.method==='GET'&&route==='feedback')return json(await call(kind,'/feedback'+u.search))
  if(req.method==='GET'&&/^archive\/[a-f0-9-]{36}$/.test(route))return json(await call(kind,'/'+route))
  if(req.method==='POST'&&['open','activate','archive'].includes(route))return json(await call(kind,'/'+route,'POST',await req.json()))

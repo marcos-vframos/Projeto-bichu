@@ -1,4 +1,5 @@
 import {initLab,labManager,labsProxy} from './labs.mjs'
+import {pilotMatrixManager} from './pilot-matrix.mjs'
 import {accessApi} from './access.mjs'
 import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
@@ -34,6 +35,7 @@ export function createApplication(options = {}) {
     throw Error('PILOT_PANEL_KEY must contain 64 hex characters')
   const recovery=recoveryManager(store,settings)
   const labs=labManager(store,settings)
+  const pilotMatrix=pilotMatrixManager(store,settings)
   async function dispatch(request) {
     const u = new URL(request.url),
       p = u.pathname
@@ -45,7 +47,7 @@ export function createApplication(options = {}) {
       if(p==='/api/pilot/lab-evaluation'){const u=new URL(request.url);u.pathname='/api/lab/evaluation';return labs.api(new Request(u,request))}
       if(p.startsWith('/api/pilot/owner/labs')){
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
-        return labsProxy(request,env)
+        return labsProxy(request,env,store,pilotMatrix)
       }
       if(p.startsWith('/api/access/'))return accessApi(request,store,env)
       if(p.startsWith('/api/pilot/owner/recovery')){
@@ -184,7 +186,7 @@ export function createApplication(options = {}) {
       res.end('{"error":"Serviço temporariamente indisponível"}')
     }
   })
-  return { store, dispatch, server, recovery, labs }
+  return { store, dispatch, server, recovery, labs, pilotMatrix }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   await migrateFromSource(process.env)
@@ -192,6 +194,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   app.server.listen(Number(process.env.PORT || 8080), '0.0.0.0')
   app.recovery.start()
   app.labs.start()
+  app.pilotMatrix.start()
   const shutdown = () =>
     app.server.close(() => {
       app.recovery.stop()

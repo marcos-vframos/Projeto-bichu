@@ -4,7 +4,7 @@ import { loadPreferences, loadOfflinePreferences } from '@/lib/preferences'
 import DeviceActivity from '@/components/DeviceActivity'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 
-type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean; labKind?: string }
+type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean; labKind?: string; matrixOriginal?: boolean }
 
 export function PilotGate({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null)
@@ -56,7 +56,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <>{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais.</aside>}{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">Acesso do proprietário · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/painel/pendencias">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <>{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais.</aside>}{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">{account.matrixOriginal?'Matriz · piloto 01 original':'Acesso do proprietário'} · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/painel/pendencias">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Entre no Meu Bichu'}</h1>
