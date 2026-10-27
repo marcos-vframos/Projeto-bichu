@@ -2,14 +2,14 @@ import BetaChecklist from './BetaChecklist'
 import BetaEvaluation from './BetaEvaluation'
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Dog, HeartPulse, Scale, TrendingUp, Settings, Stethoscope, X, PawPrint } from 'lucide-react'
+import { Home, Dog, HeartPulse, Scale, TrendingUp, Settings, Stethoscope, X, PawPrint, BookOpen } from 'lucide-react'
 import { useDog } from '@/contexts/DogContext'
 import { useActiveHeroTheme } from '@/hooks/use-active-hero-theme'
 import { preferenceStorage } from '@/lib/preferences'
 import { LogoSelectorModal } from './LogoSelectorModal'
 import { getCroppedLogoImage, subscribeLogoCrops, initLogoCrops, DEFAULT_LOGO_ID, LOGO_STORAGE_KEY } from '@/lib/logo-assets'
 
-const items = [{label:'Início',path:'/',icon:Home},{label:'Meus pets',path:'/caes',icon:Dog},{label:'Saúde Assistida',path:'/saude',icon:HeartPulse},{label:'Comparador',path:'/comparador',icon:Scale},{label:'Peso',path:'/peso',icon:TrendingUp},{label:'Ajustes',path:'/configuracoes',icon:Settings},{label:'Profissionais Pet',path:'/profissionais',icon:Stethoscope}]
+const items = [{label:'Início',path:'/',icon:Home},{label:'Meus pets',path:'/caes',icon:Dog},{label:'Saúde Assistida',path:'/saude',icon:HeartPulse},{label:'Comparador',path:'/comparador',icon:Scale},{label:'Peso',path:'/peso',icon:TrendingUp},{label:'Biblioteca',path:'/biblioteca',icon:BookOpen},{label:'Ajustes',path:'/configuracoes',icon:Settings},{label:'Profissionais Pet',path:'/profissionais',icon:Stethoscope}]
 export function Layout() {
  const {dogs,activeDog,setActiveDogId}=useDog(),navigate=useNavigate(),location=useLocation()
  const {theme}=useActiveHeroTheme(activeDog)

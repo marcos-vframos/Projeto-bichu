@@ -18,6 +18,10 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.json': 'application/json',
+  '.pdf': 'application/pdf',
+  '.jpg': 'image/jpeg',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.wasm': 'application/wasm',
 }
 export function createApplication(options = {}) {
   const settings = { ...process.env, ...options.env }
@@ -179,7 +183,7 @@ export function createApplication(options = {}) {
       res.setHeader('X-Content-Type-Options', 'nosniff')
       res.setHeader('Referrer-Policy', 'same-origin')
       res.setHeader('X-Frame-Options', 'SAMEORIGIN')
-      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'")
+      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'")
       res.end(req.method === 'HEAD' ? undefined : Buffer.from(await response.arrayBuffer()))
     } catch (e) {
       console.error('Request failed:', e.name)
