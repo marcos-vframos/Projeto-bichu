@@ -73,7 +73,7 @@ export default function OwnerDashboard() {
       {state === 'error' && <div role="alert" className="rounded-xl border border-[#a85648] bg-[#fff2ef] p-5">Não foi possível consultar o banco agora. Atualize a página para tentar novamente.</div>}
       {state === 'ready' && data && <>
         <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="text-xl font-bold">Acompanhamento das dez contas</h2>
-          <p className="text-sm text-[#4c665d]">Atualizado em {date(data.generatedAt)}. Os dados anteriores do PocketBase ainda não foram importados.</p></div>
+          <p className="text-sm text-[#4c665d]">Atualizado em {date(data.generatedAt)}.</p></div>
           <label className="text-sm font-semibold">Mostrar conta
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)} className="mt-1 block min-w-60 rounded-xl border border-[#8ba99b] bg-white p-3 text-[#18372e]">
               <option value="all">Todas as contas</option>{accounts.map(a => <option key={a.id} value={a.id}>{a.email}</option>)}

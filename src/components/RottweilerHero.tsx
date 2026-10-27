@@ -193,36 +193,9 @@ export function RottweilerHero({ activeDog }: RottweilerHeroProps) {
                 transform: `translate3d(${tilt.x}px, ${tilt.y}px, 0)`,
               }}
             >
-              {/* Imagem em tag nativa com <picture>, srcset 2K/4K e object-fit/position responsivos */}
+              {/* Retrato local ou foto do próprio pet, com ajuste responsivo */}
               <picture>
-                {!imgSrc.startsWith('data:') && (
-                  <>
-                    <source
-                      media="(min-width: 1441px)"
-                      srcSet={
-                        imgSrc.includes('usecurling')
-                          ? imgSrc.replace(/p\/\d+\/\d+/, 'p/3840/2160')
-                          : imgSrc
-                      }
-                    />
-                    <source
-                      media="(min-width: 1025px)"
-                      srcSet={
-                        imgSrc.includes('usecurling')
-                          ? imgSrc.replace(/p\/\d+\/\d+/, 'p/2560/1440')
-                          : imgSrc
-                      }
-                    />
-                    <source
-                      media="(min-width: 641px)"
-                      srcSet={
-                        imgSrc.includes('usecurling')
-                          ? imgSrc.replace(/p\/\d+\/\d+/, 'p/1920/1080')
-                          : imgSrc
-                      }
-                    />
-                  </>
-                )}
+
                 <img
                   key={imgSrc}
                   src={imgSrc}

@@ -3,7 +3,6 @@ import {pilotMatrixManager} from './pilot-matrix.mjs'
 import {accessApi} from './access.mjs'
 import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
-import {migrateFromSource} from './migrate.mjs'
 import { readFile } from 'node:fs/promises'
 import { resolve, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -142,7 +141,7 @@ export function createApplication(options = {}) {
       headers: {
         'content-type': MIME[extname(path)] || 'application/octet-stream',
         'cache-control':
-          path.endsWith('.html') || path.endsWith('sw.js') || path.startsWith(resolve(root,'team')+'/') ? 'no-cache' : 'public, max-age=3600',
+          path.endsWith('.html') || path.endsWith('sw.js') || path.endsWith('favicon.ico') || path.endsWith('meu-bichu-icon.png') || path.startsWith(resolve(root,'team')+'/') ? 'no-cache' : 'public, max-age=3600',
       },
     })
   }
@@ -178,7 +177,7 @@ export function createApplication(options = {}) {
       res.setHeader('X-Content-Type-Options', 'nosniff')
       res.setHeader('Referrer-Policy', 'same-origin')
       res.setHeader('X-Frame-Options', 'SAMEORIGIN')
-      res.setHeader('Content-Security-Policy', "frame-ancestors 'self'")
+      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'")
       res.end(req.method === 'HEAD' ? undefined : Buffer.from(await response.arrayBuffer()))
     } catch (e) {
       console.error('Request failed:', e.name)
@@ -189,7 +188,6 @@ export function createApplication(options = {}) {
   return { store, dispatch, server, recovery, labs, pilotMatrix }
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  await migrateFromSource(process.env)
   const app = createApplication()
   app.server.listen(Number(process.env.PORT || 8080), '0.0.0.0')
   app.recovery.start()

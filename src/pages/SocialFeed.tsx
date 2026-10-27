@@ -153,11 +153,11 @@ export function SocialFeedPage() {
         id: `demo_${Date.now()}`,
         author_name: 'Tutor Convidado',
         author_username: 'tutor_convidado',
-        author_avatar: 'https://img.usecurling.com/ppl/medium?gender=female&seed=15',
+        author_avatar: '/avatar-placeholder.svg',
         caption: caption.trim(),
         images: imageUrl.trim()
           ? [imageUrl.trim()]
-          : ['https://img.usecurling.com/p/800/800?q=dog+happy'],
+          : ['/heroes/beagle.png'],
         likes_count: 0,
         comments_count: 0,
         is_liked: false,
@@ -411,7 +411,7 @@ export function SocialFeedPage() {
                     <img
                       src={
                         post.author_avatar ||
-                        'https://img.usecurling.com/ppl/medium?gender=female&seed=15'
+                        '/avatar-placeholder.svg'
                       }
                       alt={post.author_name}
                       className="w-10 h-10 rounded-full object-cover border-2 shadow-sm"

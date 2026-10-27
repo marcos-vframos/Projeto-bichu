@@ -188,7 +188,6 @@ export async function bundleProjectSourceZip(): Promise<Blob> {
     const cleanPath = rawPath.replace(/^\//, '')
     // Ignora segredos e arquivos gerados
     if (cleanPath.startsWith('.env') && cleanPath !== 'env.example') continue
-    if (cleanPath === '.skip.config.json') continue
     if (cleanPath.endsWith('.zip') || cleanPath.endsWith('.tmp') || cleanPath.endsWith('.bak'))
       continue
     if (

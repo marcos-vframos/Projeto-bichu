@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { LogIn, Mail, Lock, ShieldCheck, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react'
+import { LogIn, Mail, Lock, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useActiveHeroTheme } from '@/hooks/use-active-hero-theme'
 import { useDog } from '@/contexts/DogContext'
@@ -34,11 +34,6 @@ export default function LoginPage() {
     }
   }
 
-  // Preenchimento de demonstração com um toque
-  const fillDemoAccount = () => {
-    setEmail('marcos.vframos@gmail.com')
-    setPassword('Skip@Pass')
-  }
 
   if (user) {
     return (
@@ -183,18 +178,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Atalho Demo */}
-        <div className="mt-5 pt-4 border-t border-white/5 text-center">
-          <button
-            type="button"
-            onClick={fillDemoAccount}
-            className="text-[11px] font-semibold inline-flex items-center gap-1.5 opacity-80 hover:opacity-100 transition cursor-pointer"
-            style={{ color: theme.brownPrimary }}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Preencher conta principal de demonstração</span>
-          </button>
-        </div>
+
       </div>
 
       {/* Não tem conta? Registrar */}

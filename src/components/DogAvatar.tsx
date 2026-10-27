@@ -36,7 +36,7 @@ export const DogAvatar: React.FC<DogAvatarProps> = ({
   className = '',
 }) => {
   // Se dog for passado, resolve a URL real pelo nutritionService
-  // Se avatarUrl for um nome de arquivo PocketBase, resolve via getFileUrl
+  // Se avatarUrl for um nome de arquivo dos registros do app, resolve via getFileUrl
   const resolvedUrl = React.useMemo(() => {
     if (dog) {
       return nutritionService.getAvatarUrl(dog) || avatarUrl
@@ -51,7 +51,7 @@ export const DogAvatar: React.FC<DogAvatarProps> = ({
       ) {
         return avatarUrl
       }
-      // Provável nome de arquivo PocketBase salvo diretamente
+      // Provável nome de arquivo dos registros do app salvo diretamente
       return nutritionService.getFileUrl({ avatar: avatarUrl } as DogRecord, avatarUrl) || avatarUrl
     }
     return undefined

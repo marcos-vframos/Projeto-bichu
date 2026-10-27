@@ -440,7 +440,7 @@ export const communityService = {
     }
   },
 
-  // Helpers de Imagens do PocketBase
+  // Helpers de imagens dos registros do app
   getMediaUrl(record: { [key: string]: unknown } | null, filename?: string): string | undefined {
     if (!record || !filename) return undefined
     if (

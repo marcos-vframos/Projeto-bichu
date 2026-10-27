@@ -204,7 +204,7 @@ export default function ProfessionalDetailPage() {
               <img
                 src={
                   professional.avatar ||
-                  'https://img.usecurling.com/ppl/medium?gender=female&seed=15'
+                  '/avatar-placeholder.svg'
                 }
                 alt={professional.name}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl object-cover border-4 shadow-xl shrink-0"

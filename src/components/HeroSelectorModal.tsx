@@ -248,11 +248,7 @@ export function HeroSelectorModal({
                   <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <img
                       src={theme.imageUrl}
-                      srcSet={
-                        theme.imageUrl.includes('usecurling')
-                          ? `${theme.imageUrl} 3840w, ${theme.imageUrl.replace('p/3840/2160', 'p/2560/1440')} 2560w, ${theme.imageUrl.replace('p/3840/2160', 'p/1920/1080')} 1920w`
-                          : undefined
-                      }
+
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       alt={theme.name}
                       onError={(e) => {

@@ -66,7 +66,6 @@ function isExcludedPath(relPath) {
   for (const part of parts) {
     if (EXCLUDE_DIRS.has(part)) return true
     if (part.startsWith('.env') && part !== '.env.example') return true
-    if (part === '.skip.config.json') return true
   }
 
   // Exact file exclusions

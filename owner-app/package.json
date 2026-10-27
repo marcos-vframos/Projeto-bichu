@@ -70,8 +70,6 @@
     "drizzle-kit": "0.31.10",
     "drizzle-orm": "0.45.2",
     "lucide-react": "^0.577.0",
-    "magic-string": "^0.30.21",
-    "oxc-parser": "^0.137.0",
     "oxfmt": "^0.56.0",
     "oxlint": "^1.71.0",
     "postcss": "^8.5.15",
