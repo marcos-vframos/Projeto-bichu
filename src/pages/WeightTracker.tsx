@@ -290,7 +290,7 @@ export default function WeightTrackerPage() {
       })
 
       if (dog.activity_level !== activity) {
-        await nutritionService.updateDog(dog.id, { activity_level: activity })
+        await nutritionService.updateDog(dog.id, { activity_level: activity }, dog.revision)
       }
 
       await refreshActivePlan()

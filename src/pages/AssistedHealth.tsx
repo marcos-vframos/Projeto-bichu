@@ -293,7 +293,7 @@ export default function AssistedHealthPage() {
           duration: formHealthDuration.trim(),
           professional: formHealthProfessional.trim(),
           location: formHealthLocation.trim(),
-        })
+        }, editingHealthEvent.revision)
         toast.success('Registro de saúde atualizado!')
       } else {
         await nutritionService.createHealthEvent({
@@ -315,7 +315,7 @@ export default function AssistedHealthPage() {
       await loadData()
     } catch (err) {
       console.error(err)
-      toast.error('Erro ao salvar registro de saúde.')
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar registro de saúde.')
     } finally {
       setHealthSaving(false)
     }
@@ -324,13 +324,13 @@ export default function AssistedHealthPage() {
   const handleToggleHealthComplete = async (ev: HealthEventRecord) => {
     try {
       const next = !ev.completed
-      await nutritionService.toggleHealthEventCompleted(ev.id, next)
+      const saved = await nutritionService.toggleHealthEventCompleted(ev.id, next, ev.revision)
       setHealthEvents((prev) =>
-        prev.map((item) => (item.id === ev.id ? { ...item, completed: next } : item)),
+        prev.map((item) => (item.id === ev.id ? saved : item)),
       )
       toast.success(next ? 'Marcado como concluído!' : 'Marcado como pendente.')
-    } catch {
-      toast.error('Não foi possível atualizar o status.')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível atualizar o status.')
     }
   }
 
@@ -391,7 +391,7 @@ export default function AssistedHealthPage() {
           location: formRoutineLocation.trim(),
           notes: formRoutineNotes.trim(),
           repeat: formRoutineRepeat,
-        })
+        }, editingRoutineEvent.revision)
         toast.success('Evento de rotina atualizado!')
       } else {
         await nutritionService.createRoutineEvent({
@@ -412,7 +412,7 @@ export default function AssistedHealthPage() {
       await loadData()
     } catch (err) {
       console.error(err)
-      toast.error('Erro ao salvar evento de rotina.')
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar evento de rotina.')
     } finally {
       setRoutineSaving(false)
     }
@@ -421,13 +421,13 @@ export default function AssistedHealthPage() {
   const handleToggleRoutineComplete = async (ev: RoutineEventRecord) => {
     try {
       const next = !ev.completed
-      await nutritionService.toggleRoutineEventCompleted(ev.id, next)
+      const saved = await nutritionService.toggleRoutineEventCompleted(ev.id, next, ev.revision)
       setRoutineEvents((prev) =>
-        prev.map((item) => (item.id === ev.id ? { ...item, completed: next } : item)),
+        prev.map((item) => (item.id === ev.id ? saved : item)),
       )
       toast.success(next ? 'Evento marcado como realizado!' : 'Evento marcado como pendente.')
-    } catch {
-      toast.error('Não foi possível atualizar o status.')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível atualizar o status.')
     }
   }
 

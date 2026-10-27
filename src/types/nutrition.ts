@@ -6,6 +6,7 @@ export type BodyCondition = 'abaixo_do_ideal' | 'ideal' | 'acima_do_ideal'
 export type FeedingGoal = 'manter' | 'emagrecer' | 'ganhar'
 
 export interface DogRecord {
+  revision?: string
   id: string
   created: string
   updated: string
@@ -97,6 +98,7 @@ export type BcsCategory = 'abaixo' | 'ideal' | 'sobrepeso' | 'obesidade'
 export type HealthEventType = 'consulta' | 'vacina' | 'medicacao' | 'tratamento'
 
 export interface HealthEventRecord {
+  revision?: string
   id: string
   created: string
   updated: string
@@ -127,6 +129,7 @@ export type RoutineEventCategory =
 export type RoutineEventRepeat = 'nenhuma' | 'diaria' | 'semanal' | 'quinzenal' | 'mensal' | 'anual'
 
 export interface RoutineEventRecord {
+  revision?: string
   id: string
   created: string
   updated: string

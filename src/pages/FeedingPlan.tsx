@@ -222,7 +222,7 @@ export default function FeedingPlanPage() {
 
       // Update dog's activity level if altered here
       if (dog.activity_level !== activity) {
-        await nutritionService.updateDog(dog.id, { activity_level: activity })
+        await nutritionService.updateDog(dog.id, { activity_level: activity }, dog.revision)
       }
 
       await refreshActivePlan()

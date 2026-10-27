@@ -14,8 +14,9 @@ const fmt=(v:number|null)=>v===null?'Não informado':v.toLocaleString('pt-BR',{m
 export default function NaturalDiet({foods}:{foods:FoodRecord[]}) {
   const {activeDog,activePlan,refreshActivePlan}=useDog()
   const [items,setItems]=useState<Ingredient[]>([row()]),[mixed,setMixed]=useState(false),[foodId,setFoodId]=useState(''),[target,setTarget]=useState(activePlan?.daily_kcal||0),[mode,setMode]=useState<'commercial'|'natural'|'mixed'>('natural'),[professional,setProfessional]=useState(''),[reviewed,setReviewed]=useState(false),[busy,setBusy]=useState(false),[loaded,setLoaded]=useState(false)
+  const [savedRecipe,setSavedRecipe]=useState<{id?:string;revision?:string}>({})
   const suitable=foods.filter(f=>(f.species||'canina')===(activeDog?.species||'canina')&&!['petisco','biscoito'].includes(f.category||'')&&!/complementar/i.test(f.nutritional_adequacy||'')),food=suitable.find(f=>f.id===foodId),base=sumIngredients(items),options=dietOptions(items,target,food)
-  useEffect(()=>{let current=true;setLoaded(false);setItems([row()]);setTarget(activePlan?.daily_kcal||0);setProfessional('');setReviewed(false);setFoodId('');setMixed(false);setMode('natural');if(!activeDog)return;void pilotNutritionService.getNaturalDiets(activeDog.id).then(rows=>{if(!current)return;const prior=rows[0];if(prior){setItems(prior.ingredients);setTarget(prior.target);setFoodId(prior.foodId||'');setMixed(prior.mixed);setMode(prior.mode);setProfessional(prior.professional||'')}}).catch(()=>toast.error('Não foi possível recuperar a receita salva.')).finally(()=>{if(current)setLoaded(true)});return()=>{current=false}},[activeDog?.id])
+  useEffect(()=>{let current=true;setLoaded(false);setSavedRecipe({});setItems([row()]);setTarget(activePlan?.daily_kcal||0);setProfessional('');setReviewed(false);setFoodId('');setMixed(false);setMode('natural');if(!activeDog)return;void pilotNutritionService.getNaturalDiets(activeDog.id).then(rows=>{if(!current)return;const prior=rows[0];if(prior){setSavedRecipe({id:prior.id,revision:prior.revision});setItems(prior.ingredients);setTarget(prior.target);setFoodId(prior.foodId||'');setMixed(prior.mixed);setMode(prior.mode);setProfessional(prior.professional||'')}}).catch(()=>toast.error('Não foi possível recuperar a receita salva.')).finally(()=>{if(current)setLoaded(true)});return()=>{current=false}},[activeDog?.id])
   const edit=(id:string,key:keyof Ingredient,value:string)=>setItems(prev=>prev.map(i=>i.id===id?{...i,[key]:['grams','kcal100','protein100','fat100'].includes(key)?Number(value):value}:i))
   const save=async(apply:boolean)=>{
     if(!activeDog)return
@@ -25,13 +26,14 @@ export default function NaturalDiet({foods}:{foods:FoodRecord[]}) {
     if(apply&&mode==='mixed'&&base.kcal>=target){toast.error('A porção natural já alcança a meta. Ajuste a receita para incluir a ração.');return}
     setBusy(true)
     try{
-      await pilotNutritionService.saveNaturalDiet({dog:activeDog.id,ingredients:items,target,foodId,mixed,mode,professional})
+      const saved=await pilotNutritionService.saveNaturalDiet({...savedRecipe,dog:activeDog.id,ingredients:items,target,foodId,mixed,mode,professional})
+      setSavedRecipe({id:saved.id,revision:saved.revision})
       if(apply){const selected=options[mode],portions=items.map(i=>({...i,grams:i.grams*selected.scale})),count=activePlan?.meals_per_day||2
         await nutritionService.savePlan(activeDog.id,{food_name:mode==='commercial'?food!.name:mode==='natural'?'Alimentação natural prescrita':`Natural + ${food!.name}`,food:mode==='natural'?undefined:foodId,kcal_per_kg:selected.grams>0?selected.kcal/selected.grams*1000:0,meals_per_day:count,daily_kcal:selected.kcal,daily_grams:selected.grams,goal:activePlan?.goal||'manter',diet_mode:mode,diet_details:{commercialGrams:selected.commercialGrams,naturalGrams:selected.naturalGrams,proteinGrams:selected.protein,fatGrams:selected.fat,ingredients:portions,professional},meals_json:getDefaultMeals(count,selected.grams)})
         await refreshActivePlan()
       }
       toast.success(apply?'Plano selecionado em vigência.':'Receita salva para revisão.')
-    }catch{toast.error('Não foi possível salvar o planejamento.')}finally{setBusy(false)}
+    }catch(error){toast.error(error instanceof Error?error.message:'Não foi possível salvar o planejamento.')}finally{setBusy(false)}
   }
   return <section className="rounded-2xl border border-border bg-card p-5 space-y-5"><h2 className="text-xl font-bold">Alimentação natural e mista</h2><p className="text-sm text-muted-foreground">Cadastre a receita prescrita. Informe valores por 100 g do alimento no preparo indicado, usando a tabela de composição ou o rótulo. Estes cálculos somam energia, proteína e gordura; não verificam vitaminas, minerais, taurina nem se a dieta é completa para cães ou gatos. A energia de tabelas humanas pode diferir da energia metabolizável para o pet. <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noreferrer" className="underline">Consultar FoodData Central</a>.</p>
     <label className="block text-sm font-semibold">Meta energética prescrita (kcal/dia)<Input type="number" min="1" max="20000" value={target} onChange={e=>setTarget(Number(e.target.value))}/></label>
