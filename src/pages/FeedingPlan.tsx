@@ -136,6 +136,7 @@ export default function FeedingPlanPage() {
         dailyKcal: 0,
         dailyGrams: 0,
         foodKcalPerKg: 3500,
+        foodEnergyValid: false,
         mealsPerDay: 2,
       }
     }
@@ -203,6 +204,7 @@ export default function FeedingPlanPage() {
   }
 
   const handleSavePlan = async () => {
+    if (!calculation.foodEnergyValid) { toast.error('Informe a energia do alimento em kcal/kg antes de salvar.'); return }
     if (!dog) return
     if (savedPlan?.diet_mode && savedPlan.diet_mode !== 'commercial') { toast.info('Edite o plano prescrito na área de alimentação natural do comparador.'); return }
     setSaving(true)
@@ -523,17 +525,20 @@ export default function FeedingPlanPage() {
               <Input
                 id="kcal-kg"
                 type="number"
-                min="1000"
-                max="6000"
-                step="10"
+                min="1"
+                max="10000"
+                step="1"
                 value={foodKcalPerKg}
-                onChange={(e) => setFoodKcalPerKg(Number(e.target.value) || 3500)}
+                aria-invalid={!calculation.foodEnergyValid}
+                aria-describedby="food-energy-help"
+                onChange={(e) => setFoodKcalPerKg(Number(e.target.value))}
                 className="bg-card border-border text-xs h-11 rounded-xl pr-16 font-bold text-foreground"
               />
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                 kcal/kg
               </span>
             </div>
+              <p id="food-energy-help" role={!calculation.foodEnergyValid ? 'alert' : undefined} className="text-xs text-muted-foreground">{calculation.foodEnergyValid ? 'Informe a energia do alimento em kcal/kg, inclusive quando inferior a 1.000. Valores em kcal/100 g precisam ser multiplicados por 10.' : 'Informe uma energia positiva e válida. O plano não será salvo com este valor.'}</p>
           </div>
         </div>
 
