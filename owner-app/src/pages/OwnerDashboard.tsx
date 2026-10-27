@@ -98,10 +98,7 @@ export default function OwnerDashboard() {
 
   return <main className="min-h-screen bg-[#f4f7f2] text-[#18372e]">
     <header className="sticky top-0 z-30 bg-[#14372f] text-white px-4 py-5">
-      <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3"><ShieldCheck className="h-7 w-7 text-[#cfebaa]" aria-hidden="true" />
-          <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
-            <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
+      <div className="mx-auto max-w-7xl flex items-center gap-4">
         <OwnerMenu items={[
           {label:'Resumo do painel',icon:<Home/>,action:()=>setWorkspace(null),active:!workspace},
           {label:'Abrir app do tutor',icon:<Smartphone/>,action:()=>openWorkspace('/acesso-tutor'),disabled:state==='loading',active:workspace==='/acesso-tutor'},
@@ -113,7 +110,9 @@ export default function OwnerDashboard() {
           {label:'Funcionários e responsabilidades',icon:<Users/>,action:()=>openWorkspace('/painel/equipe'),disabled:state==='loading',active:workspace==='/painel/equipe'},
           {label:'Atualizar',icon:<RefreshCw/>,action:()=>void reload(),disabled:state==='loading'},
         ]}/>
-
+        <div className="flex min-w-0 items-center gap-3"><ShieldCheck className="h-7 w-7 shrink-0 text-[#cfebaa]" aria-hidden="true" />
+          <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
+            <h1 className="text-2xl font-bold">Painel do proprietário</h1></div></div>
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
