@@ -28,6 +28,7 @@ test('tutor magic link enters the chosen expired account, preserves original dea
  assert.equal(stored.token_hash,createHash('sha256').update(link.token).digest('hex'));assert.equal(JSON.stringify(stored).includes(link.token),false)
  const c=await enter(f,link),me=await(await send(f.app,'/api/pilot/me',null,c)).json()
  assert.equal(me.id,a.id);assert.equal(me.temporaryAccess,true);assert.equal(me.ownerAccess,false)
+ assert.ok(f.app.store.raw.prepare("SELECT 1 FROM team_audit WHERE actor_id='tutor' AND action='temporary_access_enter'").get())
  assert.deepEqual(f.app.store.raw.prepare('SELECT * FROM pilot_accounts WHERE id=?').get(a.id),before)
  for(const path of ['/api/pilot/owner/dashboard','/api/pilot/owner/access-links','/api/team/users'])assert.ok((await send(f.app,path,null,c)).status>=400)
  assert.equal((await send(f.app,'/api/pilot/me',null,c,null,{'x-mb-account-id':b.id})).status,409)

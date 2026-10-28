@@ -37,7 +37,7 @@ export async function temporaryAccessApi(req,store,env){
    db.prepare(`INSERT INTO ${table} VALUES(?,?,?)`).run(digest,link.subject_id,link.expires_at)
    db.prepare('INSERT INTO temporary_access_sessions VALUES(?,?,?)').run(link.role,digest,link.id)
    db.prepare('UPDATE temporary_access_links SET last_used_at=? WHERE id=?').run(now,link.id)
-   audit(db,link.role==='staff'?link.subject_id:'owner','temporary_access_enter',link.id,{role:link.role,subjectId:link.subject_id})
+   audit(db,link.role==='staff'?link.subject_id:'tutor','temporary_access_enter',link.id,{role:link.role,subjectId:link.subject_id})
    db.exec('COMMIT')
    return reply({ok:true,role:link.role,expiresAt:link.expires_at},200,{'set-cookie':`${link.role==='tutor'?'mb_pilot':'mb_team'}=${token}; HttpOnly; SameSite=Strict; Path=${link.role==='tutor'?'/api/pilot':'/api'}; Max-Age=${Math.max(1,Math.floor((link.expires_at-now)/1000))}${env.COOKIE_SECURE===false?'':'; Secure'}`})
   }catch(error){db.exec('ROLLBACK');throw error}
