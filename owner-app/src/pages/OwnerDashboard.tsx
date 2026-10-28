@@ -102,6 +102,7 @@ export default function OwnerDashboard() {
         <OwnerMenu items={[
           {label:'Resumo do painel',icon:<Home/>,action:()=>setWorkspace(null),active:!workspace},
           {label:'Abrir app do tutor',icon:<Smartphone/>,action:()=>openWorkspace('/acesso-tutor'),disabled:state==='loading',active:workspace==='/acesso-tutor'},
+          {label:'Acessos sem senha',icon:<Users/>,action:()=>openWorkspace('/painel/acessos'),disabled:state==='loading',active:workspace==='/painel/acessos'},
           {label:'Minhas responsabilidades',icon:<ClipboardList/>,action:()=>openWorkspace('/painel/pendencias'),disabled:state==='loading',active:workspace==='/painel/pendencias'},
           {label:'Registros dos funcionários',icon:<ListChecks/>,action:()=>openWorkspace('/painel/registros'),disabled:state==='loading',active:workspace==='/painel/registros'},
           {label:'Análise dos testes',icon:<FlaskConical/>,action:()=>openWorkspace('/painel/testes'),disabled:state==='loading',active:workspace==='/painel/testes'},

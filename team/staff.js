@@ -561,7 +561,7 @@ try {
   await enter(await privateAccess())
 } catch (error) {
   $('#login-panel').hidden = false
-  show('Informe seu e-mail e senha individuais.')
+  show(error.message || 'Use o link individual de entrada automática fornecido pelo proprietário.')
 }
 setInterval(() => {
   if (!document.hidden && !$('#workspace').hidden && $('#detail').hidden) void load()

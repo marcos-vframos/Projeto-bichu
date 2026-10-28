@@ -55,9 +55,16 @@ function getCookie(request) {
 async function currentAccount(request, db) {
   const token = getCookie(request)
   if (!token) return null
-  const row = await db.prepare(`SELECT a.id, a.email, MIN(a.expires_at,s.expires_at) AS expires_at
+  const now = Date.now()
+  const row = await db.prepare(`SELECT a.id, a.email,
+    CASE WHEN t.token_hash IS NULL THEN MIN(a.expires_at,s.expires_at) ELSE MIN(s.expires_at,l.expires_at) END AS expires_at,
+    CASE WHEN t.token_hash IS NULL THEN 0 ELSE 1 END AS temporary_access
     FROM pilot_sessions s JOIN pilot_accounts a ON a.id = s.account_id
-    WHERE s.token_hash = ? AND s.expires_at > ? AND a.expires_at > ?`).bind(await digest(token), Date.now(), Date.now()).first()
+    LEFT JOIN temporary_access_sessions t ON t.token_hash=s.token_hash AND t.role='tutor'
+    LEFT JOIN temporary_access_links l ON l.id=t.link_id AND l.role='tutor' AND l.subject_id=a.id
+    WHERE s.token_hash=? AND s.expires_at>? AND
+    ((t.token_hash IS NULL AND a.expires_at>?) OR
+     (t.token_hash IS NOT NULL AND l.revoked_at IS NULL AND l.expires_at>?))`).bind(await digest(token), now, now, now).first()
   return row || null
 }
 async function ownedDog(db, accountId, dogId) {
@@ -584,7 +591,7 @@ export async function handlePilot(request, env) {
   const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)
   if(request.headers.get('x-mb-account-id') && request.headers.get('x-mb-account-id')!==account.id)return fail('A conta mudou. Recarregue o aplicativo.',409)
-  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true, matrixOriginal:account.ownerAccess===true&&account.email==='piloto01@meubichu.test'&&!env.LAB_KIND, labKind:env.LAB_KIND||null, release:env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||null })
+  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, temporaryAccess:account.temporary_access===1, ownerAccess:account.ownerAccess===true, matrixOriginal:account.ownerAccess===true&&account.email==='piloto01@meubichu.test'&&!env.LAB_KIND, labKind:env.LAB_KIND||null, release:env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||null })
   if (path[0] === 'logout' && request.method === 'POST') {
     const token = getCookie(request)
     await env.DB.prepare('DELETE FROM pilot_sessions WHERE token_hash = ?').bind(await digest(token)).run()

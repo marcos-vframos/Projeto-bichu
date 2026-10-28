@@ -2,6 +2,9 @@ import { el, button, api, statusName, show } from './shared.js'
 import { duties } from './duties.js'
 const names = {
   login: 'Entrada do funcionário',
+  temporary_access_create: 'Link de acesso sem senha criado',
+  temporary_access_enter: 'Entrada por link individual sem senha',
+  temporary_access_revoke: 'Link de acesso sem senha revogado',
   create_staff: 'Cadastro de funcionário',
   revoke_staff: 'Revogação de acesso',
   assign: 'Atribuição de pergunta',

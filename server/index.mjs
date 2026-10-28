@@ -1,5 +1,6 @@
 import {initLab,labManager,labsProxy} from './labs.mjs'
 import {pilotMatrixManager} from './pilot-matrix.mjs'
+import {temporaryAccessApi,hasTemporaryTutorCookie,clearTemporaryTutorSession} from './temporary-access.mjs'
 import {accessApi} from './access.mjs'
 import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
@@ -53,6 +54,7 @@ export function createApplication(options = {}) {
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
         return labsProxy(request,env,store,pilotMatrix)
       }
+      if(p==='/api/access/temporary/enter'||p.startsWith('/api/pilot/owner/access-links'))return temporaryAccessApi(request,store,env)
       if(p.startsWith('/api/access/'))return accessApi(request,store,env)
       if(p.startsWith('/api/pilot/owner/recovery')){
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
@@ -67,6 +69,7 @@ export function createApplication(options = {}) {
         if(p.endsWith('tutor-access') && request.method==='POST'){
           const {accountId}=await request.json()
           if(typeof accountId!=='string'||!store.raw.prepare('SELECT 1 FROM pilot_accounts WHERE id=?').get(accountId))return Response.json({error:'Conta inválida'},{status:400})
+          clearTemporaryTutorSession(request,store.raw)
           store.raw.prepare('INSERT INTO team_audit VALUES(?,?,?,?,?)').run(crypto.randomUUID(),'owner','open_tutor',accountId,Date.now())
           return Response.json({ok:true},{headers:{'cache-control':'no-store','set-cookie':`mb_owner_account=${encodeURIComponent(accountId)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE===false?'':'; Secure'}`}})
         }
@@ -97,7 +100,7 @@ export function createApplication(options = {}) {
       }
       if (!p.startsWith('/api/pilot/')) return new Response(null, { status: 404 })
       let requestEnv={...env,DB:store.withActor('tutor')}
-      if(await ownerSession(request,env.PILOT_PANEL_KEY)){
+      if(await ownerSession(request,env.PILOT_PANEL_KEY)&&!hasTemporaryTutorCookie(request,store.raw)){
         const selected=request.headers.get('cookie')?.split(';').map(x=>x.trim()).find(x=>x.startsWith('mb_owner_account='))?.slice('mb_owner_account='.length)
         if(selected){
           const account=store.raw.prepare('SELECT id,email,expires_at FROM pilot_accounts WHERE id=?').get(selected)
@@ -110,6 +113,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/painel/acessos')return asset(resolve(root,'team/access-links.html'))
     if(p==='/painel/testes')return asset(resolve(root,'team/test-analytics.html'))
     if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
     if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
@@ -118,7 +122,7 @@ export function createApplication(options = {}) {
     if (p === '/painel/registros')return asset(resolve(root,'team/audit.html'))
     if (p === '/painel/pendencias')return asset(resolve(root,'team/issues.html'))
     if (p === '/painel/equipe')return asset(resolve(root,'team/admin.html'))
-    if (['/team-ui/audit-view.js','/team-ui/audit-page.js','/team-ui/task-board.js','/team-ui/issues.js','/team-ui/issue-client.js','/team-ui/activity-form.js','/team-ui/duties.js','/team-ui/shared.js','/team-ui/admin.js','/team-ui/staff.js','/team-ui/style.css'].includes(p))return asset(resolve(root,'team',p.split('/').pop()))
+    if (['/team-ui/access-links.js','/team-ui/audit-view.js','/team-ui/audit-page.js','/team-ui/task-board.js','/team-ui/issues.js','/team-ui/issue-client.js','/team-ui/activity-form.js','/team-ui/duties.js','/team-ui/shared.js','/team-ui/admin.js','/team-ui/staff.js','/team-ui/style.css'].includes(p))return asset(resolve(root,'team',p.split('/').pop()))
     if (p.startsWith('/models/') || p === '/bcs-fase14.html')
       return new Response('BCS inativo', { status: 404 })
     const owner = p === '/painel' || p.startsWith('/painel/') || p.startsWith('/owner-assets/'),

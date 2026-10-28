@@ -164,9 +164,13 @@ export async function teamApi(req, store, env) {
     staff = token
       ? db
           .prepare(
-            'SELECT u.id,u.name FROM team_sessions s JOIN team_users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>? AND u.active=1',
+            `SELECT u.id,u.name FROM team_sessions s JOIN team_users u ON u.id=s.user_id
+             LEFT JOIN temporary_access_sessions t ON t.token_hash=s.token_hash AND t.role='staff'
+             LEFT JOIN temporary_access_links l ON l.id=t.link_id AND l.role='staff' AND l.subject_id=u.id
+             WHERE s.token_hash=? AND s.expires_at>? AND u.active=1
+             AND (t.token_hash IS NULL OR (l.revoked_at IS NULL AND l.expires_at>?))`,
           )
-          .get(await sha(token), Date.now())
+          .get(await sha(token), Date.now(), Date.now())
       : null
   if (p === '/api/team/logout' && req.method === 'POST') {
     if (token) db.prepare('DELETE FROM team_sessions WHERE token_hash=?').run(await sha(token))
