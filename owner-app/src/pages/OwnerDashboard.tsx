@@ -101,6 +101,7 @@ export default function OwnerDashboard() {
       <div className="mx-auto max-w-7xl flex items-center gap-4">
         <OwnerMenu items={[
           {label:'Resumo do painel',icon:<Home/>,action:()=>setWorkspace(null),active:!workspace},
+          {label:'Acesso master',icon:<ShieldCheck/>,action:()=>state==='denied'?location.assign('/acesso-master'):openWorkspace('/acesso-master'),disabled:state==='loading',active:workspace==='/acesso-master'},
           {label:'Abrir app do tutor',icon:<Smartphone/>,action:()=>openWorkspace('/acesso-tutor'),disabled:state==='loading',active:workspace==='/acesso-tutor'},
           {label:'Acessos sem senha',icon:<Users/>,action:()=>openWorkspace('/painel/acessos'),disabled:state==='loading',active:workspace==='/painel/acessos'},
           {label:'Minhas responsabilidades',icon:<ClipboardList/>,action:()=>openWorkspace('/painel/pendencias'),disabled:state==='loading',active:workspace==='/painel/pendencias'},
