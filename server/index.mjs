@@ -1,3 +1,4 @@
+import { masterAccess } from './master-access.mjs'
 import {initLab,labManager,labsProxy} from './labs.mjs'
 import {pilotMatrixManager} from './pilot-matrix.mjs'
 import {temporaryAccessApi,hasTemporaryTutorCookie,clearTemporaryTutorSession} from './temporary-access.mjs'
@@ -37,6 +38,7 @@ export function createApplication(options = {}) {
   const env = { ...process.env, ...options.env, DB: store.DB, BUCKET: store.BUCKET }
   if (!/^[a-f0-9]{64}$/.test(env.PILOT_PANEL_KEY || ''))
     throw Error('PILOT_PANEL_KEY must contain 64 hex characters')
+  const master = masterAccess(store, env)
   const recovery=recoveryManager(store,settings)
   const labs=labManager(store,settings)
   const pilotMatrix=pilotMatrixManager(store,settings)
@@ -47,6 +49,8 @@ export function createApplication(options = {}) {
     if (p.startsWith('/api/')) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
+      const masterResponse = await master(request)
+      if (masterResponse) return masterResponse
       if(p.startsWith('/api/lab/'))return labs.api(request)
       if(p==='/api/pilot/lab-checklist'){const u=new URL(request.url);u.pathname='/api/lab/checklist';return labs.api(new Request(u,request))}
       if(p==='/api/pilot/lab-evaluation'){const u=new URL(request.url);u.pathname='/api/lab/evaluation';return labs.api(new Request(u,request))}
@@ -113,6 +117,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/acesso-master')return asset(resolve(root,'team/master-access.html'))
     if(p==='/painel/acessos')return asset(resolve(root,'team/access-links.html'))
     if(p==='/painel/testes')return asset(resolve(root,'team/test-analytics.html'))
     if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
@@ -181,7 +186,8 @@ export function createApplication(options = {}) {
       })
       const response = await dispatch(request)
       res.statusCode = response.status
-      for (const [k, v] of response.headers) res.setHeader(k, v)
+      for (const [k, v] of response.headers) if (k !== 'set-cookie') res.setHeader(k, v)
+      if (response.headers.getSetCookie().length) res.setHeader('Set-Cookie', response.headers.getSetCookie())
       if (new URL(req.url, external).pathname.startsWith('/api/'))
         res.setHeader('Cache-Control', 'no-store')
       res.setHeader('X-Content-Type-Options', 'nosniff')

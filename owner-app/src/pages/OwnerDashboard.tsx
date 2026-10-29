@@ -119,7 +119,8 @@ export default function OwnerDashboard() {
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
       {state === 'loading' && <p role="status">Carregando dados do piloto…</p>}
       {state === 'denied' && <section className="max-w-xl rounded-2xl bg-white border border-[#cedbd0] p-6 space-y-4 shadow-sm">
-        <h2 className="text-xl font-bold">Restaurar acesso do proprietário</h2>
+        <h2 className="text-xl font-bold">Acesso do proprietário</h2>
+        <a href="/acesso-master?area=proprietario" className="inline-block rounded-xl bg-[#14372f] px-5 py-3 font-semibold text-white">Entrar com e-mail e senha master</a>
         <p>Este navegador não está autorizado a consultar o painel. Abra seu link administrativo privado ou cole-o abaixo para recuperar o acesso às áreas e aos dados.</p>
         <form onSubmit={event=>void restoreAccess(event)} className="space-y-3">
           <label htmlFor="owner-access-link" className="block font-semibold">Link administrativo privado</label>
