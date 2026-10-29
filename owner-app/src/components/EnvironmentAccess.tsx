@@ -1,0 +1,7 @@
+import {useEffect,useState} from 'react'
+type Group={id:string;label:string;description:string;links?:{label:string;url:string}[]}
+export default function EnvironmentAccess(){
+ const [groups,setGroups]=useState<Group[]>([]),[failed,setFailed]=useState(false)
+ useEffect(()=>{const controller=new AbortController();void fetch('/api/pilot/owner/account-directory',{credentials:'same-origin',cache:'no-store',signal:controller.signal}).then(async r=>{if(r.status===404)return;if(!r.ok)throw Error();const data=await r.json();setGroups(data.groups.filter((g:Group)=>g.id!=='dirty'))}).catch(e=>{if(e.name!=='AbortError')setFailed(true)});return()=>controller.abort()},[])
+ return <section aria-label="Acessar outros ambientes" className="mt-4 space-y-2 border-t border-[#d5e0d7] pt-3"><p className="text-xs font-semibold text-[#456653]">Acessar outros ambientes · os indicadores não são misturados</p>{groups.map(g=><details key={g.id} className="rounded-lg border border-[#d5e0d7] p-3"><summary className="cursor-pointer text-sm font-semibold">{g.label}</summary><p className="my-2 text-xs leading-relaxed">{g.description}</p><div className="space-y-2">{g.links?.map(link=><a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer" className="block rounded-lg bg-[#edf3ed] px-3 py-2 text-sm underline">{link.label} ↗</a>)}</div></details>)}{failed&&<p role="status" className="text-xs">Não foi possível consultar os atalhos. Reabra o menu para tentar novamente.</p>}</section>
+}

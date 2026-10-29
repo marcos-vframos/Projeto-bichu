@@ -1,3 +1,4 @@
+import {dirtyAccountAccess} from './dirty-account-access.mjs'
 import {initLab,labManager,labsProxy} from './labs.mjs'
 import {pilotMatrixManager} from './pilot-matrix.mjs'
 import {accessApi} from './access.mjs'
@@ -42,6 +43,8 @@ export function createApplication(options = {}) {
     if (p.startsWith('/api/')) {
       if (!['GET', 'HEAD'].includes(request.method) && request.headers.get('origin') !== u.origin)
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
+      const dirtyResponse=await dirtyAccountAccess(request,store,env)
+      if(dirtyResponse)return dirtyResponse
       if(p.startsWith('/api/lab/'))return labs.api(request)
       if(p==='/api/pilot/lab-checklist'){const u=new URL(request.url);u.pathname='/api/lab/checklist';return labs.api(new Request(u,request))}
       if(p==='/api/pilot/lab-evaluation'){const u=new URL(request.url);u.pathname='/api/lab/evaluation';return labs.api(new Request(u,request))}
@@ -106,6 +109,7 @@ export function createApplication(options = {}) {
       }
       return handlePilot(new Request(request, { headers }), requestEnv)
     }
+    if(p==='/teste-contas'&&env.LAB_KIND==='dirty')return asset(resolve(root,'team/dirty-test-entry.html'))
     if(p==='/painel/testes')return asset(resolve(root,'team/test-analytics.html'))
     if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
     if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
