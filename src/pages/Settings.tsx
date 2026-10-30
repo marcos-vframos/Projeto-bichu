@@ -343,14 +343,14 @@ export default function SettingsPage() {
         }
       }
 
-      await nutritionService.updateDog(editingPet.id, formData)
+      await nutritionService.updateDog(editingPet.id, formData, editingPet.revision)
       await refreshDogs()
       window.dispatchEvent(new Event('bichu:hero-theme-changed'))
       toast.success(`Informações e galeria de ${editingPet.name} salvas!`)
       setEditingPet(null)
     } catch (err) {
       console.error(err)
-      toast.error('Erro ao salvar as informações do animal.')
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar as informações do animal.')
     } finally {
       setSavingPet(false)
     }

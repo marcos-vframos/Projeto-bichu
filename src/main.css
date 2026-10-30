@@ -491,3 +491,60 @@
 }
 
 .bichu-sidebar nav { text-shadow: 0 1px 3px rgba(255,255,255,.95), 0 0 6px rgba(255,255,255,.85); }
+
+/* Session context stays readable without covering the tutor navigation. */
+.bichu-session-banner{position:sticky;top:0;z-index:50;background:#f6f2df;color:#243b30;border-bottom:1px solid #d8d7bd;font:13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.bichu-session-inner{max-width:1480px;margin:auto;min-height:52px;padding:8px 20px;display:flex;align-items:center;gap:12px}
+.bichu-session-inner>svg{flex-shrink:0;color:#526c35}.bichu-session-identity{display:flex;align-items:center;gap:10px;min-width:0}.bichu-session-identity strong{white-space:nowrap}.bichu-session-identity span{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bichu-session-inner>p{margin-left:auto;font-size:12px;color:#596348}
+.bichu-session-actions{position:relative;flex-shrink:0}.bichu-session-actions summary{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;border:1px solid #bdc6a9;border-radius:10px;list-style:none;font-weight:600}.bichu-session-actions summary::-webkit-details-marker{display:none}.bichu-session-actions nav{position:absolute;right:0;top:calc(100% + 6px);width:245px;padding:8px;background:#fcfcf6;color:#183c30;border:1px solid #ccd4bf;border-radius:12px;box-shadow:0 12px 30px #13291b22}.bichu-session-actions a{display:block;padding:11px 12px;border-radius:8px;text-decoration:none}.bichu-session-actions a:hover{background:#e9efe0}.bichu-session-actions a:focus-visible,.bichu-session-actions summary:focus-visible{outline:2px solid #37654d;outline-offset:3px}
+.bichu-shell .bichu-menu,.bichu-shell .bichu-menu-trigger{top:calc(var(--bichu-session-height,0px) + max(.75rem,env(safe-area-inset-top)))}
+.bichu-shell .bichu-menu{height:calc(100dvh - var(--bichu-session-height,0px) - max(.75rem,env(safe-area-inset-top)));padding-top:0}
+.bichu-desktop-toolbar{display:none}.bichu-home-intro,.bichu-home-presentation{min-width:0}
+@media(max-width:650px){.bichu-session-inner{padding:8px 12px;gap:8px}.bichu-session-inner>p{display:none}.bichu-session-identity{align-items:flex-start;flex-direction:column;gap:1px;flex:1}.bichu-session-identity span{max-width:42vw;font-size:11px}.bichu-session-actions summary{font-size:12px;padding:9px}.bichu-session-actions nav{right:0;width:min(245px,85vw)}}
+@media(min-width:1024px){
+ .bichu-shell{--bichu-desktop-sidebar:264px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.55}
+ .bichu-shell :is(h1,h2,h3,h4,h5,h6,button,input,select,textarea){font-family:inherit}
+ .bichu-shell .bichu-content{max-width:1480px;min-width:0;padding:16px 32px 40px;container-type:inline-size;container-name:bichu-content}
+ .bichu-shell .bichu-workspace{width:auto;min-width:0;margin-left:0;transition:margin-left 180ms ease-out}
+ .bichu-shell[data-menu-expanded="true"] .bichu-workspace{margin-left:var(--bichu-desktop-sidebar)}
+ .bichu-shell .bichu-menu{width:var(--bichu-desktop-sidebar);padding-left:14px;padding-right:20px}
+ .bichu-shell .bichu-sidebar{background:linear-gradient(90deg,rgba(247,250,244,.86),rgba(247,250,244,.72) 72%,rgba(247,250,244,0));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+ .bichu-shell .bichu-sidebar nav{text-shadow:0 1px 2px #fff9}
+ .bichu-shell .bichu-pin-menu{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:5px;min-height:44px;border:1px solid #75847877;border-radius:12px;font-size:13px;text-align:left;color:#253b2f;background:#f6faef66}
+ .bichu-shell .bichu-pin-menu[aria-pressed="true"]{background:#dbeacf99}
+ .bichu-desktop-toolbar{height:44px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-left:46px}
+ .bichu-desktop-toolbar>span{font-size:13px;font-weight:700;letter-spacing:.08em;opacity:.8}.bichu-desktop-toolbar label{display:flex;align-items:center;gap:10px;font-size:13px}
+ .bichu-desktop-toolbar select{max-width:240px;min-height:40px;padding:7px 32px 7px 12px;border:1px solid #8a9c8777;border-radius:12px;background:#f7faf2;color:#173d31;font:600 14px/1.4 system-ui,sans-serif}
+ .bichu-home-intro{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:24px}
+ .bichu-shell .bichu-hero{margin:0 0 18px;border-radius:24px;isolation:isolate}
+ .bichu-shell .bichu-hero-copy{min-height:320px;padding:32px 28px 36px;max-width:none}
+ .bichu-shell .bichu-hero-copy h1{font-size:clamp(30px,3vw,42px);max-width:100%;line-height:1.14}
+ .bichu-shell .bichu-hero-motion{animation:none;transform:none!important}
+ .bichu-shell .bichu-hero img{object-fit:contain;object-position:center;transform:none!important}
+ .bichu-shell [class~="text-[10px]"]{font-size:12px;line-height:1.5}
+ .bichu-shell [class~="text-[11px]"],.bichu-shell [class~="text-xs"]{font-size:13px;line-height:1.5}
+ .bichu-shell .bichu-essential-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:14px}
+ .bichu-shell .bichu-essential-grid>button{height:100%;align-items:flex-start;min-width:0;padding:18px;box-shadow:none}
+ .bichu-shell .bichu-essential-grid>button>div{align-items:flex-start;gap:12px;flex-wrap:wrap}
+ .bichu-shell .bichu-essential-grid>button>svg{display:none}
+ .bichu-shell .bichu-nutrition-summary{box-shadow:none}
+ .bichu-shell .bichu-plan-summary{border:1px solid #a58b6266;border-radius:18px;background:#a58b620d;padding:18px 20px;line-height:1.5}
+ .bichu-plan-summary>div>span{font-size:11px;font-weight:700;letter-spacing:.09em;opacity:.75}.bichu-plan-summary h2{font-size:19px;font-weight:750;margin:4px 0}.bichu-plan-summary p{font-size:14px;overflow-wrap:anywhere}
+ .bichu-plan-numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.bichu-plan-numbers p{display:flex;flex-direction:column;gap:2px}.bichu-plan-numbers strong{font-size:22px;font-variant-numeric:tabular-nums}.bichu-plan-numbers span{font-size:12px;opacity:.8}
+ .bichu-plan-summary summary{cursor:pointer;font-size:14px;font-weight:650;padding:8px 0}.bichu-plan-summary details>p,.bichu-plan-summary ul{margin:10px 0}.bichu-plan-summary li{font-size:13px}.bichu-plan-summary a{display:inline-block;padding:8px 0;text-decoration:underline;font-size:14px}
+ .bichu-today{min-width:0;border:1px solid #a58b624d;border-radius:24px;background:#a58b620d;padding:20px;align-self:start;color:inherit}
+ .bichu-today-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}.bichu-today-heading span{font-size:11px;letter-spacing:.09em;font-weight:650;opacity:.75}.bichu-today-heading h2{font-size:22px;font-weight:750;margin-top:4px;line-height:1.25;overflow-wrap:anywhere}
+ .bichu-today .bichu-meal-checklist{padding:0;border:0;background:transparent;color:inherit;box-shadow:none}
+ .bichu-today .bichu-meal-checklist :is(.text-foreground,.text-muted-foreground){color:inherit}
+ .bichu-today .bichu-meal-checklist h3{font-size:14px}.bichu-today .bichu-meal-checklist p{font-size:12px;line-height:1.5}
+ .bichu-today .bichu-meal-hint{opacity:.75}.bichu-today .bichu-meal-checklist label{padding:10px;border-color:#a58b623d;min-height:56px;color:inherit}.bichu-today .bichu-meal-checklist label span{font-size:13px;min-width:0;overflow-wrap:anywhere}.bichu-today .bichu-meal-checklist label span span{font-size:12px;opacity:.7}
+ .bichu-next-health{border-top:1px solid #a58b623d;padding-top:15px;margin-top:18px}.bichu-next-health h3{font-size:13px;font-weight:650;margin-bottom:7px}.bichu-next-health p{font-size:13px;line-height:1.5}.bichu-next-health p:has(strong){display:flex;justify-content:space-between;gap:14px}.bichu-next-health strong{min-width:0;overflow-wrap:anywhere}.bichu-next-health p>span{white-space:nowrap}.bichu-overdue{margin-top:9px;opacity:.85}
+ .bichu-today-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}.bichu-today-actions a{min-height:52px;display:flex;align-items:center;justify-content:center;gap:5px;flex-direction:column;padding:9px 5px;border:1px solid #a58b624d;border-radius:12px;font-size:12px;font-weight:600}.bichu-today-actions a:hover{background:#a58b6226}
+ .bichu-shell a:focus-visible,.bichu-shell button:focus-visible,.bichu-shell select:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+}
+@container bichu-content (min-width:850px){.bichu-home-intro{grid-template-columns:minmax(0,1fr) 350px}}
+@container bichu-content (max-width:760px){.bichu-essential-grid{grid-template-columns:1fr!important}}
+@media(prefers-reduced-motion:reduce){.bichu-shell .bichu-workspace{transition:none}}
+@container bichu-content (min-width:1200px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@container bichu-content (max-width:820px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container bichu-content (max-width:520px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:1fr}}

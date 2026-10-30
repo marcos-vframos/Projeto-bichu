@@ -48,6 +48,12 @@ export function openStore(directory) {
       },
     }
   }
+  const assertRecord = expected => {
+    const row = db.prepare('SELECT data,updated_at FROM pilot_records WHERE id=? AND account_id=? AND collection=?').get(expected.id, expected.accountId, expected.collection)
+    if (!row || row.data !== expected.data || row.updated_at !== expected.updatedAt) {
+      throw Object.assign(new Error('O registro mudou durante a gravação.'), { code: 'RECORD_CONFLICT' })
+    }
+  }
   const DB = {
     prepare,
     batch(statements) {
@@ -60,6 +66,15 @@ export function openStore(directory) {
         db.exec('ROLLBACK')
         throw e
       }
+    },
+    guardedBatch(expected, statements) {
+      db.exec('BEGIN IMMEDIATE')
+      try {
+        assertRecord(expected)
+        const result = statements.map(statement => statement.run())
+        db.exec('COMMIT')
+        return result
+      } catch (error) { db.exec('ROLLBACK'); throw error }
     },
   }
   const withActor = actor => {
@@ -74,7 +89,8 @@ export function openStore(directory) {
     }
     return {
       prepare(sql){const s=prepare(sql);return {...s,bind(...v){s.bind(...v);return this},run:()=>transaction(()=>s.run()),runInTransaction:()=>s.run()}},
-      batch:statements=>transaction(()=>statements.map(s=>s.runInTransaction()))
+      batch:statements=>transaction(()=>statements.map(s=>s.runInTransaction())),
+      guardedBatch:(expected,statements)=>transaction(()=>{assertRecord(expected);return statements.map(s=>s.runInTransaction())})
     }
   }
   const objectRoot = resolve(directory, 'objects'),

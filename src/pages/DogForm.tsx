@@ -97,6 +97,7 @@ export default function DogFormPage() {
 
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)
+  const [revision, setRevision] = useState<string>()
 
   // Form State
   const [species, setSpecies] = useState<PetSpecies>('canina')
@@ -139,6 +140,7 @@ export default function DogFormPage() {
       const data = await nutritionService.getDogById(id!)
       if (!active) return
       if (data) {
+        setRevision(data.revision)
         setSpecies(data.species === 'felina' ? 'felina' : 'canina')
         setName(data.name || '')
         setBreed(data.breed || 'SRD / Sem Raça Definida (Vira-lata)')
@@ -332,7 +334,7 @@ export default function DogFormPage() {
       }
 
       if (isEditing && id) {
-        const updated = await nutritionService.updateDog(id, formData)
+        const updated = await nutritionService.updateDog(id, formData, revision)
         toast.success('Alterações salvas com sucesso!')
         // Sincroniza evento para recarregar o tema
         window.dispatchEvent(new Event('bichu:hero-theme-changed'))

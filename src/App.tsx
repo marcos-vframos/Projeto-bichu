@@ -1,3 +1,4 @@
+import {dirtyPresenceEnabled} from '@/lib/dirty-presence'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { DogProvider } from '@/contexts/DogContext'
@@ -8,6 +9,9 @@ import Layout from '@/components/Layout'
 import { PilotGate } from '@/components/PilotGate'
 
 // Páginas existentes
+const LibraryPage = lazy(() => import('@/pages/Library'))
+const LabPetHome = lazy(() => import('@/components/LabPetPresence'))
+const LabHousehold = lazy(() => import('@/pages/LabHousehold'))
 const Index = lazy(() => import('@/pages/Index'))
 const DogsListPage = lazy(() => import('@/pages/DogsList'))
 const DogFormPage = lazy(() => import('@/pages/DogForm'))
@@ -45,7 +49,9 @@ export function App() {
             )}
             <Suspense fallback={<p role="status" className="p-6">Carregando área…</p>}><Routes>
               <Route element={<Layout />}>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={dirtyPresenceEnabled()?<LabPetHome/>:<Index />} />
+                {dirtyPresenceEnabled()&&<Route path="/rotina-da-casa" element={<LabHousehold/>}/>}
+                <Route path="/biblioteca" element={<LibraryPage />} />
                 <Route path="/caes" element={<DogsListPage />} />
                 <Route path="/caes/novo" element={<DogFormPage />} />
                 <Route path="/caes/:id" element={<DogDetailPage />} />

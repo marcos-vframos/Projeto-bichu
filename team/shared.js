@@ -36,6 +36,15 @@ export async function api(path, body, method) {
   return data
 }
 export async function privateAccess() {
+  const entry = new URLSearchParams(location.hash.slice(1)).get('entrada')
+  if(entry){
+    history.replaceState(null,'',location.pathname+location.search)
+    const response=await fetch('/api/access/temporary/enter',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token:entry})})
+    const data=await response.json()
+    if(!response.ok)throw Error(data.error||'Link temporário indisponível')
+    if(data.role==='tutor'){sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account');location.replace('/');throw Error('Abrindo app do tutor…')}
+    const query=new URLSearchParams(location.search);query.set('acesso','funcionario');history.replaceState(null,'',location.pathname+'?'+query)
+  }
   const token = new URLSearchParams(location.hash.slice(1)).get('access')
   if (token) {
     history.replaceState(null, '', location.pathname + location.search)

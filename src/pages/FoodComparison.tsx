@@ -1,3 +1,5 @@
+import DietPlanSummary from '@/components/DietPlanSummary'
+import {dirtyPresenceEnabled} from '@/lib/dirty-presence'
 import { formatPortion } from '@/lib/format-portion'
 import NaturalDiet from '@/components/NaturalDiet'
 import FoodQuality from '@/components/FoodQuality'
@@ -57,6 +59,8 @@ interface EditableFoodValues {
 export default function FoodComparisonPage() {
   const navigate = useNavigate()
   const { activeDog, activePlan, dogs, setActiveDogId, refreshActivePlan } = useDog()
+  const [comparisonOpen,setComparisonOpen]=useState(false)
+  const labPresence=dirtyPresenceEnabled()
 
   const [species, setSpecies] = useState(activeDog?.species === 'felina' ? 'felina' : 'canina')
   const [category, setCategory] = useState('seca')
@@ -497,6 +501,8 @@ export default function FoodComparisonPage() {
 
   return (
     <div className="space-y-6 pb-12">
+      {labPresence&&<section className="lab-plan-first"><span className="lab-eyebrow">Alimentação em uso</span><h2>{activeDog?`O plano de ${activeDog.name}`:'Plano alimentar'}</h2>{activePlan?<><p>{activePlan.food_name} · {activePlan.daily_grams.toLocaleString('pt-BR',{maximumFractionDigits:1})} g/dia no plano salvo</p><DietPlanSummary plan={activePlan} compact/></>:<p>Consulte o plano do pet antes de comparar alimentos.</p>}<a href="/plano">Abrir plano alimentar</a><button type="button" aria-expanded={comparisonOpen} onClick={()=>setComparisonOpen(v=>!v)}>{comparisonOpen?'Recolher comparador':'Comparar ou editar alimentos'}</button></section>}
+      <div hidden={labPresence&&!comparisonOpen} className="space-y-6">
       <section className="rounded-2xl border border-border bg-card p-4 space-y-3"><div className="flex flex-wrap gap-3"><label className="font-semibold">Espécie<select aria-label="Espécie dos alimentos" value={species} onChange={e=>setSpecies(e.target.value)} className="ml-2 rounded-xl border border-border bg-background p-3"><option value="canina">Cães</option><option value="felina">Gatos</option></select></label><label className="font-semibold">Categoria<select aria-label="Categoria alimentar" value={category} onChange={e=>{setCategory(e.target.value);setNatural(false)}} className="ml-2 rounded-xl border border-border bg-background p-3"><option value="seca">Ração seca</option><option value="umida">Alimento úmido</option><option value="petisco">Petiscos</option><option value="biscoito">Biscoitos</option></select></label><Button variant={natural?'default':'outline'} onClick={()=>setNatural(v=>!v)}>Alimentação natural e mista</Button></div><p className="text-sm text-muted-foreground">Compare produtos da mesma espécie e categoria. Petiscos, biscoitos e alimentos complementares não substituem a dieta completa. O custo exibido considera a mesma energia diária, não uma recomendação de servir essa quantidade.</p></section>
       {natural && <NaturalDiet foods={allFoods.filter(f=>(f.species||'canina')===species)} />}
       {comparisonList.length===0 && <p className="rounded-xl border border-border p-4">Nenhum alimento desta categoria cadastrado. Use “Adicionar manualmente” para incluir os dados reais do rótulo.</p>}
@@ -1290,6 +1296,7 @@ export default function FoodComparisonPage() {
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

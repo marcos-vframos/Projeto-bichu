@@ -98,13 +98,12 @@ export default function OwnerDashboard() {
 
   return <main className="min-h-screen bg-[#f4f7f2] text-[#18372e]">
     <header className="sticky top-0 z-30 bg-[#14372f] text-white px-4 py-5">
-      <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3"><ShieldCheck className="h-7 w-7 text-[#cfebaa]" aria-hidden="true" />
-          <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
-            <h1 className="text-2xl font-bold">Painel do piloto</h1></div></div>
+      <div className="mx-auto max-w-7xl flex items-center gap-4">
         <OwnerMenu items={[
           {label:'Resumo do painel',icon:<Home/>,action:()=>setWorkspace(null),active:!workspace},
+          {label:'Acesso master',icon:<ShieldCheck/>,action:()=>state==='denied'?location.assign('/acesso-master'):openWorkspace('/acesso-master'),disabled:state==='loading',active:workspace==='/acesso-master'},
           {label:'Abrir app do tutor',icon:<Smartphone/>,action:()=>openWorkspace('/acesso-tutor'),disabled:state==='loading',active:workspace==='/acesso-tutor'},
+          {label:'Acessos sem senha',icon:<Users/>,action:()=>openWorkspace('/painel/acessos'),disabled:state==='loading',active:workspace==='/painel/acessos'},
           {label:'Minhas responsabilidades',icon:<ClipboardList/>,action:()=>openWorkspace('/painel/pendencias'),disabled:state==='loading',active:workspace==='/painel/pendencias'},
           {label:'Registros dos funcionários',icon:<ListChecks/>,action:()=>openWorkspace('/painel/registros'),disabled:state==='loading',active:workspace==='/painel/registros'},
           {label:'Análise dos testes',icon:<FlaskConical/>,action:()=>openWorkspace('/painel/testes'),disabled:state==='loading',active:workspace==='/painel/testes'},
@@ -113,13 +112,16 @@ export default function OwnerDashboard() {
           {label:'Funcionários e responsabilidades',icon:<Users/>,action:()=>openWorkspace('/painel/equipe'),disabled:state==='loading',active:workspace==='/painel/equipe'},
           {label:'Atualizar',icon:<RefreshCw/>,action:()=>void reload(),disabled:state==='loading'},
         ]}/>
-
+        <div className="flex min-w-0 items-center gap-3"><ShieldCheck className="h-7 w-7 shrink-0 text-[#cfebaa]" aria-hidden="true" />
+          <div><p className="text-xs uppercase tracking-widest text-[#c3dfcc]">Meu Bichu · proprietário</p>
+            <h1 className="text-2xl font-bold">Painel do proprietário</h1></div></div>
       </div>
     </header>
     <div className="mx-auto max-w-7xl px-4 py-7 space-y-7">
       {state === 'loading' && <p role="status">Carregando dados do piloto…</p>}
       {state === 'denied' && <section className="max-w-xl rounded-2xl bg-white border border-[#cedbd0] p-6 space-y-4 shadow-sm">
-        <h2 className="text-xl font-bold">Restaurar acesso do proprietário</h2>
+        <h2 className="text-xl font-bold">Acesso do proprietário</h2>
+        <a href="/acesso-master?area=proprietario" className="inline-block rounded-xl bg-[#14372f] px-5 py-3 font-semibold text-white">Entrar com e-mail e senha master</a>
         <p>Este navegador não está autorizado a consultar o painel. Abra seu link administrativo privado ou cole-o abaixo para recuperar o acesso às áreas e aos dados.</p>
         <form onSubmit={event=>void restoreAccess(event)} className="space-y-3">
           <label htmlFor="owner-access-link" className="block font-semibold">Link administrativo privado</label>

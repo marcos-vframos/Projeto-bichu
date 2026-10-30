@@ -46,6 +46,7 @@ export async function accessApi(req,store,env){const p=new URL(req.url).pathname
  if(!user){db.exec('ROLLBACK');return ok({error:'Conta indisponível'},400)}
  db.prepare(staff?'UPDATE team_users SET salt=?,password_hash=? WHERE id=?':'UPDATE pilot_accounts SET password_salt=?,password_hash=? WHERE id=?').run(salt,hash,data.id)
  db.prepare(staff?'DELETE FROM team_sessions WHERE user_id=?':'DELETE FROM pilot_sessions WHERE account_id=?').run(data.id)
+ db.prepare('UPDATE temporary_access_links SET revoked_at=? WHERE role=? AND subject_id=? AND revoked_at IS NULL').run(Date.now(),staff?'staff':'tutor',data.id)
  db.prepare(staff?'DELETE FROM team_attempts WHERE email=?':'DELETE FROM pilot_login_attempts WHERE email=?').run(row.subject)
  }
  db.prepare('DELETE FROM access_tokens WHERE subject=?').run(row.subject);db.exec('COMMIT')

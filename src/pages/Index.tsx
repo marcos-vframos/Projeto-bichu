@@ -1,3 +1,5 @@
+import TodayOverview from '@/components/TodayOverview'
+import { useIsDesktop } from '@/hooks/use-desktop'
 import { formatPortion } from '@/lib/format-portion'
 import { weightDate } from '@/lib/weight-date'
 import DietPlanSummary from '@/components/DietPlanSummary'
@@ -47,6 +49,7 @@ import { toast } from 'sonner'
 export function Index() {
   const { dogs, activeDog, activePlan, loading, refreshDogs, refreshActivePlan } = useDog()
   const navigate = useNavigate()
+  const isDesktop = useIsDesktop()
   const [shakingModule, setShakingModule] = useState<string | null>(null)
   const [weightSheetOpen, setWeightSheetOpen] = useState(false)
   const [weightLogs, setWeightLogs] = useState<WeightLogRecord[]>([])
@@ -146,7 +149,7 @@ export function Index() {
   // ONBOARDING EMPTY STATE: Apresenta o Hero imersivo limpo no topo
   if (!loading && dogs.length === 0) {
     return (
-      <div className="space-y-6 pb-10 transition-colors duration-500">
+      <div className="bichu-home space-y-6 pb-10 transition-colors duration-500">
         {/* Hero imersivo com topo clean (apenas saudação mínima) */}
         <RottweilerHero activeDog={null} />
 
@@ -196,7 +199,7 @@ export function Index() {
             </span>
           </div>
 
-          <div className="flex flex-col gap-2.5">
+          <div className="bichu-essential-grid flex flex-col gap-2.5">
             {/* 1. Cálculo RER / MER */}
             <button
               type="button"
@@ -485,10 +488,9 @@ export function Index() {
   ]
 
   return (
-    <div className="space-y-6 pb-12 transition-colors duration-500">
+    <div className="bichu-home space-y-6 pb-12 transition-colors duration-500">
       {/* 1. HERO IMERSIVO COM TOPO LIMPO: A imagem respira e a saudação é curta e essencial */}
-      <RottweilerHero activeDog={activeDog} />
-      <DietPlanSummary plan={activePlan} />
+      <div className="bichu-home-intro"><div className="bichu-home-presentation"><RottweilerHero activeDog={activeDog} /><DietPlanSummary plan={activePlan} compact={isDesktop}/></div>{isDesktop&&activeDog&&<TodayOverview key={activeDog.id} dog={activeDog} plan={activePlan}/>}</div>
 
       {/* 2. ZONA PÓS-HERO (ABAIXO DA DOBRA): Seleção de Interface, raça ativa e atalhos sem sobrepor o animal */}
       <div className="flex items-center justify-between gap-3 flex-wrap px-1">
@@ -566,7 +568,7 @@ export function Index() {
 
       {/* 3. CARD RESUMO DE HOJE — Vidro translúcido elegante integrado ao fundo escuro da raça */}
       <div
-        className="relative overflow-hidden rounded-3xl p-5 sm:p-6 backdrop-blur-xl border transition-all duration-300 shadow-xl"
+        className="bichu-nutrition-summary relative overflow-hidden rounded-3xl p-5 sm:p-6 backdrop-blur-xl border transition-all duration-300 shadow-xl"
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0.035)',
           borderColor: `${currentHeroTheme.brownPrimary}25`,
@@ -828,7 +830,7 @@ export function Index() {
           </span>
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="bichu-essential-grid flex flex-col gap-2.5">
           {/* 1. Cálculo RER / MER (Horizontal & Clicável → /caes/:id/plano) */}
           <button
             type="button"

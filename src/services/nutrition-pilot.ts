@@ -4,12 +4,13 @@ import type { DogRecord, FeedingPlanRecord, WeightLogRecord, FoodRecord, UserFoo
 
 const ROOT = '/api/pilot/records'
 type Collection = 'dogs' | 'weight_logs' | 'feeding_plans' | 'bcs_evaluations' | 'health_events' | 'pet_routine_events' | 'user_foods' | 'natural_diets'
-async function request<T>(collection: Collection, method = 'GET', id?: string, data?: object | FormData, query?:string): Promise<T> {
+async function request<T>(collection: Collection, method = 'GET', id?: string, data?: object | FormData, query?:string, revision?:string): Promise<T> {
+  if(method==='PATCH'&&!revision)throw new Error('Reabra o registro para carregar a versão atual antes de editar. Suas alterações ainda não foram enviadas.')
   const owner=accountKey(),requestId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`
   const started = performance.now(), route = `${ROOT}/${collection}${id ? `/${encodeURIComponent(id)}` : ''}${query?`?${query}`:''}`
   let response: Response
   try { response = await fetch(route, {
-    method, credentials: 'same-origin', headers: {'x-mb-account-id':owner,...(data && !(data instanceof FormData)?{'content-type':'application/json'}:{})},
+    method, credentials: 'same-origin', headers: {'x-mb-account-id':owner,...(revision?{'if-match':`"${revision}"`}:{}),...(data && !(data instanceof FormData)?{'content-type':'application/json'}:{})},
     body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
   }) } catch (error) { if(method==='GET'&&accountKey()===owner){const cached=cacheRead<T>(route);if(cached){window.dispatchEvent(new CustomEvent('bichu:offline-read',{detail:cached.savedAt}));return cached.value}} void logActivity('network_error', performance.now()-started, { route, method, requestId }); throw error }
   const durationMs = Math.round(performance.now() - started)
@@ -20,7 +21,7 @@ async function request<T>(collection: Collection, method = 'GET', id?: string, d
 }
 const list = async <T>(collection: Collection,dog?:string) => {const all:T[]=[];let page:number|null=1;do{const result=await request<{items:T[];nextPage:number|null}>(collection,'GET',undefined,undefined,new URLSearchParams({page:String(page),...(dog?{dog}:{})}).toString());all.push(...result.items);page=result.nextPage}while(page!==null);return all}
 const create = <T>(collection: Collection, data: object | FormData) => request<T>(collection, 'POST', undefined, data)
-const update = <T>(collection: Collection, id: string, data: object | FormData) => request<T>(collection, 'PATCH', id, data)
+const update = <T>(collection: Collection, id: string, data: object | FormData, revision?:string) => request<T>(collection, 'PATCH', id, data, undefined, revision)
 const remove = async (collection: Collection, id: string) => { await request(collection, 'DELETE', id); return true }
 const fileUrl = (record: { id: string }, filename?: string) => filename ? `/api/pilot/files/${encodeURIComponent(record.id)}/${encodeURIComponent(filename)}` : undefined
 
@@ -38,10 +39,10 @@ const catalog: FoodRecord[] = [
   ['GranPlus Gourmet Filhotes', 'Guabi', 3900, 'filhote'],
 ].map(([name, brand, kcal, stage], i) => ({ id: `catalog-${i + 1}`, name: String(name), brand: String(brand), kcal_per_kg: Number(kcal), life_stage: stage as FoodRecord['life_stage'] }))
 
-type NaturalRecipe = { id?: string; dog: string; ingredients: import('@/lib/diet-math').Ingredient[]; target: number; foodId: string; mixed: boolean; mode: 'commercial'|'natural'|'mixed'; professional: string }
+type NaturalRecipe = { id?: string; revision?:string; dog: string; ingredients: import('@/lib/diet-math').Ingredient[]; target: number; foodId: string; mixed: boolean; mode: 'commercial'|'natural'|'mixed'; professional: string }
 export const pilotNutritionService = {
   async getNaturalDiets(dogId: string) { return (await list<NaturalRecipe>('natural_diets')).filter(r=>r.dog===dogId) },
-  async saveNaturalDiet(data: NaturalRecipe) { const prior=(await this.getNaturalDiets(data.dog))[0]; return prior?.id ? update<NaturalRecipe>('natural_diets',prior.id,data) : create<NaturalRecipe>('natural_diets',data) },
+  async saveNaturalDiet(data: NaturalRecipe) { return data.id ? update<NaturalRecipe>('natural_diets',data.id,data,data.revision) : create<NaturalRecipe>('natural_diets',data) },
   async getDogs() { return list<DogRecord>('dogs') },
   async getDogById(id: string) { try { return await request<DogRecord>('dogs', 'GET', id) } catch { return null } },
   getAvatarUrl(dog: DogRecord | null | undefined) { return dog ? fileUrl(dog, dog.avatar || dog.gallery?.[0]) : undefined },
@@ -52,7 +53,7 @@ export const pilotNutritionService = {
 
     return dog
   },
-  async updateDog(id: string, data: Partial<DogRecord> | FormData) { const dog = await update<DogRecord>('dogs', id, data); window.dispatchEvent(new CustomEvent('bichu:weight-changed', { detail: id })); return dog },
+  async updateDog(id: string, data: Partial<DogRecord> | FormData, revision?:string) { const dog = await update<DogRecord>('dogs', id, data, revision); window.dispatchEvent(new CustomEvent('bichu:weight-changed', { detail: id })); return dog },
   async deleteDog(id: string) { return remove('dogs', id) },
   async getActivePlan(dogId: string) { return (await list<FeedingPlanRecord>('feeding_plans')).filter(p => p.dog === dogId && p.is_active).sort((a,b) => b.created.localeCompare(a.created))[0] || null },
   async savePlan(dogId: string, data: Partial<FeedingPlanRecord>) {
@@ -73,13 +74,13 @@ export const pilotNutritionService = {
   async deleteBcsEvaluation(id: string) { return remove('bcs_evaluations', id) },
   async getHealthEvents(dogId: string) { return (await list<HealthEventRecord>('health_events')).filter(x => x.dog === dogId).sort((a,b) => a.event_date.localeCompare(b.event_date)) },
   async createHealthEvent(data: Omit<HealthEventRecord, 'id' | 'created' | 'updated' | 'device_key'>) { return create<HealthEventRecord>('health_events', data) },
-  async updateHealthEvent(id: string, data: Partial<HealthEventRecord>) { return update<HealthEventRecord>('health_events', id, data) },
-  async toggleHealthEventCompleted(id: string, completed: boolean) { return update<HealthEventRecord>('health_events', id, { completed }) },
+  async updateHealthEvent(id: string, data: Partial<HealthEventRecord>, revision?:string) { return update<HealthEventRecord>('health_events', id, data, revision) },
+  async toggleHealthEventCompleted(id: string, completed: boolean, revision?:string) { return update<HealthEventRecord>('health_events', id, { completed }, revision) },
   async deleteHealthEvent(id: string) { return remove('health_events', id) },
   async getRoutineEvents(dogId: string) { return (await list<RoutineEventRecord>('pet_routine_events')).filter(x => x.dog === dogId).sort((a,b) => a.event_date.localeCompare(b.event_date)) },
   async createRoutineEvent(data: Omit<RoutineEventRecord, 'id' | 'created' | 'updated'>) { return create<RoutineEventRecord>('pet_routine_events', data) },
-  async updateRoutineEvent(id: string, data: Partial<RoutineEventRecord>) { return update<RoutineEventRecord>('pet_routine_events', id, data) },
-  async toggleRoutineEventCompleted(id: string, completed: boolean) { return update<RoutineEventRecord>('pet_routine_events', id, { completed }) },
+  async updateRoutineEvent(id: string, data: Partial<RoutineEventRecord>, revision?:string) { return update<RoutineEventRecord>('pet_routine_events', id, data, revision) },
+  async toggleRoutineEventCompleted(id: string, completed: boolean, revision?:string) { return update<RoutineEventRecord>('pet_routine_events', id, { completed }, revision) },
   async deleteRoutineEvent(id: string) { return remove('pet_routine_events', id) },
   async getUserFoods() { return list<UserFoodRecord>('user_foods') },
   async createUserFood(formData: FormData) { return create<UserFoodRecord>('user_foods', formData) },

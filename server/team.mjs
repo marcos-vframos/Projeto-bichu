@@ -52,6 +52,10 @@ async function sign(v, key) {
   )
   return Buffer.from(await crypto.subtle.sign('HMAC', k, enc.encode(v))).toString('hex')
 }
+export async function ownerCookie(env) {
+  const data = (Date.now() + 30 * 86400000) + '.' + Buffer.from(crypto.getRandomValues(new Uint8Array(24))).toString('hex')
+  return `mb_owner=${data}.${await sign(data, env.PILOT_PANEL_KEY)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE === false ? '' : '; Secure'}`
+}
 export async function ownerSession(req, key) {
   if (!key) return false
   const value = cookie(req, 'mb_owner'),
@@ -120,14 +124,7 @@ export async function teamApi(req, store, env) {
     const { token } = await req.json()
     if (typeof token !== 'string' || token !== env.PILOT_PANEL_KEY)
       return json({ error: 'Link privado inválido' }, 403)
-    const data =
-      Date.now() +
-      30 * 86400000 +
-      '.' +
-      Buffer.from(crypto.getRandomValues(new Uint8Array(24))).toString('hex')
-    return json({ ok: true }, 200, {
-      'set-cookie': `mb_owner=${data}.${await sign(data, env.PILOT_PANEL_KEY)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=2592000${env.COOKIE_SECURE === false ? '' : '; Secure'}`,
-    })
+    return json({ ok: true }, 200, { 'set-cookie': await ownerCookie(env) })
   }
   if (p === '/api/pilot/owner/session') return json({ authorized: owner }, owner ? 200 : 403)
   if (p === '/api/team/login' && req.method === 'POST') {
@@ -164,9 +161,13 @@ export async function teamApi(req, store, env) {
     staff = token
       ? db
           .prepare(
-            'SELECT u.id,u.name FROM team_sessions s JOIN team_users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>? AND u.active=1',
+            `SELECT u.id,u.name FROM team_sessions s JOIN team_users u ON u.id=s.user_id
+             LEFT JOIN temporary_access_sessions t ON t.token_hash=s.token_hash AND t.role='staff'
+             LEFT JOIN temporary_access_links l ON l.id=t.link_id AND l.role='staff' AND l.subject_id=u.id
+             WHERE s.token_hash=? AND s.expires_at>? AND u.active=1
+             AND (t.token_hash IS NULL OR (l.revoked_at IS NULL AND l.expires_at>?))`,
           )
-          .get(await sha(token), Date.now())
+          .get(await sha(token), Date.now(), Date.now())
       : null
   if (p === '/api/team/logout' && req.method === 'POST') {
     if (token) db.prepare('DELETE FROM team_sessions WHERE token_hash=?').run(await sha(token))

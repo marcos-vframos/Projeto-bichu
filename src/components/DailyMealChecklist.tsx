@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { MealItem } from '@/types/nutrition'
 
 type Confirmation = { id: string; slot: number; day: string; meal: { label: string; time: string; grams: number }; completed: boolean; confirmed_at: string | null }
-export default function DailyMealChecklist({ dogId, meals }: { dogId: string; meals: MealItem[] }) {
+export default function DailyMealChecklist({ dogId, meals, compact = false }: { dogId: string; meals: MealItem[]; compact?: boolean }) {
   const [data, setData] = useState<{ day: string; confirmations: Confirmation[] } | null>(null)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState<number | null>(null)
@@ -37,10 +37,11 @@ export default function DailyMealChecklist({ dogId, meals }: { dogId: string; me
     } finally { setSaving(null) }
   }
   const total = meals.filter((m, i) => matching(m, i)?.completed).length
-  return <section className="rounded-2xl border border-primary/40 bg-card p-4 space-y-3">
+  return <section data-compact={compact} className="bichu-meal-checklist rounded-2xl border border-primary/40 bg-card p-4 space-y-3">
     <div><h3 className="text-base font-bold text-foreground">Confirmação diária das refeições</h3>
       <p className="text-sm text-muted-foreground">{data ? `${data.day.split('-').reverse().join('/')} · ${total} de ${meals.length} confirmadas` : 'Carregando confirmações…'}</p>
-      <p className="mt-1 text-sm text-muted-foreground">Confirme após oferecer cada refeição. A lista recomeça à meia-noite de Brasília e o histórico fica salvo. Mudanças na porção ou horário precisam de nova confirmação.</p></div>
+      <p hidden={compact} className="mt-1 text-sm text-muted-foreground">Confirme após oferecer cada refeição. A lista recomeça à meia-noite de Brasília e o histórico fica salvo. Mudanças na porção ou horário precisam de nova confirmação.</p></div>
+    {compact&&<p className="bichu-meal-hint">Marque após oferecer. Reinicia diariamente; o histórico permanece salvo.</p>}
     {error && <div role="alert" className="text-sm text-red-300">{error}<button type="button" className="ml-2 underline" onClick={() => void load().catch(e => setError(e.message))}>Tentar novamente</button></div>}
     {meals.map((meal, slot) => { const confirmation = matching(meal, slot); return <label key={slot} className="flex items-center gap-3 rounded-xl border border-border p-3 min-h-14 text-foreground cursor-pointer">
       <input type="checkbox" className="h-6 w-6 shrink-0 accent-green-600" checked={confirmation?.completed || false} disabled={!data || saving !== null || !!error}

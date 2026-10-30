@@ -163,7 +163,7 @@ export function RottweilerHero({ activeDog }: RottweilerHeroProps) {
       aria-label={`Apresentação Meu Bichu com ${theme.name}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group/hero relative -mx-4 -mt-4 mb-6 sm:mb-8 overflow-hidden transition-colors duration-700 rounded-b-3xl sm:rounded-b-[2.5rem]"
+      className="bichu-hero group/hero relative -mx-4 -mt-4 mb-6 sm:mb-8 overflow-hidden transition-colors duration-700 rounded-b-3xl sm:rounded-b-[2.5rem]"
       style={{
         backgroundColor: theme.bgColor,
       }}
@@ -188,7 +188,7 @@ export function RottweilerHero({ activeDog }: RottweilerHeroProps) {
           <div className="relative w-full h-full">
             {/* CONTAINER COM MICRO-RESPIRAÇÃO E TILT (MOVIMENTO E FLUIDEZ) */}
             <div
-              className="w-full h-full animate-hero-breathe transition-transform duration-300 ease-out"
+              className="bichu-hero-motion w-full h-full animate-hero-breathe transition-transform duration-300 ease-out"
               style={{
                 transform: `translate3d(${tilt.x}px, ${tilt.y}px, 0)`,
               }}
@@ -255,7 +255,7 @@ export function RottweilerHero({ activeDog }: RottweilerHeroProps) {
           "Olá, [nome]" / "Bom dia, [nome]" / "Boa tarde, [nome]" / "Boa noite, [nome]"
         - O texto "Nutrição Canina • Border Collie" (eyebrow/chip de raça) foi REMOVIDO conforme solicitado.
       */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 pt-10 sm:pt-14 pb-14 sm:pb-16 min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] flex flex-col justify-end">
+      <div className="bichu-hero-copy relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 pt-10 sm:pt-14 pb-14 sm:pb-16 min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] flex flex-col justify-end">
         <div className="max-w-md sm:max-w-lg pb-2 sm:pb-4">
           <div className="space-y-1 sm:space-y-1.5">
             {/* Badge de status discreto quando a foto do pet assume a interface */}

@@ -1,0 +1,562 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-27",
+  "publisher": "ByPET BR",
+  "collection": "Cuidado Inteligente",
+  "breeds": [
+    {
+      "id": "border",
+      "name": "Border Collie",
+      "species": "dogs",
+      "summary": "Adaptação, educação, enriquecimento e cuidados ao longo da vida.",
+      "tags": [
+        "Comportamento",
+        "Rotina",
+        "Cuidados"
+      ],
+      "cover": "/biblioteca/capas/border.jpg",
+      "documents": [
+        {
+          "id": "border-guide",
+          "title": "Guia para tutores de Border Collie",
+          "edition": "Edição-mestre 2026",
+          "pages": 59,
+          "fillable": false,
+          "url": "/biblioteca/documentos/border-guide-3ba90f7088db.pdf",
+          "bytes": 6214751,
+          "sha256": "3ba90f7088db17283ba724c2834fd7ba8a23c57cb33d566da0be11cd400ee094",
+          "originalName": "BORDER_COLLIE_FORMATACAO_03.pdf",
+          "chapters": [
+            {
+              "title": "BORDER COLLIE: ORIGEM, FUNÇÃO E IDENTIDADE DA RAÇA",
+              "page": 5
+            },
+            {
+              "title": "A CHEGADA DO BORDER COLLIE: ADAPTAÇÃO, SEGURANÇA E ROTINA",
+              "page": 11
+            },
+            {
+              "title": "NUTRIÇÃO E CONDIÇÃO CORPORAL: ALIMENTAR COM CRITÉRIO",
+              "page": 14
+            },
+            {
+              "title": "EDUCAÇÃO E COMPORTAMENTO: CONSTRUINDO EQUILÍBRIO E COOPERAÇÃO",
+              "page": 18
+            },
+            {
+              "title": "SAÚDE PREVENTIVA: PREDISPOSIÇÕES, VIGILÂNCIA E SINAIS DE ALERTA",
+              "page": 21
+            },
+            {
+              "title": "HIGIENE E PELAGEM: CUIDADO FUNCIONAL E BEM-ESTAR",
+              "page": 27
+            },
+            {
+              "title": "MOVIMENTO E ENRIQUECIMENTO: CORPO ATIVO, MENTE EQUILIBRADA",
+              "page": 30
+            },
+            {
+              "title": "DESENVOLVIMENTO E LONGEVIDADE: DO FILHOTE AO CÃO IDOSO",
+              "page": 37
+            },
+            {
+              "title": "REPRODUÇÃO E CASTRAÇÃO: DECISÕES RESPONSÁVEIS EM CADA FASE",
+              "page": 40
+            },
+            {
+              "title": "CALENDÁRIOS E REGISTROS: ORGANIZAÇÃO PRÁTICA DO CUIDADO",
+              "page": 44
+            },
+            {
+              "title": "DÚVIDAS ESSENCIAIS: RESPOSTAS SEGURAS PARA O DIA A DIA",
+              "page": 48
+            },
+            {
+              "title": "EVIDÊNCIAS E REFERÊNCIAS: CRITÉRIOS, FONTES E LIMITES DO GUIA",
+              "page": 51
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bernese",
+      "name": "Bernese Mountain Dog",
+      "species": "dogs",
+      "summary": "Cuidados por fase da vida, rotina familiar e registros do seu cão.",
+      "tags": [
+        "Rotina familiar",
+        "Pelagem",
+        "Registros"
+      ],
+      "cover": "/biblioteca/capas/bernese.jpg",
+      "documents": [
+        {
+          "id": "bernese-revised",
+          "title": "Guia para tutores de Bernese Mountain Dog",
+          "edition": "Edição revisada 2026",
+          "pages": 51,
+          "fillable": true,
+          "url": "/biblioteca/documentos/bernese-revised-d2cc973c19bb.pdf",
+          "bytes": 3242972,
+          "sha256": "d2cc973c19bb27d4ab29517cfad49475b2c1a463900caab3e86fe4624d5ae9ea",
+          "originalName": "GUIA_BERNESE_REVISADO_2026_PREENCHIVEL.pdf",
+          "chapters": [
+            {
+              "title": "Origem, função e identidade do Bernese Mountain Dog",
+              "page": 5
+            },
+            {
+              "title": "Procedência, ambiente e primeiros dias sem improviso",
+              "page": 9
+            },
+            {
+              "title": "Nutrição, condição corporal e desenvolvimento de raça grande",
+              "page": 13
+            },
+            {
+              "title": "Comunicação, socialização e cooperação em um cão de grande porte",
+              "page": 17
+            },
+            {
+              "title": "Prevenção, predisposições e urgências sem alarmismo",
+              "page": 21
+            },
+            {
+              "title": "Pelagem, pele, higiene e conforto térmico no Brasil",
+              "page": 26
+            },
+            {
+              "title": "Movimento, enriquecimento, tração e recuperação",
+              "page": 29
+            },
+            {
+              "title": "Do filhote ao idoso com decisões antecipadas",
+              "page": 33
+            },
+            {
+              "title": "Genética, exames, castração e compromisso com a raça",
+              "page": 36
+            },
+            {
+              "title": "Calendários, registros e decisões editáveis",
+              "page": 38
+            },
+            {
+              "title": "Viagens, hotel, creche, mudança e imprevistos",
+              "page": 43
+            },
+            {
+              "title": "Respostas essenciais, evidências e limites",
+              "page": 46
+            }
+          ]
+        },
+        {
+          "id": "bernese-master",
+          "title": "Guia para tutores de Bernese",
+          "edition": "Edição-mestre 2026",
+          "pages": 59,
+          "fillable": false,
+          "url": "/biblioteca/documentos/bernese-master-8e5946c71e1f.pdf",
+          "bytes": 6218613,
+          "sha256": "8e5946c71e1f5e8162ed73f7ac1899ac05594db5b6ac481aa66d9e5c868302f7",
+          "originalName": "GUIA_BERNESE_MODELO_BORDER_COLLIE.pdf",
+          "chapters": [
+            {
+              "title": "BERNESE: ORIGEM, FUNÇÃO E IDENTIDADE DA RAÇA",
+              "page": 5
+            },
+            {
+              "title": "A CHEGADA DO BERNESE: ADAPTAÇÃO, SEGURANÇA E ROTINA",
+              "page": 11
+            },
+            {
+              "title": "NUTRIÇÃO E CONDIÇÃO CORPORAL: ALIMENTAR COM CRITÉRIO",
+              "page": 14
+            },
+            {
+              "title": "EDUCAÇÃO E COMPORTAMENTO: CONSTRUINDO EQUILÍBRIO E COOPERAÇÃO",
+              "page": 18
+            },
+            {
+              "title": "SAÚDE PREVENTIVA: PREDISPOSIÇÕES, VIGILÂNCIA E SINAIS DE ALERTA",
+              "page": 21
+            },
+            {
+              "title": "HIGIENE E PELAGEM: CUIDADO FUNCIONAL E BEM-ESTAR",
+              "page": 27
+            },
+            {
+              "title": "MOVIMENTO E ENRIQUECIMENTO: CORPO ATIVO, MENTE EQUILIBRADA",
+              "page": 30
+            },
+            {
+              "title": "DESENVOLVIMENTO E LONGEVIDADE: DO FILHOTE AO CÃO IDOSO",
+              "page": 37
+            },
+            {
+              "title": "REPRODUÇÃO E CASTRAÇÃO: DECISÕES RESPONSÁVEIS EM CADA FASE",
+              "page": 40
+            },
+            {
+              "title": "CALENDÁRIOS E REGISTROS: ORGANIZAÇÃO PRÁTICA DO CUIDADO",
+              "page": 44
+            },
+            {
+              "title": "DÚVIDAS ESSENCIAIS: RESPOSTAS SEGURAS PARA O DIA A DIA",
+              "page": 48
+            },
+            {
+              "title": "EVIDÊNCIAS E REFERÊNCIAS: CRITÉRIOS, FONTES E LIMITES DO GUIA",
+              "page": 51
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pitbull",
+      "name": "Pit Bull · Red Nose",
+      "species": "dogs",
+      "summary": "História, identidade, educação, rotina e cuidados preventivos.",
+      "tags": [
+        "História",
+        "Educação",
+        "Rotina"
+      ],
+      "cover": "/biblioteca/capas/pitbull.jpg",
+      "documents": [
+        {
+          "id": "pitbull-guide",
+          "title": "Guia para tutores de Pit Bull Red Nose",
+          "edition": "Edição 2026",
+          "pages": 73,
+          "fillable": false,
+          "url": "/biblioteca/documentos/pitbull-guide-a5af0ead4f26.pdf",
+          "bytes": 7832007,
+          "sha256": "a5af0ead4f26600abdde5d9125167a7483755f32beb1423750ae21a11426ca34",
+          "originalName": "GUIA_PITBULL_RED_NOSE.pdf",
+          "chapters": [
+            {
+              "title": "PIT BULL RED NOSE: ORIGEM, FUNÇÃO E IDENTIDADE DA RAÇA",
+              "page": 5
+            },
+            {
+              "title": "A CHEGADA DO PIT BULL: ADAPTAÇÃO, SEGURANÇA E ROTINA",
+              "page": 23
+            },
+            {
+              "title": "NUTRIÇÃO E CONDIÇÃO CORPORAL: ALIMENTAR COM CRITÉRIO",
+              "page": 26
+            },
+            {
+              "title": "EDUCAÇÃO E COMPORTAMENTO: CONSTRUINDO EQUILÍBRIO E COOPERAÇÃO",
+              "page": 30
+            },
+            {
+              "title": "SAÚDE PREVENTIVA: PREDISPOSIÇÕES, VIGILÂNCIA E SINAIS DE ALERTA",
+              "page": 33
+            },
+            {
+              "title": "HIGIENE E PELAGEM: CUIDADO FUNCIONAL E BEM-ESTAR",
+              "page": 39
+            },
+            {
+              "title": "MOVIMENTO E ENRIQUECIMENTO: CORPO ATIVO, MENTE EQUILIBRADA",
+              "page": 42
+            },
+            {
+              "title": "DESENVOLVIMENTO E LONGEVIDADE: DO FILHOTE AO CÃO IDOSO",
+              "page": 50
+            },
+            {
+              "title": "REPRODUÇÃO E CASTRAÇÃO: DECISÕES RESPONSÁVEIS EM CADA FASE",
+              "page": 53
+            },
+            {
+              "title": "CALENDÁRIOS E REGISTROS: ORGANIZAÇÃO PRÁTICA DO CUIDADO",
+              "page": 57
+            },
+            {
+              "title": "DÚVIDAS ESSENCIAIS: RESPOSTAS SEGURAS PARA O DIA A DIA",
+              "page": 61
+            },
+            {
+              "title": "EVIDÊNCIAS E REFERÊNCIAS: CRITÉRIOS, FONTES E LIMITES DO GUIA",
+              "page": 64
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ragdoll",
+      "name": "Ragdoll",
+      "species": "cats",
+      "summary": "Da chegada à casa aos cuidados de rotina, com fichas para preencher.",
+      "tags": [
+        "Adaptação",
+        "Higiene",
+        "Fichas"
+      ],
+      "cover": "/biblioteca/capas/ragdoll.jpg",
+      "documents": [
+        {
+          "id": "ragdoll-collection",
+          "title": "Guia para tutores de Ragdoll",
+          "edition": "Coleção ByPET BR · edição 2026",
+          "pages": 60,
+          "fillable": false,
+          "url": "/biblioteca/documentos/ragdoll-collection-1006e9ba71ed.pdf",
+          "bytes": 2787416,
+          "sha256": "1006e9ba71edcc2c84a94977fa42ce5623b2d74a69e9b720894c6c517f585c6e",
+          "originalName": "Guia_Ragdoll_Colecao_ByPET_BR.pdf",
+          "chapters": [
+            {
+              "title": "Como usar este guia",
+              "page": 2
+            },
+            {
+              "title": "Sumário",
+              "page": 3
+            },
+            {
+              "title": "Ragdoll: perfil da raça",
+              "page": 4
+            },
+            {
+              "title": "Escolha, compra e adoção",
+              "page": 8
+            },
+            {
+              "title": "Chegada e adaptação",
+              "page": 13
+            },
+            {
+              "title": "Alimentação e condição corporal",
+              "page": 17
+            },
+            {
+              "title": "Caixa sanitária, pelagem e higiene",
+              "page": 21
+            },
+            {
+              "title": "Comportamento, brincadeira e enriquecimento",
+              "page": 25
+            },
+            {
+              "title": "Saúde preventiva e emergências",
+              "page": 29
+            },
+            {
+              "title": "Do filhote ao idoso",
+              "page": 34
+            },
+            {
+              "title": "Castração e reprodução",
+              "page": 39
+            },
+            {
+              "title": "O Ragdoll no Brasil",
+              "page": 43
+            },
+            {
+              "title": "Registros e checklists",
+              "page": 48
+            },
+            {
+              "title": "Perguntas frequentes",
+              "page": 52
+            },
+            {
+              "title": "Glossário",
+              "page": 55
+            },
+            {
+              "title": "Fontes e referências",
+              "page": 57
+            },
+            {
+              "title": "Sobre a ByPET BR",
+              "page": 59
+            }
+          ]
+        },
+        {
+          "id": "ragdoll-master",
+          "title": "Guia para tutores de Ragdoll",
+          "edition": "Edição-mestre 2026",
+          "pages": 59,
+          "fillable": false,
+          "url": "/biblioteca/documentos/ragdoll-master-d4ea38d0de7b.pdf",
+          "bytes": 5716496,
+          "sha256": "d4ea38d0de7be6dd0298be28dcff6718aa8bcf847b3df1002392bcf562abc702",
+          "originalName": "GUIA_RAGDOLL(1).pdf",
+          "chapters": [
+            {
+              "title": "RAGDOLL: ORIGEM, COMPANHIA E IDENTIDADE DA RAÇA",
+              "page": 5
+            },
+            {
+              "title": "A CHEGADA DO RAGDOLL: ADAPTAÇÃO, SEGURANÇA E ROTINA",
+              "page": 11
+            },
+            {
+              "title": "NUTRIÇÃO E CONDIÇÃO CORPORAL: ALIMENTAR COM CRITÉRIO",
+              "page": 14
+            },
+            {
+              "title": "EDUCAÇÃO E COMPORTAMENTO: CONSTRUINDO EQUILÍBRIO E COOPERAÇÃO",
+              "page": 18
+            },
+            {
+              "title": "SAÚDE PREVENTIVA: PREDISPOSIÇÕES, VIGILÂNCIA E SINAIS DE ALERTA",
+              "page": 21
+            },
+            {
+              "title": "HIGIENE E PELAGEM: CUIDADO FUNCIONAL E BEM-ESTAR",
+              "page": 27
+            },
+            {
+              "title": "MOVIMENTO E ENRIQUECIMENTO: CORPO ATIVO, MENTE EQUILIBRADA",
+              "page": 30
+            },
+            {
+              "title": "DESENVOLVIMENTO E LONGEVIDADE: DO FILHOTE AO GATO IDOSO",
+              "page": 37
+            },
+            {
+              "title": "REPRODUÇÃO E CASTRAÇÃO: DECISÕES RESPONSÁVEIS EM CADA FASE",
+              "page": 40
+            },
+            {
+              "title": "CALENDÁRIOS E REGISTROS: ORGANIZAÇÃO PRÁTICA DO CUIDADO",
+              "page": 44
+            },
+            {
+              "title": "DÚVIDAS ESSENCIAIS: RESPOSTAS SEGURAS PARA O DIA A DIA",
+              "page": 48
+            },
+            {
+              "title": "EVIDÊNCIAS E REFERÊNCIAS: CRITÉRIOS, FONTES E LIMITES DO GUIA",
+              "page": 51
+            }
+          ]
+        },
+        {
+          "id": "ragdoll-forms",
+          "title": "Fichas Ragdoll preenchíveis",
+          "edition": "Identificação, emergência e registros",
+          "pages": 6,
+          "fillable": true,
+          "url": "/biblioteca/documentos/ragdoll-forms-1707968d3f7b.pdf",
+          "bytes": 230563,
+          "sha256": "1707968d3f7b5037a5227fde0de0490ab87fb2bf86fd84133665dde93de47570",
+          "originalName": "Fichas_Ragdoll_Preenchiveis.pdf",
+          "chapters": [
+            {
+              "title": "Ficha de identificação e emergência",
+              "page": 1
+            },
+            {
+              "title": "Calendário anual de cuidados",
+              "page": 2
+            },
+            {
+              "title": "Registro de vacinação",
+              "page": 3
+            },
+            {
+              "title": "Registro de antiparasitários",
+              "page": 4
+            },
+            {
+              "title": "Peso e diário de observação",
+              "page": 5
+            },
+            {
+              "title": "Orçamento de manutenção",
+              "page": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sphynx",
+      "name": "Sphynx",
+      "species": "cats",
+      "summary": "Identidade da raça, cuidados com a pele, ambiente e bem-estar.",
+      "tags": [
+        "Pele",
+        "Ambiente",
+        "Bem-estar"
+      ],
+      "cover": "/biblioteca/capas/sphynx.jpg",
+      "documents": [
+        {
+          "id": "sphynx-guide",
+          "title": "Guia para tutores de Sphynx",
+          "edition": "Edição-mestre 2026",
+          "pages": 59,
+          "fillable": false,
+          "url": "/biblioteca/documentos/sphynx-guide-260258907e97.pdf",
+          "bytes": 6109038,
+          "sha256": "260258907e97bc386ef35bd8d10c90a6ddec9ffeb49e1baf1076af74b8de6fb3",
+          "originalName": "GUIA_SPHYNX.pdf",
+          "chapters": [
+            {
+              "title": "SPHYNX: ORIGEM, COMPANHIA E IDENTIDADE DA RAÇA",
+              "page": 5
+            },
+            {
+              "title": "A CHEGADA DO SPHYNX: ADAPTAÇÃO, SEGURANÇA E ROTINA",
+              "page": 11
+            },
+            {
+              "title": "NUTRIÇÃO E CONDIÇÃO CORPORAL: ALIMENTAR COM CRITÉRIO",
+              "page": 14
+            },
+            {
+              "title": "EDUCAÇÃO E COMPORTAMENTO: CONSTRUINDO EQUILÍBRIO E COOPERAÇÃO",
+              "page": 18
+            },
+            {
+              "title": "SAÚDE PREVENTIVA: PREDISPOSIÇÕES, VIGILÂNCIA E SINAIS DE ALERTA",
+              "page": 21
+            },
+            {
+              "title": "HIGIENE E PELE: CUIDADO FUNCIONAL E BEM-ESTAR",
+              "page": 27
+            },
+            {
+              "title": "MOVIMENTO E ENRIQUECIMENTO: CORPO ATIVO, MENTE EQUILIBRADA",
+              "page": 30
+            },
+            {
+              "title": "DESENVOLVIMENTO E LONGEVIDADE: DO FILHOTE AO GATO IDOSO",
+              "page": 37
+            },
+            {
+              "title": "REPRODUÇÃO E CASTRAÇÃO: DECISÕES RESPONSÁVEIS EM CADA FASE",
+              "page": 40
+            },
+            {
+              "title": "CALENDÁRIOS E REGISTROS: ORGANIZAÇÃO PRÁTICA DO CUIDADO",
+              "page": 44
+            },
+            {
+              "title": "DÚVIDAS ESSENCIAIS: RESPOSTAS SEGURAS PARA O DIA A DIA",
+              "page": 48
+            },
+            {
+              "title": "EVIDÊNCIAS E REFERÊNCIAS: CRITÉRIOS, FONTES E LIMITES DO GUIA",
+              "page": 51
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

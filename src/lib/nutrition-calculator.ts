@@ -19,6 +19,7 @@ export interface NutritionCalculationResult {
   dailyKcal: number
   dailyGrams: number
   foodKcalPerKg: number
+  foodEnergyValid: boolean
   mealsPerDay: number
 }
 
@@ -72,10 +73,11 @@ export function calculateNutrition(input: NutritionCalculationInput): NutritionC
   const dailyKcalRaw = kcalBeforeActivity * (1 + activityAdjustmentPercent / 100)
   const dailyKcal = Math.round(dailyKcalRaw)
 
-  const foodKcalPerKg =
-    input.foodKcalPerKg && input.foodKcalPerKg > 1000 ? input.foodKcalPerKg : 3500
+  // Only an omitted value uses the estimate; supplied values are never replaced.
+  const foodKcalPerKg = input.foodKcalPerKg === undefined ? 3500 : input.foodKcalPerKg
+  const foodEnergyValid = Number.isFinite(foodKcalPerKg) && foodKcalPerKg > 0
   // Gramas/dia = kcal/dia ÷ (kcal/kg ÷ 1000)
-  const dailyGramsRaw = dailyKcal / (foodKcalPerKg / 1000)
+  const dailyGramsRaw = foodEnergyValid ? dailyKcal / (foodKcalPerKg / 1000) : 0
   const dailyGrams = Math.round(dailyGramsRaw)
 
   const effectiveTotalFactor = rer > 0 ? dailyKcal / rer : baseFactor
@@ -89,6 +91,7 @@ export function calculateNutrition(input: NutritionCalculationInput): NutritionC
     dailyKcal,
     dailyGrams,
     foodKcalPerKg,
+    foodEnergyValid,
     mealsPerDay,
   }
 }

@@ -1,10 +1,11 @@
+import SessionBanner from './SessionBanner'
 import OfflineNotice from '@/components/OfflineNotice'
 import {preferenceStorage} from '@/lib/preferences'
 import { loadPreferences, loadOfflinePreferences } from '@/lib/preferences'
 import DeviceActivity from '@/components/DeviceActivity'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 
-type Account = { id: string; email: string; expiresAt: number; ownerAccess?: boolean; labKind?: string; matrixOriginal?: boolean }
+type Account = { id: string; email: string; expiresAt: number; temporaryAccess?: boolean; ownerAccess?: boolean; labKind?: string; matrixOriginal?: boolean }
 
 export function PilotGate({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null)
@@ -20,6 +21,15 @@ export function PilotGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAccess() {
       try {
+        const entry=new URLSearchParams(window.location.hash.slice(1)).get('entrada')
+        if(entry){
+          history.replaceState(null,'',location.pathname+location.search)
+          sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account')
+          const response=await fetch('/api/access/temporary/enter',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token:entry})})
+          const data=await response.json()
+          if(!response.ok){setError(data.error||'Link temporário indisponível. Solicite outro ao proprietário.');return}
+          if(data.role==='staff'){location.replace('/equipe?acesso=funcionario');return}
+        }
         const access=new URLSearchParams(window.location.hash.slice(1)).get('access')
         if(access){const r=await fetch('/api/pilot/owner/unlock',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({token:access})});if(!r.ok)throw Error('Acesso privado não validado');history.replaceState(null,'',location.pathname+location.search)}
         const labTicket=new URLSearchParams(location.hash.slice(1)).get('lab')
@@ -57,7 +67,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <>{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais. {account.labKind==='dirty'&&<a className="underline ml-2" href="/teste-contas">Abrir painel de teste e contas</a>}</aside>}{account.ownerAccess?<aside className="bg-amber-100 text-amber-950 px-4 py-2 text-sm">{account.matrixOriginal?'Matriz · piloto 01 original':'Acesso do proprietário'} · {account.email} · alterações são salvas nesta conta. <a className="underline" href="/acesso-tutor">Trocar conta</a> · <a className="underline" href="/painel/pendencias">Minhas responsabilidades</a> · <a className="underline" href="/painel">Painel</a></aside>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <>{account.temporaryAccess&&<aside className="bg-emerald-100 text-emerald-950 px-4 py-2 text-sm">Acesso temporário sem senha · {account.email} · válido até {new Date(account.expiresAt).toLocaleDateString('pt-BR')}.</aside>}{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais. {account.labKind==='dirty'&&<a className="underline ml-2" href="/teste-contas">Abrir painel de teste e contas</a>}</aside>}{account.ownerAccess?<SessionBanner email={account.email} matrixOriginal={account.matrixOriginal}/>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Entre no Meu Bichu'}</h1>
@@ -78,6 +88,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
       {error && <p role="alert" className="rounded-lg bg-[#713529] p-3 text-sm text-white">{error}</p>}
       <button disabled={busy} className="w-full rounded-xl bg-[#d3ebaa] py-3 font-bold text-[#17372c] disabled:opacity-50">{busy ? 'Aguarde…' : eraseMode?'Excluir conta definitivamente':'Entrar'}</button>
 <button type="button" className="text-sm underline" onClick={()=>{setEraseMode(v=>!v);setConfirmation('');setError('')}}>{eraseMode?'Voltar ao acesso':'Excluir minha conta e meus dados (inclusive após expiração)'}</button><a href="/privacidade.html" className="block text-sm underline">Política de Privacidade</a>
+    <a href="/acesso-master" className="block text-sm underline">Entrar com a conta master</a>
     <nav className="flex flex-wrap gap-3 text-sm"><a className="underline" href="/acesso.html?modo=cadastro">Criar conta</a><a className="underline" href="/acesso.html?modo=recuperar">Esqueci minha senha</a><a className="underline" href="/termos.html">Termos</a><a className="underline" href="/suporte.html">Suporte</a></nav></form>
   </main>
 }

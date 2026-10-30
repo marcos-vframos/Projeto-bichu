@@ -55,20 +55,28 @@ function getCookie(request) {
 async function currentAccount(request, db) {
   const token = getCookie(request)
   if (!token) return null
-  const row = await db.prepare(`SELECT a.id, a.email, MIN(a.expires_at,s.expires_at) AS expires_at
+  const now = Date.now()
+  const row = await db.prepare(`SELECT a.id, a.email,
+    CASE WHEN t.token_hash IS NULL THEN MIN(a.expires_at,s.expires_at) ELSE MIN(s.expires_at,l.expires_at) END AS expires_at,
+    CASE WHEN t.token_hash IS NULL THEN 0 ELSE 1 END AS temporary_access
     FROM pilot_sessions s JOIN pilot_accounts a ON a.id = s.account_id
-    WHERE s.token_hash = ? AND s.expires_at > ? AND a.expires_at > ?`).bind(await digest(token), Date.now(), Date.now()).first()
+    LEFT JOIN temporary_access_sessions t ON t.token_hash=s.token_hash AND t.role='tutor'
+    LEFT JOIN temporary_access_links l ON l.id=t.link_id AND l.role='tutor' AND l.subject_id=a.id
+    WHERE s.token_hash=? AND s.expires_at>? AND
+    ((t.token_hash IS NULL AND a.expires_at>?) OR
+     (t.token_hash IS NOT NULL AND l.revoked_at IS NULL AND l.expires_at>?))`).bind(await digest(token), now, now, now).first()
   return row || null
 }
 async function ownedDog(db, accountId, dogId) {
   return db.prepare('SELECT id FROM pilot_records WHERE id = ? AND account_id = ? AND collection = ?')
     .bind(dogId, accountId, 'dogs').first()
 }
-function rowToRecord(row) { return { ...JSON.parse(row.data), id: row.id, created: row.created_at, updated: row.updated_at } }
+async function recordRevision(row) { return digest(JSON.stringify([row.id,row.account_id,row.collection,row.updated_at,row.data])) }
+async function rowToRecord(row) { return { ...JSON.parse(row.data), id: row.id, created: row.created_at, updated: row.updated_at, revision: await recordRevision(row) } }
 function legalPayload(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dados inválidos')
   const result = { ...data }
-  delete result.id; delete result.created; delete result.updated; delete result.user; delete result.device_key
+  delete result.id; delete result.created; delete result.updated; delete result.revision; delete result.user; delete result.device_key
   if (JSON.stringify(result).length > 100000) throw new Error('Registro grande demais')
   return result
 }
@@ -123,7 +131,7 @@ async function recordApi(request, env, account, path) {
     if (id) {
       const row = await db.prepare('SELECT * FROM pilot_records WHERE id = ? AND account_id = ? AND collection = ?')
         .bind(id, account.id, collection).first()
-      return row ? answer(rowToRecord(row)) : fail('Registro não encontrado', 404)
+      return row ? answer(await rowToRecord(row)) : fail('Registro não encontrado', 404)
     }
     const url=new URL(request.url),page=Number(url.searchParams.get('page')||0),dog=url.searchParams.get('dog')
     if(!Number.isSafeInteger(page)||page<0||page>100000)return fail('Página inválida')
@@ -131,7 +139,7 @@ async function recordApi(request, env, account, path) {
     if(dog)values.push(dog)
     const size=page?200:1000
     const result=await db.prepare(`SELECT * FROM pilot_records WHERE account_id = ? AND collection = ?${where} ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`).bind(...values,size+1,page?(page-1)*size:0).all()
-    const items=result.results.slice(0,size).map(rowToRecord)
+    const items=await Promise.all(result.results.slice(0,size).map(rowToRecord))
     return page?answer({items,nextPage:result.results.length>size?page+1:null}):answer(items)
 
   }
@@ -143,6 +151,12 @@ async function recordApi(request, env, account, path) {
   const prior = id ? await db.prepare('SELECT * FROM pilot_records WHERE id = ? AND account_id = ? AND collection = ?')
     .bind(id, account.id, collection).first() : null
   if (id && !prior) return fail('Registro não encontrado', 404)
+  if (request.method === 'PATCH') {
+    const revision=request.headers.get('if-match')
+    if (!revision) return fail('Atualize o aplicativo e reabra o registro antes de editar.',428)
+    if (revision !== '"'+await recordRevision(prior)+'"') return answer({code:'RECORD_CONFLICT',error:'Este registro foi alterado em outro aparelho. Suas alterações não foram enviadas. Mantenha suas anotações e reabra o registro para conferir a versão salva.'},409)
+  }
+  const previousFiles=prior&&collection==='dogs'?(await db.prepare('SELECT id, filename, object_key FROM pilot_files WHERE account_id = ? AND record_id = ?').bind(account.id,id).all()).results:[]
   if (request.method === 'DELETE') {
     const related = collection === 'dogs'
       ? await db.prepare('SELECT id FROM pilot_records WHERE account_id = ? AND dog_id = ?').bind(account.id, id).all()
@@ -187,6 +201,7 @@ async function recordApi(request, env, account, path) {
   if (collection === 'weight_logs' && Number.isFinite(Date.parse(data.logged_at))) data.logged_at = new Date(data.logged_at).toISOString()
   if (['dogs', 'weight_logs'].includes(collection) && (!Number.isFinite(Number(data.weight_kg)) || Number(data.weight_kg) <= 0 || Number(data.weight_kg) > 200)) return fail('Peso inválido')
   if (collection === 'weight_logs' && (!data.logged_at || !Number.isFinite(Date.parse(data.logged_at)))) return fail('Data inválida')
+  let committed=false
   try {
     const statements=[]
     if(collection==='feeding_plans' && data.is_active)statements.push(db.prepare("UPDATE pilot_records SET data=json_set(data,'$.is_active',json('false')),updated_at=? WHERE account_id=? AND dog_id=? AND collection='feeding_plans' AND id!=? AND json_extract(data,'$.is_active')=1").bind(now,account.id,dogId,recordId))
@@ -201,22 +216,24 @@ async function recordApi(request, env, account, path) {
     if(collection==='weight_logs')statements.push(db.prepare("UPDATE pilot_records SET data=json_set(data,'$.weight_kg',(SELECT CAST(json_extract(data,'$.weight_kg') AS REAL) FROM pilot_records WHERE account_id=? AND dog_id=? AND collection='weight_logs' ORDER BY json_extract(data,'$.logged_at') DESC,created_at DESC,id DESC LIMIT 1)),updated_at=? WHERE account_id=? AND id=? AND collection='dogs'").bind(account.id,dogId,now,account.id,dogId))
     for (const file of files) statements.push(db.prepare('INSERT INTO pilot_files (id, account_id, record_id, collection, filename, object_key, content_type, size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(file.id, account.id, recordId, collection, file.filename, file.objectKey, file.contentType, file.size))
-    await db.batch(statements)
+    if(prior)await db.guardedBatch({id:prior.id,accountId:account.id,collection,data:prior.data,updatedAt:prior.updated_at},statements)
+    else await db.batch(statements)
+    committed=true
     if (prior && collection === 'dogs') {
       const retained = new Set([data.avatar, ...(data.gallery || [])])
-      const oldFiles = await db.prepare('SELECT id, filename, object_key FROM pilot_files WHERE account_id = ? AND record_id = ?')
-        .bind(account.id, recordId).all()
-      for (const old of oldFiles.results) {
+      for (const old of previousFiles) {
         if (retained.has(old.filename)) continue
         await db.prepare('DELETE FROM pilot_files WHERE id = ? AND account_id = ?').bind(old.id, account.id).run()
         await env.BUCKET.delete(old.object_key)
       }
     }
   } catch (error) {
-    for (const file of files) await env.BUCKET.delete(file.objectKey)
+    if(!committed)for (const file of files) await env.BUCKET.delete(file.objectKey)
+    if(error.code==='RECORD_CONFLICT')return answer({code:'RECORD_CONFLICT',error:'Este registro mudou durante a gravação. Nada desta tentativa foi aplicado. Mantenha suas anotações e reabra o registro para conferir a versão salva.'},409)
+    if(committed){console.error('File cleanup failed after record commit');return answer(await rowToRecord({id:recordId,account_id:account.id,collection,data:JSON.stringify(data),created_at:prior?.created_at||now,updated_at:now}),prior?200:201)}
     throw error
   }
-  return answer({ ...data, id: recordId, created: prior?.created_at || now, updated: now }, prior ? 200 : 201)
+  return answer(await rowToRecord({id:recordId,account_id:account.id,collection,data:JSON.stringify(data),created_at:prior?.created_at||now,updated_at:now}),prior ? 200 : 201)
 }
 
 async function provision(db, supplied) {
@@ -294,7 +311,7 @@ async function dailyMeals(request, env, account, url) {
     const dog = url.searchParams.get('dog')
     if (!dog || !await ownedDog(db, account.id, dog)) return fail('Pet não encontrado nesta conta', 403)
     const rows = await db.prepare("SELECT * FROM pilot_records WHERE account_id = ? AND dog_id = ? AND collection = 'meal_confirmations' AND json_extract(data, '$.day') = ? ORDER BY updated_at DESC").bind(account.id, dog, day).all()
-    return answer({ day, confirmations: rows.results.map(rowToRecord) })
+    return answer({ day, confirmations: await Promise.all(rows.results.map(rowToRecord)) })
   }
   if (request.method !== 'POST') return fail('Método não permitido', 405)
   const { dog, meal, slot, completed, day: suppliedDay } = await request.json()
@@ -574,7 +591,7 @@ export async function handlePilot(request, env) {
   const account = env.OWNER_ACCESS_ACCOUNT || await currentAccount(request, env.DB)
   if (!account) return fail('Entre novamente ou solicite novo acesso', 401)
   if(request.headers.get('x-mb-account-id') && request.headers.get('x-mb-account-id')!==account.id)return fail('A conta mudou. Recarregue o aplicativo.',409)
-  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, ownerAccess:account.ownerAccess===true, matrixOriginal:account.ownerAccess===true&&account.email==='piloto01@meubichu.test'&&!env.LAB_KIND, labKind:env.LAB_KIND||null, release:env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||null })
+  if (path[0] === 'me' && request.method === 'GET') return answer({ id: account.id, email: account.email, name: account.email.split('@')[0], expiresAt: account.ownerAccess ? Date.now()+86400000 : account.expires_at, temporaryAccess:account.temporary_access===1, ownerAccess:account.ownerAccess===true, matrixOriginal:account.ownerAccess===true&&account.email==='piloto01@meubichu.test'&&!env.LAB_KIND, labKind:env.LAB_KIND||null, release:env.RAILWAY_GIT_COMMIT_SHA||env.APP_RELEASE||null })
   if (path[0] === 'logout' && request.method === 'POST') {
     const token = getCookie(request)
     await env.DB.prepare('DELETE FROM pilot_sessions WHERE token_hash = ?').bind(await digest(token)).run()

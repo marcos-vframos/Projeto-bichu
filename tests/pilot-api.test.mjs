@@ -18,14 +18,21 @@ function database() {
       run() { return db.prepare(sql).run(...args) },
     }
   }
-  return { raw: db, api: { prepare: wrap, batch: statements => Promise.all(statements.map(s => s.run())) } }
+  return { raw: db, api: { prepare: wrap, batch: statements => Promise.all(statements.map(s => s.run())), guardedBatch(expected,statements){
+    db.exec('BEGIN IMMEDIATE')
+    try{const row=db.prepare('SELECT data,updated_at FROM pilot_records WHERE id=? AND account_id=? AND collection=?').get(expected.id,expected.accountId,expected.collection);if(!row||row.data!==expected.data||row.updated_at!==expected.updatedAt)throw Object.assign(Error('Conflict'),{code:'RECORD_CONFLICT'});const result=statements.map(s=>s.run());db.exec('COMMIT');return result}catch(error){db.exec('ROLLBACK');throw error}
+  } } }
 }
-function call(env, path, method = 'GET', body, cookie, admin = false, owner = false) {
+async function call(env, path, method = 'GET', body, cookie, admin = false, owner = false) {
   const headers = { origin: 'https://pilot.test' }
   if (body) headers['content-type'] = 'application/json'
   if (cookie) headers.cookie = cookie
   if (admin) headers.authorization = 'Bearer admin-test'
   if (owner) headers['oai-authenticated-user-id'] = 'd410baf1-83e0-4641-9a41-f44fc8c5025a'
+  if(method==='PATCH'&&/^records\/[^/]+\/[^/]+$/.test(path)){
+    const current=await handlePilot(new Request(`https://pilot.test/api/pilot/${path}`,{headers}),env)
+    if(current.ok)headers['if-match']='"'+(await current.json()).revision+'"'
+  }
   return handlePilot(new Request(`https://pilot.test/api/pilot/${path}`, { method, headers, body: body && JSON.stringify(body) }), env)
 }
 
