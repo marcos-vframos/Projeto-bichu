@@ -6,7 +6,7 @@ import {snapshot,verifyRestored,pack} from './recovery.mjs'
 
 const SOURCE='piloto01@meubichu.test'
 const DEST='https://bichu-testes-sujos-production.up.railway.app'
-const COLLECTIONS=new Set(['dogs','weight_logs','feeding_plans','bcs_evaluations','health_events','pet_routine_events','user_foods','account_preferences','natural_diets','pilot_feedback'])
+const COLLECTIONS=new Set(['dogs','weight_logs','feeding_plans','bcs_evaluations','health_events','pet_routine_events','user_foods','account_preferences','natural_diets','pilot_feedback','meal_confirmations'])
 const sha=b=>createHash('sha256').update(b).digest('hex')
 const json=(d,status=200)=>Response.json(d,{status,headers:{'cache-control':'no-store'}})
 const fail=m=>{throw new Error(m)}
@@ -43,6 +43,7 @@ export async function importMatrix(store,env,p){
  const target=db.prepare("SELECT l.account_id FROM lab_accounts l JOIN pilot_accounts a ON a.id=l.account_id WHERE l.slot='dirty' AND l.active=1 AND a.account_kind='internal'").get();if(!target)fail('Conta interna dos testes sujos não encontrada')
  const targetId=target.account_id,baseline=fingerprint(db,targetId),mapping=new Map([[p.sourceAccountId,targetId]]),newFiles=[]
  for(const r of p.records)mapping.set(r.id,randomUUID())
+ for(const r of p.records.filter(r=>r.collection==='meal_confirmations')){const d=JSON.parse(r.data);mapping.set(r.id,sha(JSON.stringify([targetId,mapping.get(r.dog_id),d.day,d.slot,d.meal])))}
  // A filename can occur in more than one record: its mapping is scoped below.
  const recordFiles=new Map()
  for(const f of p.files){const filename=randomUUID()+'.'+(f.content_type==='image/jpeg'?'jpg':f.content_type.split('/')[1]),id=randomUUID(),recordId=mapping.get(f.record_id),key=targetId+'/'+recordId+'/'+filename;newFiles.push({...f,id,filename,recordId,key});if(!recordFiles.has(f.record_id))recordFiles.set(f.record_id,new Map());recordFiles.get(f.record_id).set(f.filename,filename)}
