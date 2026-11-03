@@ -1,0 +1,11 @@
+# Cópia autorizada da matriz para testes sujos
+
+O proprietário autorizou em 03/11/2026 uma cópia dos dados reais da matriz original (Piloto 01) para alimentar os testes sujos. É uma exceção explícita à regra anterior de usar somente dados fictícios nesse laboratório. Não autoriza copiar outras contas, credenciais, equipe ou qualquer dado para beta. Não cria sincronização contínua.
+
+A página /painel/clonar-matriz, no principal e com sessão de proprietário, lê apenas o Piloto 01 e envia registros e fotos ao serviço dirty configurado. A rota de destino requer a chave de controle já existente e aceita importação somente no host/ambiente sujo esperado. Nenhuma variável ou chave real nova é criada/copied. Não são copiados aparelhos, localização de aparelhos, eventos de uso, sessões, permissões ou hashes de senha. O código experimental do laboratório é preservado: o clone desta operação é dos dados de uso, não uma troca do layout.
+
+Antes de substituir os registros da conta dirty, cria-se snapshot completo do destino e verifica-se a restauração/integridade. O backup é cifrado com a própria LAB_CONTROL_KEY do destino em /data/clone-backups/<id>.enc. Não há chave em HTML/JS ou resposta HTTP. A recuperação pode usar unpack de server/recovery.mjs em um volume separado; nunca restaurar sobre dados ativos sem reconciliação.
+
+Datas e conteúdo são preservados, com IDs/vínculos e nomes de fotos novos no destino. Fotos têm hash/tamanho conferidos e caminhos novos. A origem não é gravada; apenas uma entrada administrativa de auditoria é adicionada no principal após sucesso. O destino usa transação com verificação de concorrência; falha antes do commit conserva registros atuais. Um mesmo ID de pedido é idempotente. Os arquivos antigos permanecem fisicamente no volume e no backup, sem exposição pública.
+
+Limite da transferência: 6 MB comprimidos; pacotes maiores são recusados antes da substituição. Snapshot de fotos e registros é conferido contra alterações da origem. O teste automático cobre captura restrita ao Piloto 01, proteção da origem, datas, vínculos locais, fotos, restauração do backup, separação de credenciais, repetição de pedido e recusas de pacote/ambiente/autorização/origem inválidos. Esses testes não substituem a verificação da operação real no painel.
