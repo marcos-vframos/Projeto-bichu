@@ -34,19 +34,9 @@ test('master owner and matrix login preserve original identity and data, issue s
  assert.ok(f.db.prepare("SELECT 1 FROM team_audit WHERE action='master_login' AND record_id='original'").get())
  }finally{await f.close()}
 })
-test('master staff is an individual employee, cannot read owner/tutor APIs, permissions and revocation stay effective',async()=>{
+test('master não cria nem autentica conta de funcionário',async()=>{
  const f=await fixture();try{
- const r=await login(f,'funcionario'),c=cookies(r);assert.equal(r.status,200)
- const me=await(await send(f,'/api/team/me',null,c,{'x-mb-team-mode':'staff'})).json();assert.equal(me.role,'staff');assert.ok(me.permissions.includes('tasks.update'))
- assert.equal((await send(f,'/api/pilot/owner/dashboard',null,c)).status,403)
- assert.equal((await send(f,'/api/team/users',null,c)).status,403)
- assert.equal((await send(f,'/api/pilot/me',null,c)).status,401)
- const user=f.db.prepare('SELECT id FROM team_users WHERE email=?').get(email)
- f.db.prepare('UPDATE team_permissions SET permissions=? WHERE user_id=?').run('[]',user.id)
- const again=await login(f,'funcionario');assert.deepEqual((await(await send(f,'/api/team/me',null,cookies(again))).json()).permissions,[])
- assert.equal(f.db.prepare('SELECT COUNT(*) n FROM team_users').get().n,1)
- f.db.prepare('UPDATE team_users SET active=0 WHERE id=?').run(user.id)
- assert.equal((await login(f,'funcionario')).status,403);assert.equal((await send(f,'/api/team/me',null,c)).status,401)
+ const r=await login(f,'funcionario');assert.equal(r.status,400);assert.equal(r.headers.getSetCookie().length,0);assert.equal(f.db.prepare('SELECT COUNT(*) n FROM team_users').get().n,0)
  }finally{await f.close()}
 })
 test('master is opt-in, validates origin and credentials, locks repeated failures without granting sessions',async()=>{
@@ -59,10 +49,10 @@ test('master is opt-in, validates origin and credentials, locks repeated failure
  const disabled=await fixture({MASTER_ACCESS_HASH:''});try{assert.equal((await login(disabled,'proprietario')).status,503)}finally{await disabled.close()}
  const beta=await fixture({LAB_KIND:'beta'});try{assert.equal((await login(beta,'proprietario')).status,503);assert.equal(beta.db.prepare('SELECT COUNT(*) n FROM lab_accounts WHERE active=0').get().n,20)}finally{await beta.close()}
 })
-test('existing tutor and staff login forms accept master credentials; missing matrix is never silently recreated',async()=>{
+test('tutor e funcionário recusam credencial master; matriz ausente não é recriada',async()=>{
  const f=await fixture();try{
- assert.equal((await send(f,'/api/pilot/login',{email,password})).status,200)
- assert.equal((await send(f,'/api/team/login',{email,password})).status,200)
+ assert.equal((await send(f,'/api/pilot/login',{email,password})).status,403)
+ assert.equal((await send(f,'/api/team/login',{email,password})).status,403)
  f.db.prepare("DELETE FROM pilot_accounts WHERE id='original'").run()
  assert.equal((await login(f,'matriz')).status,409)
  assert.equal(f.db.prepare("SELECT COUNT(*) n FROM pilot_accounts WHERE email='piloto01@meubichu.test'").get().n,0)

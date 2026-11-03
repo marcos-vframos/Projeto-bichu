@@ -1,3 +1,4 @@
+import {permissionCatalog} from '../server/team.mjs'
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {mkdtemp,rm} from 'node:fs/promises'
@@ -12,7 +13,7 @@ test('employee completion is recorded atomically with author, result, status and
  const key='d'.repeat(64),env={PILOT_PANEL_KEY:key,COOKIE_SECURE:false};app=createApplication({store:openStore(folder),env})
  const call=(path,method='GET',body,auth)=>app.dispatch(new Request('https://test.local'+path,{method,headers:{origin:'https://test.local',...(auth?{cookie:auth}:{}),...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})}))
  const owner=cookie(await call('/api/pilot/owner/unlock','POST',{token:key})),credentials={name:'Nome original',email:'colaborador@teste.local',password:'individual-teste-123'}
- const user=(await(await call('/api/team/users','POST',credentials,owner)).json()).id,auth=cookie(await call('/api/team/login','POST',credentials))
+ const user=(await(await call('/api/team/users','POST',{...credentials,permissions:Object.keys(permissionCatalog)},owner)).json()).id,auth=cookie(await call('/api/team/login','POST',credentials))
  const task=(await(await call('/api/team/tasks','POST',{title:'Conferir cadastro',details:'Verificar contato',userId:user},owner)).json()).id
  assert.equal((await call('/api/team/tasks/'+task,'PATCH',{status:'em_andamento',note:'Contato em verificação'},auth)).status,200)
  assert.equal((await call('/api/team/tasks/'+task,'PATCH',{status:'concluida',note:'Contato verificado e resultado confirmado'},auth)).status,200)

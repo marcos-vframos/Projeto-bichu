@@ -87,7 +87,7 @@ export function initTeam(db) {
   for (const u of db.prepare('SELECT id FROM team_users').all())
     db.prepare('INSERT OR IGNORE INTO team_permissions VALUES(?,?)').run(
       u.id,
-      JSON.stringify(Object.keys(permissionCatalog)),
+      '[]',
     )
 }
 function initTeamTables(db) {
@@ -161,7 +161,7 @@ export async function teamApi(req, store, env) {
     staff = token
       ? db
           .prepare(
-            `SELECT u.id,u.name FROM team_sessions s JOIN team_users u ON u.id=s.user_id
+            `SELECT u.id,u.name,u.email FROM team_sessions s JOIN team_users u ON u.id=s.user_id
              LEFT JOIN temporary_access_sessions t ON t.token_hash=s.token_hash AND t.role='staff'
              LEFT JOIN temporary_access_links l ON l.id=t.link_id AND l.role='staff' AND l.subject_id=u.id
              WHERE s.token_hash=? AND s.expires_at>? AND u.active=1
@@ -174,6 +174,10 @@ export async function teamApi(req, store, env) {
     return json({ ok: true }, 200, {
       'set-cookie': 'mb_team=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0',
     })
+  }
+  if(staff&&staff.email===String(env.MASTER_ACCESS_EMAIL||'').trim().toLowerCase()){
+    db.prepare('DELETE FROM team_sessions WHERE user_id=?').run(staff.id)
+    if(!owner)return json({error:'Acesso master reservado à administração. Entre com uma conta individual de funcionário.'},401)
   }
   const selectedPreview = owner ? u.searchParams.get('assignee') : null
   if (
@@ -276,7 +280,8 @@ export async function teamApi(req, store, env) {
   }
   if (p === '/api/team/users' && req.method === 'POST') {
     if (!owner) return json({ error: 'Exclusivo do proprietário' }, 403)
-    const { name, email, password } = await req.json()
+    const { name, email, password, permissions: selectedPermissions = [] } = await req.json()
+    if (!Array.isArray(selectedPermissions) || selectedPermissions.some(x=>!Object.hasOwn(permissionCatalog,x)) || new Set(selectedPermissions).size!==selectedPermissions.length || ((selectedPermissions.includes('questions.reply')||selectedPermissions.includes('questions.review'))&&!selectedPermissions.includes('questions.read')) || (selectedPermissions.includes('tasks.update')&&!selectedPermissions.includes('tasks.read'))) return json({error:'Selecione permissões válidas e as consultas correspondentes'},400)
     if (
       typeof name !== 'string' ||
       !name.trim() ||
@@ -308,7 +313,7 @@ export async function teamApi(req, store, env) {
     }
     db.prepare('INSERT INTO team_permissions VALUES(?,?)').run(
       id,
-      JSON.stringify(Object.keys(permissionCatalog)),
+      JSON.stringify(selectedPermissions),
     )
     audit('owner', 'create_staff', id)
     return json({ id }, 201)

@@ -1,3 +1,4 @@
+import {permissionCatalog} from '../server/team.mjs'
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {mkdtemp,rm} from 'node:fs/promises'
@@ -12,7 +13,7 @@ test('responsibilities: employee buttons separate from administration, assigned 
  const key='b'.repeat(64);app=createApplication({store:openStore(folder),env:{PILOT_PANEL_KEY:key,COOKIE_SECURE:false,PILOT_PANEL_ORIGIN:''}})
  const call=(path,method='GET',body,auth)=>app.dispatch(new Request('https://test.local'+path,{method,headers:{origin:'https://test.local',...(auth?{cookie:auth}:{}),...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})}))
  const owner=cookie(await call('/api/pilot/owner/unlock','POST',{token:key}))
- const employee=async(number)=>{const credentials={name:'Pessoa '+number,email:`pessoa${number}@test.local`,password:'somente-para-o-teste-123'};const response=await call('/api/team/users','POST',credentials,owner);assert.equal(response.status,201);const{id}=await response.json();return{id,auth:cookie(await call('/api/team/login','POST',credentials))}}
+ const employee=async(number)=>{const credentials={name:'Pessoa '+number,email:`pessoa${number}@test.local`,password:'somente-para-o-teste-123'};const response=await call('/api/team/users','POST',{...credentials,permissions:Object.keys(permissionCatalog)},owner);assert.equal(response.status,201);const{id}=await response.json();return{id,auth:cookie(await call('/api/team/login','POST',credentials))}}
  const first=await employee(1),second=await employee(2)
  const staffMode=await app.dispatch(new Request('https://test.local/api/team/me',{headers:{cookie:owner+'; '+first.auth,'x-mb-team-mode':'staff'}}));assert.equal((await staffMode.json()).name,'Pessoa 1')
  assert.equal((await app.dispatch(new Request('https://test.local/api/team/me',{headers:{cookie:owner,'x-mb-team-mode':'staff'}}))).status,401)

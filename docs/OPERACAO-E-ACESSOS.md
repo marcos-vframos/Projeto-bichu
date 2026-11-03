@@ -40,3 +40,16 @@ Páginas públicas: /termos.html, /privacidade.html, /suporte.html e /excluir-co
 Primeiro envio, download e restauração isolada aprovados às 16h24 (Brasília). Foram verificados 10 registros de contas, 56 registros do app e os 6 objetos de fotos, além das demais tabelas de métricas, autenticação, equipe e auditoria. O volume ativo não foi substituído pelo ensaio. O painel /painel/seguranca mostra o resultado atual de cada rodada; esta nota é uma evidência pontual, não substitui acompanhamento de falhas futuras.
 
 Configuração consultada em produção: backup habilitado; cadastro público e recuperação de senha ainda indisponíveis porque SMTP_PASSWORD não foi fornecida. Não foram enviados e-mails reais de teste.
+
+
+## Preparação operacional — 03/11/2026
+
+O acesso master é aceito exclusivamente no fluxo administrativo (/acesso-master), para proprietário e matriz administrativa. As rotas de login comum do tutor e da equipe recusam esse e-mail. Sessões de equipe antigas associadas ao e-mail master deixam de ser aceitas; o cadastro e as atribuições existentes não são apagados. O e-mail master também não pode receber cadastro público ou recuperação comum. Sua manutenção depende da configuração privada do servidor.
+
+Novos funcionários começam sem atribuições gerais; o proprietário seleciona as permissões no cadastro ou posteriormente. Atribuições existentes são preservadas. Uma tarefa atribuída pode conceder acesso limitado ao caso necessário, sem liberar registros de outros tutores. Não compartilhar a senha master com colaboradores.
+
+/painel/seguranca agora mostra configuração de cadastro, variáveis SMTP ausentes (apenas nomes), equipe, contato e última restauração. A existência da configuração SMTP não comprova entrega real; é obrigatório concluir cadastro, recuperação e novo login com uma caixa controlada pelo titular. Não há certificação jurídica automática nem indicação de lançamento liberado.
+
+A entrada comum de tutor limpa a seleção administrativa anterior, impedindo que um navegador usado pelo proprietário continue gravando na conta previamente inspecionada.
+
+Pendências externas: inserir SMTP_PASSWORD diretamente no serviço principal da Railway, conferir o nome civil completo do controlador e guardar chave/cópia de recuperação fora da conta de hospedagem. Não incluir segredos em arquivos de exemplo, chat ou GitHub.

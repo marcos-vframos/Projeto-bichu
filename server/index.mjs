@@ -4,6 +4,7 @@ import {initLab,labManager,labsProxy} from './labs.mjs'
 import {pilotMatrixManager} from './pilot-matrix.mjs'
 import {temporaryAccessApi,hasTemporaryTutorCookie,clearTemporaryTutorSession} from './temporary-access.mjs'
 import {accessApi} from './access.mjs'
+import {operationStatus} from './operation-status.mjs'
 import {recoveryManager} from './recovery.mjs'
 import http from 'node:http'
 import { readFile } from 'node:fs/promises'
@@ -64,6 +65,10 @@ export function createApplication(options = {}) {
       }
       if(p==='/api/access/temporary/enter'||p.startsWith('/api/pilot/owner/access-links'))return temporaryAccessApi(request,store,env)
       if(p.startsWith('/api/access/'))return accessApi(request,store,env)
+      if(p==='/api/pilot/owner/operation'&&request.method==='GET'){
+        if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
+        return Response.json(operationStatus(store,env,recovery.state()),{headers:{'cache-control':'no-store'}})
+      }
       if(p.startsWith('/api/pilot/owner/recovery')){
         if(!await ownerSession(request,env.PILOT_PANEL_KEY))return Response.json({error:'Exclusivo do proprietário'},{status:403})
         if(p==='/api/pilot/owner/recovery'&&request.method==='GET')return Response.json(recovery.state(),{headers:{'cache-control':'no-store'}})
@@ -119,7 +124,13 @@ export function createApplication(options = {}) {
           }
         }
       }
-      return handlePilot(new Request(request, { headers }), requestEnv)
+      const response=await handlePilot(new Request(request, { headers }), requestEnv)
+      // A successful ordinary sign-in must replace a previous administrative preview.
+      if(p==='/api/pilot/login'&&request.method==='POST'&&response.ok){
+        clearTemporaryTutorSession(request,store.raw)
+        response.headers.append('set-cookie',`mb_owner_account=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0${env.COOKIE_SECURE===false?'':'; Secure'}`)
+      }
+      return response
     }
     if(p==='/acesso-master')return asset(resolve(root,'team/master-access.html'))
     if(p==='/painel/acessos')return asset(resolve(root,'team/access-links.html'))

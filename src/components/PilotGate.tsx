@@ -57,7 +57,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Não foi possível entrar')
       setPassword('')
-      if(eraseMode){localStorage.removeItem(`mb_preferences_${data.id}`);localStorage.removeItem(`mb_preferences_pending_${data.id}`);localStorage.removeItem(`mb_offline_${data.id}`);sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account');setEraseMode(false);setError('Conta e dados excluídos do servidor.');return}
+      if(eraseMode){localStorage.removeItem(`mb_preferences_edits_${data.id}`);localStorage.removeItem(`mb_preferences_${data.id}`);localStorage.removeItem(`mb_preferences_pending_${data.id}`);localStorage.removeItem(`mb_offline_${data.id}`);sessionStorage.removeItem('mb_offline_session');sessionStorage.removeItem('mb_active_account');setEraseMode(false);setError('Conta e dados excluídos do servidor.');return}
       await loadPreferences(data.id);sessionStorage.setItem('mb_lab_kind',data.labKind||'')
       sessionStorage.setItem('mb_offline_session',JSON.stringify(data));setAccount(data)
     } catch (cause) {
@@ -87,7 +87,6 @@ export function PilotGate({ children }: { children: ReactNode }) {
       {error && <p role="alert" className="rounded-lg bg-[#713529] p-3 text-sm text-white">{error}</p>}
       <button disabled={busy} className="w-full rounded-xl bg-[#d3ebaa] py-3 font-bold text-[#17372c] disabled:opacity-50">{busy ? 'Aguarde…' : eraseMode?'Excluir conta definitivamente':'Entrar'}</button>
 <button type="button" className="text-sm underline" onClick={()=>{setEraseMode(v=>!v);setConfirmation('');setError('')}}>{eraseMode?'Voltar ao acesso':'Excluir minha conta e meus dados (inclusive após expiração)'}</button><a href="/privacidade.html" className="block text-sm underline">Política de Privacidade</a>
-    <a href="/acesso-master?area=matriz" className="block text-sm underline">Entrar na matriz com a conta master</a>
     <nav className="flex flex-wrap gap-3 text-sm"><a className="underline" href="/acesso.html?modo=cadastro">Criar conta</a><a className="underline" href="/acesso.html?modo=recuperar">Esqueci minha senha</a><a className="underline" href="/termos.html">Termos</a><a className="underline" href="/suporte.html">Suporte</a></nav></form>
   </main>
 }

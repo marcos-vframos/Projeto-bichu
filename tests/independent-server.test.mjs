@@ -1,3 +1,4 @@
+import {permissionCatalog} from '../server/team.mjs'
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {mkdtemp,rm,readFile} from 'node:fs/promises'
@@ -23,8 +24,8 @@ test('independent runtime: employee isolation, owner assignment, tutor receives 
  assert.equal((await request(app,'/api/pilot/owner/dashboard','GET',null,null,{'oai-authenticated-user-id':'d410baf1-83e0-4641-9a41-f44fc8c5025a'})).status,403)
  const owner=cookie(await request(app,'/api/pilot/owner/unlock','POST',{token:key}));const employee={name:'Atendente teste',email:'equipe@meubichu.test',password:'senha-somente-teste-123'}
  assert.equal((await request(app,'/api/pilot/owner/dashboard','GET',null,owner)).status,200)
- const created=await request(app,'/api/team/users','POST',employee,owner);assert.equal(created.status,201);const uid=(await created.json()).id
- assert.equal((await request(app,'/api/team/users','POST',employee,owner)).status,409)
+ const created=await request(app,'/api/team/users','POST',{...employee,permissions:Object.keys(permissionCatalog)},owner);assert.equal(created.status,201);const uid=(await created.json()).id
+ assert.equal((await request(app,'/api/team/users','POST',{...employee,permissions:Object.keys(permissionCatalog)},owner)).status,409)
  const staff=cookie(await request(app,'/api/team/login','POST',employee))
  assert.equal((await (await request(app,'/api/team/cases','GET',null,staff)).json()).items.length,0)
  const body={message:'Resposta da equipe.',status:'respondido',replyId:crypto.randomUUID()}

@@ -182,7 +182,9 @@ $('#create-person').onsubmit = async (event) => {
   const send = event.target.querySelector('button')
   send.disabled = true
   try {
-    await api('users', Object.fromEntries(new FormData(event.target)))
+    const body=Object.fromEntries(new FormData(event.target))
+    body.permissions=[...document.querySelectorAll('#new-permissions input:checked')].map(x=>x.value)
+    await api('users', body)
     event.target.reset()
     await reload()
     show('Funcionário cadastrado. Faça as atribuições no painel administrativo.')
@@ -220,6 +222,8 @@ try {
   const me = await privateAccess()
   if (me.role !== 'owner') throw Error('Gestão disponível somente no painel do proprietário.')
   catalog = me.catalog
+  const initialChoices=$('#new-permissions')
+  for(const [key,title] of Object.entries(catalog)){const label=el('label',title),check=el('input');check.type='checkbox';check.value=key;check.name='permissions';label.prepend(check);initialChoices.append(label)}
   $('#admin').hidden = false
   await reload()
   await auditView.start()

@@ -14,7 +14,7 @@ export async function enterMaster(credentials,request=fetch){
 if(typeof document!=='undefined'){
  const form=document.getElementById('master-login'),message=document.getElementById('message'),submit=document.getElementById('submit'),area=document.getElementById('area')
  const requested=new URLSearchParams(location.search).get('area')
- if(['proprietario','matriz','funcionario','dirty'].includes(requested))area.value=requested
+ if(['proprietario','matriz','dirty'].includes(requested))area.value=requested
  form.addEventListener('submit',async event=>{
   event.preventDefault();submit.disabled=true;message.textContent='Verificando acesso…'
   const credentials=Object.fromEntries(new FormData(form));form.elements.password.value=''

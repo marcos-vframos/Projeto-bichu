@@ -16,6 +16,8 @@ export async function accessApi(req,store,env){const p=new URL(req.url).pathname
  if(p==='/api/access/register'||p==='/api/access/recover'){
  const email=String(b.email||'').trim().toLowerCase();if(email.length>120||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return ok({error:'E-mail inválido'},400)
  if(!limit(db,p+':'+sha(email),3))return ok({error:'Aguarde antes de solicitar outro e-mail.'},429)
+ const reserved=email===String(env.MASTER_ACCESS_EMAIL||'').trim().toLowerCase()
+ if(reserved)return ok({message:p.endsWith('/register')?'Se este e-mail puder ser cadastrado, você receberá um link de confirmação válido por 24 horas. Se já possui conta, entre ou recupere a senha.':'Se houver uma conta elegível, o link de recuperação chegará ao e-mail cadastrado. Ele expira em 30 minutos.'})
  if(!mailConfigured(env))return ok({error:'Envio automático de e-mail ainda não está configurado. Contate suportemeubichu@gmail.com.'},503)
  if(p.endsWith('/register')){
  if(env.PUBLIC_REGISTRATION!=='true')return ok({error:'O cadastro público ainda não foi liberado.'},503)
@@ -33,6 +35,7 @@ export async function accessApi(req,store,env){const p=new URL(req.url).pathname
  const row=db.prepare('SELECT * FROM access_tokens WHERE token_hash=?').get(sha(b.token));if(!row||row.expires_at<=Date.now())return ok({error:'Link inválido, utilizado ou expirado. Faça uma nova solicitação.'},400)
  if(p.endsWith('/verify')&&row.purpose!=='verify_tutor'||p.endsWith('/reset')&&!row.purpose.startsWith('reset_'))return ok({error:'Link inválido'},400)
  if(p.endsWith('/reset')&&!validPassword(b.password))return ok({error:'Use uma senha de 12 a 128 caracteres.'},400)
+ if(row.subject===String(env.MASTER_ACCESS_EMAIL||'').trim().toLowerCase()){db.prepare('DELETE FROM access_tokens WHERE subject=?').run(row.subject);return ok({error:'Este acesso é administrado pelo proprietário.'},400)}
  const data=JSON.parse(row.payload),salt=token(),hash=p.endsWith('/reset')?await passwordHash(b.password,salt):null
  db.exec('BEGIN IMMEDIATE');try{
  // Recheck after the asynchronous password calculation, then consume once.

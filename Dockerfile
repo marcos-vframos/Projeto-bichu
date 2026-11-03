@@ -6,7 +6,7 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
 ARG RAILWAY_GIT_COMMIT_SHA
 ENV APP_RELEASE=${RAILWAY_GIT_COMMIT_SHA}
-RUN npm run build && mkdir -p /runtime/node_modules && cp -rL node_modules/nodemailer /runtime/node_modules/nodemailer
+RUN npm run build && npm test && node --test owner-app/tests/*.test.mjs && mkdir -p /runtime/node_modules && cp -rL node_modules/nodemailer /runtime/node_modules/nodemailer
 FROM node:24-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production DATA_DIR=/data PORT=8080
