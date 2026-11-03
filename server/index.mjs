@@ -1,3 +1,4 @@
+import {matrixCloneApi} from './clone-matrix.mjs'
 import {dirtyAccountAccess} from './dirty-account-access.mjs'
 import { masterAccess } from './master-access.mjs'
 import {initLab,labManager,labsProxy} from './labs.mjs'
@@ -39,6 +40,7 @@ export function createApplication(options = {}) {
   const env = { ...process.env, ...options.env, DB: store.DB, BUCKET: store.BUCKET }
   if (!/^[a-f0-9]{64}$/.test(env.PILOT_PANEL_KEY || ''))
     throw Error('PILOT_PANEL_KEY must contain 64 hex characters')
+  const matrixClone=matrixCloneApi(store,env,req=>ownerSession(req,env.PILOT_PANEL_KEY))
   const master = masterAccess(store, env)
   const recovery=recoveryManager(store,settings)
   const labs=labManager(store,settings)
@@ -52,6 +54,8 @@ export function createApplication(options = {}) {
         return Response.json({ error: 'Origem inválida' }, { status: 403 })
       const dirtyResponse=await dirtyAccountAccess(request,store,env)
       if(dirtyResponse)return dirtyResponse
+      const cloneResponse=await matrixClone(request)
+      if(cloneResponse)return cloneResponse
       const masterResponse = await master(request)
       if (masterResponse) return masterResponse
       if(p.startsWith('/api/lab/'))return labs.api(request)
@@ -129,6 +133,7 @@ export function createApplication(options = {}) {
     if(p==='/acesso-master')return asset(resolve(root,'team/master-access.html'))
     if(p==='/painel/acessos')return asset(resolve(root,'team/access-links.html'))
     if(p==='/painel/testes')return asset(resolve(root,'team/test-analytics.html'))
+    if(p==='/painel/clonar-matriz')return asset(resolve(root,'team/clone-matrix.html'))
     if(p==='/painel/configuracoes')return asset(resolve(root,'team/labs.html'))
     if(p==='/painel/seguranca')return asset(resolve(root,'team/recovery.html'))
     if (p === '/acesso-tutor')return asset(resolve(root,'team/tutor-access.html'))
