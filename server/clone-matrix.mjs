@@ -1,6 +1,6 @@
 import {randomUUID,createHash,timingSafeEqual} from 'node:crypto'
 import {gzipSync,gunzipSync} from 'node:zlib'
-import {mkdir,rename,rm} from 'node:fs/promises'
+import {mkdir,rename,rm,copyFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import {snapshot,verifyRestored,pack} from './recovery.mjs'
 
@@ -50,7 +50,7 @@ export async function importMatrix(store,env,p){
  let backupFolder,sealed,backupPath
  try{
   backupFolder=snapshot(store,env.DATA_DIR);await verifyRestored(backupFolder);sealed=await pack(backupFolder,env.LAB_CONTROL_KEY)
-  const backupDir=join(env.DATA_DIR,'clone-backups');await mkdir(backupDir,{recursive:true});backupPath=join(backupDir,p.id+'.enc');await rename(sealed,backupPath);sealed=null
+  const backupDir=join(env.DATA_DIR,'clone-backups');await mkdir(backupDir,{recursive:true});backupPath=join(backupDir,p.id+'.enc');await copyFile(sealed,backupPath+'.tmp');await rename(backupPath+'.tmp',backupPath);await rm(sealed,{force:true});sealed=null
   // New unique paths mean a failed import cannot overwrite any current photo.
   for(const f of newFiles)await store.BUCKET.put(f.key,Buffer.from(f.base64,'base64'))
   db.exec('BEGIN IMMEDIATE')

@@ -3,14 +3,15 @@ import assert from 'node:assert/strict'
 import {mkdtemp,rm,readdir} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
+import {existsSync,statSync} from 'node:fs'
 import {gzipSync} from 'node:zlib'
 import {randomUUID} from 'node:crypto'
 import {openStore} from '../server/storage.mjs'
 import {captureMatrix,importMatrix,matrixCloneApi} from '../server/clone-matrix.mjs'
 import {unpack} from '../server/recovery.mjs'
 const origin='https://bichu-testes-sujos-production.up.railway.app',key='b'.repeat(64)
-async function setup(t){const dir=await mkdtemp(join(tmpdir(),'bichu-clone-test-')),source=openStore(join(dir,'source')),target=openStore(join(dir,'target'))
- t.after(async()=>{source.close();target.close();await rm(dir,{recursive:true,force:true})})
+async function setup(t,volumeRoot){const dir=await mkdtemp(join(tmpdir(),'bichu-clone-test-')),targetDirectory=volumeRoot?await mkdtemp(join(volumeRoot,'bichu-clone-volume-')):join(dir,'target'),source=openStore(join(dir,'source')),target=openStore(targetDirectory)
+ t.after(async()=>{source.close();target.close();await rm(dir,{recursive:true,force:true});if(volumeRoot)await rm(targetDirectory,{recursive:true,force:true})})
  for(const store of [source,target])store.raw.exec('CREATE TABLE team_audit(id TEXT PRIMARY KEY,actor TEXT,action TEXT,target TEXT,created_at INTEGER);CREATE TABLE lab_accounts(slot TEXT PRIMARY KEY,account_id TEXT,active INTEGER)')
  const sid=randomUUID(),tid=randomUUID(),other=randomUUID(),dog=randomUUID(),weight=randomUUID(),photo=randomUUID()+'.png'
  for(const [store,id,email] of [[source,sid,'piloto01@meubichu.test'],[source,other,'outra@teste.invalid'],[target,tid,'dirty@dirty.meubichu.invalid']])store.raw.prepare("INSERT INTO pilot_accounts(id,email,password_salt,password_hash,created_at,expires_at,account_kind) VALUES(?,?,?,?,?,?,'internal')").run(id,email,'salt-'+id,'hash-'+id,1,253402300799000)
@@ -19,7 +20,7 @@ async function setup(t){const dir=await mkdtemp(join(tmpdir(),'bichu-clone-test-
  insert(source,dog,sid,'dogs',null,{name:'Maze',species:'dog',avatar:photo,weight_kg:28});insert(source,weight,sid,'weight_logs',dog,{dog,weight_kg:28,date:'2026-10-02'});insert(source,randomUUID(),sid,'account_preferences',null,{active_pet:dog,bichu_tutor_name:'Marcos',bichu_accent:'green'});insert(source,randomUUID(),sid,'meal_confirmations',dog,{dog,day:'2026-10-02',slot:0,meal:{label:'Manhã',time:'08:00',grams:100},completed:true});insert(source,randomUUID(),other,'dogs',null,{name:'NÃO COPIAR'});insert(target,randomUUID(),tid,'dogs',null,{name:'Antes da cópia'})
  const objectKey=sid+'/'+dog+'/'+photo,bytes=Buffer.from('fixture-photo-bytes');await source.BUCKET.put(objectKey,bytes);source.raw.prepare('INSERT INTO pilot_files VALUES(?,?,?,?,?,?,?,?)').run(randomUUID(),sid,dog,'dogs',photo,objectKey,'image/png',bytes.length)
  source.raw.prepare('INSERT INTO pilot_sessions VALUES(?,?,?)').run('real-session',sid,Date.now()+60000)
- return {source,target,dir,sid,tid,dog,weight,env:{LAB_KIND:'dirty',APP_ORIGIN:origin,LAB_CONTROL_KEY:key,DATA_DIR:join(dir,'target')}}
+ return {source,target,dir,sid,tid,dog,weight,env:{LAB_KIND:'dirty',APP_ORIGIN:origin,LAB_CONTROL_KEY:key,DATA_DIR:targetDirectory}}
 }
 test('copia somente Piloto 01, preserva datas/fotos, remapeia vínculos e não copia credenciais; backup restaura',async t=>{const x=await setup(t),prior=x.source.raw.prepare('SELECT * FROM pilot_records ORDER BY id').all(),p=await captureMatrix(x.source,randomUUID()),r=await importMatrix(x.target,x.env,p)
  assert.equal(r.records,4);assert.equal(r.files,1);assert.equal(r.backupCreated,true)
@@ -35,4 +36,14 @@ test('rotas exigem sessão proprietária, origem correta e chave exclusiva; não
  assert.equal((await local(new Request(origin+'/api/lab/manage/clone-matrix'))).status,403)
  const p=await captureMatrix(x.source,randomUUID());const req=new Request(origin+'/api/lab/manage/clone-matrix',{method:'POST',headers:{origin,authorization:'Bearer '+key},body:gzipSync(Buffer.from(JSON.stringify(p)))});const res=await local(req);assert.equal(res.status,200);const text=await res.text();assert.ok(!text.includes('password'));assert.ok(!text.includes('backup_path'));assert.ok(!text.includes(key))
  const wrong=new Request(origin+'/api/lab/manage/clone-matrix',{method:'POST',headers:{origin:'https://outro',authorization:'Bearer '+key},body:'x'});assert.equal((await local(wrong)).status,403)
+})
+
+
+test('backup entre volumes distintos usa cópia e permite importação com restauração verificável',async t=>{
+ if(!existsSync('/dev/shm')||statSync('/dev/shm').dev===statSync(tmpdir()).dev){t.skip('Dois volumes não disponíveis');return}
+ const x=await setup(t,'/dev/shm'),p=await captureMatrix(x.source,randomUUID()),result=await importMatrix(x.target,x.env,p)
+ assert.equal(result.backupCreated,true);assert.equal(result.records,4)
+ const path=x.target.raw.prepare('SELECT backup_path FROM dirty_matrix_clones').get().backup_path
+ assert.ok(path.startsWith('/dev/shm/'));assert.ok(existsSync(path));assert.ok(!existsSync(path+'.tmp'))
+ const checked=await unpack(path,key,join(x.dir,'restore-volume'));assert.equal(checked.tables.pilot_records,1)
 })
