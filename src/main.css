@@ -548,3 +548,16 @@
 @container bichu-content (min-width:1200px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @container bichu-content (max-width:820px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container bichu-content (max-width:520px){.bichu-shell .bichu-library .bl-grid{grid-template-columns:1fr}}
+
+
+/* A dedicated top row keeps the personalized icon away from every page. */
+.bichu-shell{--bichu-header-height:72px;padding-top:var(--bichu-header-height)}
+.bichu-app-header{position:fixed;top:var(--bichu-session-height,0px);left:0;right:0;z-index:40;height:var(--bichu-header-height);padding:8px max(16px,env(safe-area-inset-left));display:flex;align-items:center;gap:12px;border-bottom:1px solid #83907b44;isolation:isolate}
+.bichu-app-header>button{flex-shrink:0}.bichu-app-title{font:700 15px/1.4 system-ui,sans-serif;letter-spacing:.03em}
+.bichu-shell .bichu-menu{position:fixed;left:0;top:calc(var(--bichu-session-height,0px) + var(--bichu-header-height));height:calc(100dvh - var(--bichu-session-height,0px) - var(--bichu-header-height));z-index:39;width:min(19rem,88vw);padding:8px 20px 20px 12px;overflow-y:auto;overscroll-behavior:contain}
+.bichu-menu-hidden{display:none}.bichu-shell .bichu-desktop-toolbar{padding-left:0}
+.bichu-swipe-edge{position:fixed;left:0;top:calc(var(--bichu-session-height,0px) + var(--bichu-header-height));bottom:0;width:24px;z-index:38;touch-action:pan-y}
+@media(min-width:1024px){.bichu-shell .bichu-menu{width:var(--bichu-desktop-sidebar)}}
+@media(prefers-reduced-motion:reduce){.bichu-sidebar{animation:none}}
+
+.bichu-contextbar{position:sticky;top:0;z-index:50}.bichu-contextbar .bichu-session-banner{position:relative}

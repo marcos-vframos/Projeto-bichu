@@ -3,11 +3,12 @@ import OfflineNotice from '@/components/OfflineNotice'
 import {preferenceStorage} from '@/lib/preferences'
 import { loadPreferences, loadOfflinePreferences } from '@/lib/preferences'
 import DeviceActivity from '@/components/DeviceActivity'
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 
 type Account = { id: string; email: string; expiresAt: number; temporaryAccess?: boolean; ownerAccess?: boolean; labKind?: string; matrixOriginal?: boolean }
 
 export function PilotGate({ children }: { children: ReactNode }) {
+  const contextRef=useRef<HTMLDivElement>(null)
   const [account, setAccount] = useState<Account | null>(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
@@ -45,6 +46,15 @@ export function PilotGate({ children }: { children: ReactNode }) {
     void checkAccess()
   }, [])
 
+  useEffect(()=>{
+    const node=contextRef.current
+    if(!node)return
+    const update=()=>document.documentElement.style.setProperty('--bichu-session-height',`${node.getBoundingClientRect().height}px`)
+    const observer=new ResizeObserver(update)
+    update();observer.observe(node)
+    return()=>{observer.disconnect();document.documentElement.style.removeProperty('--bichu-session-height')}
+  },[account])
+
   async function login(event: FormEvent) {
     event.preventDefault()
     setBusy(true)
@@ -66,7 +76,7 @@ export function PilotGate({ children }: { children: ReactNode }) {
   }
 
   if (loading) return <main className="min-h-screen grid place-items-center bg-[#102923] text-white">Verificando acesso…</main>
-  if (account) return <>{account.temporaryAccess&&<aside className="bg-emerald-100 text-emerald-950 px-4 py-2 text-sm">Acesso temporário sem senha · {account.email} · válido até {new Date(account.expiresAt).toLocaleDateString('pt-BR')}.</aside>}{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais.</aside>}{account.ownerAccess?<SessionBanner email={account.email} matrixOriginal={account.matrixOriginal}/>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}{children}</>
+  if (account) return <><div ref={contextRef} className="bichu-contextbar">{account.temporaryAccess&&<aside className="bg-emerald-100 text-emerald-950 px-4 py-2 text-sm">Acesso temporário sem senha · {account.email} · válido até {new Date(account.expiresAt).toLocaleDateString('pt-BR')}.</aside>}{account.labKind&&<aside className="bg-indigo-100 text-indigo-950 px-4 py-2 text-sm">Ambiente de desenvolvimento · {account.labKind==='matrix'?'Matriz':account.labKind==='dirty'?'Testes pesados':'Beta'} · dados separados dos usuários reais.</aside>}{account.ownerAccess?<SessionBanner email={account.email} matrixOriginal={account.matrixOriginal}/>:<DeviceActivity key={account.id} />}<OfflineNotice/>{error&&<p role="status" className="bg-amber-100 p-3 text-sm text-amber-950">{error}</p>}</div>{children}</>
   return <main className="min-h-screen grid place-items-center bg-[#102923] text-[#f5f9f6] px-4">
     <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#53776c] bg-[#1b3c33] p-7 shadow-2xl space-y-5">
       <h1 className="text-2xl font-bold">{eraseMode?'Excluir conta e dados':'Entre no Meu Bichu'}</h1>
@@ -90,3 +100,4 @@ export function PilotGate({ children }: { children: ReactNode }) {
     <nav className="flex flex-wrap gap-3 text-sm"><a className="underline" href="/acesso.html?modo=cadastro">Criar conta</a><a className="underline" href="/acesso.html?modo=recuperar">Esqueci minha senha</a><a className="underline" href="/termos.html">Termos</a><a className="underline" href="/suporte.html">Suporte</a></nav></form>
   </main>
 }
+

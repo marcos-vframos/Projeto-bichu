@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ArrowLeft, ArrowUpRight, BookOpen, Bookmark, Cat, Check, ChevronRight, ClipboardList, Dog, FileText, Search, X } from 'lucide-react'
 import { libraryTopics, matchesLibrarySearch, parseLibraryCatalog, topicChapter, type LibraryCatalog } from '@/lib/library-catalog'
+import LibraryBreedCard from '@/components/LibraryBreedCard'
 import { preferenceStorage } from '@/lib/preferences'
 import './library/library.css'
 const LibraryReader = lazy(() => import('@/components/LibraryReader'))
@@ -68,10 +69,11 @@ export default function Library() {
       {area === 'topics' && <div className="bl-topic-filter"><button aria-pressed={!topic} onClick={()=>setParams({area})}>Todos os assuntos</button>{libraryTopics.map(t=><button key={t.id} aria-pressed={topic===t.id} onClick={()=>setParams({area,tema:t.id})}>{t.title}</button>)}</div>}
       {area === 'forms' && <p className="bl-note">As fichas ficam agrupadas por raça. Baixe o PDF preenchível para registrar informações em um leitor compatível.</p>}
       <div className="bl-results"><h2>{search ? 'Resultados da busca' : area==='saved' ? 'Seus perfis salvos' : 'Explore as raças'}</h2><span role="status">{visible.length} {visible.length===1?'perfil':'perfis'}</span></div>
-      <div className="bl-grid">{visible.slice(0,limit).map(b=><article className="bl-card" key={b.id}><div className="bl-card-image"><img src={b.cover} alt={b.name} loading="lazy" width={480} height={280}/><span>{b.species==='dogs'?'Cães':'Gatos'}</span><button aria-label={`${saved.has(b.id)?'Remover':'Salvar'} ${b.name}`} aria-pressed={saved.has(b.id)} onClick={()=>toggleSaved(b.id)}><Bookmark size={19} fill={saved.has(b.id)?'currentColor':'none'}/></button></div><div className="bl-card-content"><h3>{b.name}</h3><p>{b.summary}</p><div className="bl-tags">{b.tags.map(t=><span key={t}>{t}</span>)}</div><footer><span><FileText size={15}/>{b.documents.length} {b.documents.length===1?'PDF':'PDFs'}</span><button onClick={()=>openBreed(b.id)}>Conhecer <ChevronRight size={17}/></button></footer></div></article>)}</div>
+      <div className="bl-grid">{visible.slice(0,limit).map(b=><LibraryBreedCard key={b.id} breed={b} saved={saved.has(b.id)} onSave={()=>toggleSaved(b.id)} onOpen={()=>openBreed(b.id)} onChapter={(pdf,page)=>setParams({area,raca:b.id,pdf,pagina:String(page)})}/>)}</div>
       {!visible.length && <section className="bl-empty"><BookOpen size={32}/><h3>{area==='saved'?'Seus favoritos aparecerão aqui.':'Nenhum perfil encontrado.'}</h3><p>{area==='saved'?'Toque no marcador de uma raça para guardá-la.':'Tente outra raça, palavra ou área.'}</p><button onClick={()=>selectArea('all')}>Ver todo o acervo</button></section>}
       {visible.length>limit && <button className="bl-more" onClick={()=>setLimit(n=>n+12)}>Mostrar mais perfis</button>}
     </>}
     <footer className="bl-disclaimer"><BookOpen size={18}/><p>Acervo {catalog.publisher} · Conteúdo educativo. Os guias informam que não houve revisão técnico-veterinária nesta edição. Para decisões sobre saúde ou alimentação do seu pet, procure orientação veterinária.</p></footer>
   </div>
 }
+
